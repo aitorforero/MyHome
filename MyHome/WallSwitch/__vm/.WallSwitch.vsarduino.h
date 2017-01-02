@@ -85,4 +85,11 @@ extern "C" void __cxa_pure_virtual() {;}
 #define portInputRegister(P)
 #define portModeRegister(P)
 #include <..\WallSwitch\WallSwitch.ino>
+#include <..\WallSwitch\PciListener.h>
+#include <..\WallSwitch\PciManager.cpp>
+#include <..\WallSwitch\PciManager.h>
+#include <..\WallSwitch\RotaryEncoder.cpp>
+#include <..\WallSwitch\RotaryEncoder.h>
+#include <..\WallSwitch\RotaryEncoderPciListener.cpp>
+#include <..\WallSwitch\RotaryEncoderPciListener.h>
 #endif
