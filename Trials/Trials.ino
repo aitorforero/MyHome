@@ -1,14 +1,6 @@
-
-
-
-// This sketch has been Refurbished by BUHOSOFT
-// IMPORTANT: Adafruit_TFTLCD LIBRARY MUST BE SPECIFICALLY
-// CONFIGURED FOR EITHER THE TFT SHIELD OR THE BREAKOUT BOARD.
-// SEE RELEVANT COMMENTS IN Adafruit_TFTLCD.h FOR SETUP.
-//#define DEBUG
 #include <Adafruit_GFX.h>    // Core graphics library
-#include "pin_magic_CUSTOM.h"
 #include <Adafruit_TFTLCD.h> // Hardware-specific library
+#include "Photo.h"
 
 
 // Pines de conexion del LCD 
@@ -20,49 +12,30 @@
 
 Adafruit_TFTLCD tft(LCD_CS, LCD_CD, LCD_WR, LCD_RD, LCD_RESET); // Instancia del LCD 
 
-#define  BLACK   0x0000  // Definimos los colores para poder referirnos a ellos con su nombre                  
-#define RED     0xF800  // en lugar de usar el código hexadecimal de cada uno. 
-#define GREEN   0x07E0 
-#define WHITE   0xFFFF  
-#define BLUE    0x001F 
-#define CYAN    0x07FF
-#define YELLOW  0xFFE0
-#define MAGENTA 0xF81F
-
-
+#define   BLACK   0x0000  // Color codes for background, text or filled circles, squares or triangles.                 
+#define   RED     0xF800 
+#define   GREEN   0x07E0  
+#define   WHITE   0xFFFF  
+#define   BLUE    0x001F 
+#define   CYAN    0x07FF
+#define   YELLOW  0xFFE0
+#define   MAGENTA 0xF81F
 
 void setup(void) 
 { 
-  Serial.begin(9600);
-  Serial.println("Starting...");
-
   tft.reset();
    
   uint16_t identifier = tft.readID();
- 
-   
   tft.begin(identifier);
-  tft.fillScreen(BLACK); // Colocamos el fondo del LCD en Negro
+  tft.setRotation(0); // Establecemos la posición de la pantalla Vertical u Horizontal
+  tft.fillScreen(WHITE); // Colocamos el fondo del LCD en Negro
+  tft.drawXBitmap(0, 0, photo, photo_width,  photo_height, 0x00);
 }
   
 
 void loop(void) 
 {     
-    Serial.println("Writing...");
-
-    tft.setRotation(0); // Establecemos la posición de la pantalla Vertical u Horizontal
   
-    tft.setCursor(40, 10);  // Situamos el cursor en la posicion del LCD deseada,
-                            // (X, Y) siendo X el ancho (240 px max.) e Y el alto (320 px max.) 
-                          
-    tft.setTextSize(5); // Definimos tamaño del texto. (Probado tamaños del 1 al 10)
-    
-    tft.setTextColor(CYAN); // Definimos el color del texto 
-    
-    tft.println("Texto"); // Escribimos nuestro texto en el LCD. Realizará un salto de linea 
-                          // automatico si el texto es mayor que el tamaño del LCD
-                                  
-    delay(10000);
 }
 
 /* TFT Graphic functions
