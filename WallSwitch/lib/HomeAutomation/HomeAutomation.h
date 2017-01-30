@@ -1,13 +1,8 @@
 #ifndef _HomeAutomation_h
 #define _HomeAutomation_h
 
-#if defined(ARDUINO) && ARDUINO >= 100
-  #include "arduino.h"
-#else
-  #include "WProgram.h"
-#endif
 
-//#include <SPI.h>
+#include "Arduino.h"
 #include <Ethernet.h>
 
 class HomeAutomation
