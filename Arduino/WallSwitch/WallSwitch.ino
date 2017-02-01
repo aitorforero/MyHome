@@ -1,3 +1,6 @@
+#define byte uint8_t
+
+
 #include <Arduino.h>
 
 // This libraries are here to avoid PlatformIO compiling error
@@ -15,11 +18,12 @@
 #define B_PIN 6
 #define SW_PIN 7
 
+/*
 byte mac[] = { 0x90, 0xA2, 0xDA, 0x10, 0x91, 0x62 };
 char server[] = "192.168.0.14";
 int port = 8080;
 IPAddress ip(192, 168, 0, 177);
-
+*/
 
 void onCounterClockWise();
 void onClockWise();
@@ -36,7 +40,17 @@ void setup()
     Serial.begin(9600);
     Serial.println("Initializing...");
 
-    homeAutomation = new HomeAutomation(mac, server, port, ip);
+    Configuration::load();
+    homeAutomation = new HomeAutomation(
+      Configuration::getMACAddress, 
+      Configuration::getServer.IPAddress, 
+      Configuration::getServer.port, 
+      IPAddress(
+        Configuration::getIPAddress[0],
+        Configuration::getIPAddress[1],
+        Configuration::getIPAddress[2],
+        Configuration::getIPAddress[3]));
+        
     rotaryEncoder = new RotaryEncoder(A_PIN, B_PIN, SW_PIN);
     Serial.println("Ready.");
 
