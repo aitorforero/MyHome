@@ -8,11 +8,14 @@
 #include <SPI.h>
 #include <EEPROM.h>
 
-
+#include <State.h> 
+#include <StateMachine.h> 
 #include <HomeAutomation.h>
 #include <RotaryEncoder.h>
 #include <Configuration.h>
 #include <avr/wdt.h>
+
+
 
 #define A_PIN 5
 #define B_PIN 6
