@@ -1,7 +1,7 @@
 #define byte uint8_t
 
-#ifndef _Configuration_h_
-#define _Configuration_h_
+#ifndef mConfiguration_h_
+#define mConfiguration_h_
 
 
 #include <Arduino.h>
@@ -29,7 +29,12 @@ struct ConfigData
 
 class Configuration
 {
-  public:
+  private:
+    static bool readFromEEPROM();
+    static void saveToEEPROM();
+    static ConfigData mConfiguration;
+    
+   public:
     static bool load();
     static void save();
     static byte* getMACAddress();
@@ -41,10 +46,7 @@ class Configuration
     static void setZone(String newZone);
     static void setServer(MQTTServer newServer);
 
-  private:
-    static ConfigData _Configuration;
-    static bool readFromEEPROM();
-    static void saveToEEPROM();     
+  
     
 };
 

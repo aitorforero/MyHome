@@ -2,18 +2,18 @@
 
 
 #include <Arduino.h>
+#include <avr/wdt.h>
 
 // This libraries are here to avoid PlatformIO compiling error
 // due not file found
 #include <SPI.h>
 #include <EEPROM.h>
 
-#include <State.h> 
-#include <StateMachine.h> 
 #include <HomeAutomation.h>
 #include <RotaryEncoder.h>
 #include <Configuration.h>
-#include <avr/wdt.h>
+#include <InitializingState.h>
+
 
 
 
@@ -42,19 +42,20 @@ void setup()
 
     Serial.begin(9600);
     Serial.println("Initializing...");
-
+    
+/*
     Configuration::load();
     homeAutomation = new HomeAutomation(
-      Configuration::getMACAddress, 
-      Configuration::getServer.IPAddress, 
-      Configuration::getServer.port, 
+      Configuration::getMACAddress(), 
+      Configuration::getServer().IPAddress, 
+      Configuration::getServer().port, 
       IPAddress(
-        Configuration::getIPAddress[0],
-        Configuration::getIPAddress[1],
-        Configuration::getIPAddress[2],
-        Configuration::getIPAddress[3]));
+        Configuration::getIPAddress()[0],
+        Configuration::getIPAddress()[1],
+        Configuration::getIPAddress()[2],
+        Configuration::getIPAddress()[3]));
         
-    rotaryEncoder = new RotaryEncoder(A_PIN, B_PIN, SW_PIN);
+    rotaryEncoder = new RotaryEncoder(A_PIN, B_PIN, SW_PIN);*/
     Serial.println("Ready.");
 
     wdt_enable(WDTO_250MS);
@@ -62,6 +63,7 @@ void setup()
 
 void loop()
 {   
+    WallSwitch::Instance()->update();
     wdt_reset();
 }
 

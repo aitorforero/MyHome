@@ -1,27 +1,32 @@
 #include "StateMachine.h"
 
-
-void StateMachine::setCurrentState(State<entity_type>* s)
+template <class entity_type>   
+void StateMachine<entity_type>::setCurrentState(State<entity_type>* s)
 {
   _CurrentState = s;
 }
 
-void StateMachine::setPreviousState(State<entity_type>* s)
+template <class entity_type> 
+void StateMachine<entity_type>::setPreviousState(State<entity_type>* s)
 {
   _PreviousState = s;
 };
 
-StateMachine::StateMachine(entity_type* owner)
+template <class entity_type> 
+StateMachine<entity_type>::StateMachine(entity_type* owner)
 {
-  _Owner = s;
+  _Owner = owner;
 };
 
-void StateMachine::update()
+template <class entity_type> 
+void StateMachine<entity_type>::update()
 {
   if(_CurrentState) _CurrentState->execute(_Owner);
 };
 
-void StateMachine::changeState(State<entity_type>* s)
+
+template <class entity_type> 
+void StateMachine<entity_type>::changeState(State<entity_type>* s)
 {
   _PreviousState = _CurrentState;
   _CurrentState->exit(_Owner);
@@ -29,12 +34,14 @@ void StateMachine::changeState(State<entity_type>* s)
   _CurrentState->enter(_Owner);
 };
 
-void StateMachine::revertState()
+template <class entity_type> 
+void StateMachine<entity_type>::revertState()
 {
   changeState(_PreviousState);
 };
 
-bool StateMachine::isInState(const State<entity_type>& s)
+template <class entity_type> 
+bool StateMachine<entity_type>::isInState(const State<entity_type>& s)
 {
   //TODO: Not Implemented yet
   return false;
