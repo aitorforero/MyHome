@@ -40,7 +40,7 @@ RotaryEncoder* rotaryEncoder;
 
 void setup()
 {
-  Debug.initialize(9600);
+  Debug::initialize(9600);
   wdt_disable();
   //Initialize serial communications for debugin
 
@@ -52,11 +52,7 @@ void setup()
 
 void loop()
 {
-    Debug::debug("Loop;");
-    WallSwitch* ws = WallSwitch::Instance();
-    Debug::debug("updating");
-    //delay(5000);
-    //ws->update();
+    WallSwitch::Instance()->update();
     wdt_reset();
 }
 

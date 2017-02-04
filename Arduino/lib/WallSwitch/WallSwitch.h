@@ -21,13 +21,14 @@ class WallSwitch
       Adafruit_TFTLCD* mTFT;
       StateMachine<WallSwitch>* mStateMachine;
       WallSwitch();
-
+      void initializeTFT();
 
     public:
       static WallSwitch* Instance();
       void update();
-      StateMachine<WallSwitch>*  GetStateMachine()const{return mStateMachine;}
-      void initializeTFT();
+      StateMachine<WallSwitch>*  getStateMachine()const{return mStateMachine;}
+      void initialize();
+
 
 };
 

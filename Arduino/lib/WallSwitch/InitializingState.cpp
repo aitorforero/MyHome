@@ -1,11 +1,12 @@
 #include "InitializingState.h"
 #include <WallSwitch.h>
 #include <Configuration.h>
+#include "MainState.h"
+#include <Debug.h>
 
 InitializingState* InitializingState::Instance()
 {
 		static InitializingState   instance;
-
 		return &instance;
 };
 
@@ -18,7 +19,10 @@ void InitializingState::enter(WallSwitch* ws)
 void InitializingState::execute(WallSwitch* ws)
 {
 
-		ws->initializeTFT();
+		ws->initialize();
+
+		ws->getStateMachine()->changeState(MainState::Instance());
+
 
 		// TODO: Show splash screen
 /*
@@ -39,12 +43,11 @@ void InitializingState::execute(WallSwitch* ws)
 	 }
 	 else
 	 {
-		 ws->getStateMachine()->changeState(ConfigurationState::Instance());
 	 }
 
 */
 
-	  Serial.println("Ready.");
+
 };
 
 void InitializingState::exit(WallSwitch* ws)

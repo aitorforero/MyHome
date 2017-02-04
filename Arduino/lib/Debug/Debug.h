@@ -6,18 +6,11 @@
 
 class Debug
 {
-private:
-  static bool initialized;
-
 public:
   static void initialize(int br)
   {
-    if(!initialized)
-    {
       Serial.begin(br);
-      initialized=true;
-    }
-
+      delay(1000);
   }
 
   static void debug(char* Text)

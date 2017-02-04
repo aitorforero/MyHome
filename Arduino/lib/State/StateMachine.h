@@ -26,8 +26,9 @@ class StateMachine
 	public:
 		StateMachine(entity_type* owner)
 		{
-			Debug::debug("StateMachine::StateMachine");
 			_Owner = owner;
+			_CurrentState = NULL;
+			_PreviousState = NULL;
 		};
 
 		void update()
@@ -38,7 +39,7 @@ class StateMachine
 		void changeState(State<entity_type>* s)
 		{
 			_PreviousState = _CurrentState;
-			_CurrentState->exit(_Owner);
+			if(_CurrentState)	_CurrentState->exit(_Owner);
 			_CurrentState = s;
 			_CurrentState->enter(_Owner);
 		};
