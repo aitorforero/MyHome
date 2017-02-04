@@ -2,7 +2,6 @@
 #define _WallSwitch_h
 
 #include <Adafruit_TFTLCD.h>
-#include <pin_magic.h>
 #include <StateMachine.h>
 
 
@@ -23,10 +22,12 @@ class WallSwitch
       StateMachine<WallSwitch>* mStateMachine;
       WallSwitch();
 
+
     public:
       static WallSwitch* Instance();
       void update();
       StateMachine<WallSwitch>*  GetStateMachine()const{return mStateMachine;}
+      void initializeTFT();
 
 };
 

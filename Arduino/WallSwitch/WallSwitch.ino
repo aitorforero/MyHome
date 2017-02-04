@@ -8,7 +8,9 @@
 // due not file found
 #include <SPI.h>
 #include <EEPROM.h>
+#include <Configuration.h>
 
+#include <Debug.h>
 #include <HomeAutomation.h>
 #include <RotaryEncoder.h>
 
@@ -38,14 +40,23 @@ RotaryEncoder* rotaryEncoder;
 
 void setup()
 {
+  Debug.initialize(9600);
+  wdt_disable();
+  //Initialize serial communications for debugin
+
+  Debug::debug("Initializing...");
   /* Enable watchdog.
-     If the loop last more than 8s restart the hardware */ 
-   wdt_enable(WDTO_8S);
+     If the loop last more than 8s restart the hardware */
+  wdt_enable(WDTO_8S);
 }
 
 void loop()
-{   
-    WallSwitch::Instance()->update();
+{
+    Debug::debug("Loop;");
+    WallSwitch* ws = WallSwitch::Instance();
+    Debug::debug("updating");
+    //delay(5000);
+    //ws->update();
     wdt_reset();
 }
 

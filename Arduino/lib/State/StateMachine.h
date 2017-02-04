@@ -1,13 +1,15 @@
 #ifndef _StateMachine_h
 #define _StateMachine_h
 
+#include <Arduino.h>
+#include <Debug.h>
 #include "State.h"
 
-template <class entity_type>      
+template <class entity_type>
 class StateMachine
 {
 	private:
-	
+
 		entity_type* _Owner;
 		State<entity_type>* _CurrentState;
 		State<entity_type>* _PreviousState;
@@ -15,15 +17,16 @@ class StateMachine
 		{
 			_CurrentState = s;
 		};
-	
+
 		void setPreviousState(State<entity_type>* s)
 		{
 			_PreviousState = s;
 		};
-	
+
 	public:
 		StateMachine(entity_type* owner)
 		{
+			Debug::debug("StateMachine::StateMachine");
 			_Owner = owner;
 		};
 
@@ -31,7 +34,7 @@ class StateMachine
 		{
 			  if(_CurrentState) _CurrentState->execute(_Owner);
 		};
-	
+
 		void changeState(State<entity_type>* s)
 		{
 			_PreviousState = _CurrentState;
@@ -40,14 +43,13 @@ class StateMachine
 			_CurrentState->enter(_Owner);
 		};
 
-	
+
 		void revertState()
 		{
-		  changeState(_PreviousState);	
+		  changeState(_PreviousState);
 		};
-	
-	
+
+
 };
 
 #endif
-	
