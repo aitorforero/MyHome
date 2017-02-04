@@ -25,6 +25,8 @@ class WallSwitch
     public:
       static WallSwitch* Instance();
       void update();
+      StateMachine<WallSwitch>*  GetStateMachine()const{return mStateMachine;}
+
 };
 
 #endif

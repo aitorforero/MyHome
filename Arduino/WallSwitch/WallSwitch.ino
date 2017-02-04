@@ -11,7 +11,7 @@
 
 #include <HomeAutomation.h>
 #include <RotaryEncoder.h>
-#include <Configuration.h>
+
 #include <InitializingState.h>
 
 
@@ -38,27 +38,9 @@ RotaryEncoder* rotaryEncoder;
 
 void setup()
 {
-    wdt_disable();
-
-    Serial.begin(9600);
-    Serial.println("Initializing...");
-    
-/*
-    Configuration::load();
-    homeAutomation = new HomeAutomation(
-      Configuration::getMACAddress(), 
-      Configuration::getServer().IPAddress, 
-      Configuration::getServer().port, 
-      IPAddress(
-        Configuration::getIPAddress()[0],
-        Configuration::getIPAddress()[1],
-        Configuration::getIPAddress()[2],
-        Configuration::getIPAddress()[3]));
-        
-    rotaryEncoder = new RotaryEncoder(A_PIN, B_PIN, SW_PIN);*/
-    Serial.println("Ready.");
-
-    wdt_enable(WDTO_250MS);
+  /* Enable watchdog.
+     If the loop last more than 8s restart the hardware */ 
+   wdt_enable(WDTO_8S);
 }
 
 void loop()
