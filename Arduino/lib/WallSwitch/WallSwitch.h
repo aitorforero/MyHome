@@ -2,10 +2,11 @@
 #define _WallSwitch_h
 
 #include <Adafruit_TFTLCD.h>
+#include <pin_magic.h>
 #include <StateMachine.h>
 
 
-// Pines de conexion del LCD 
+// Pines de conexion del LCD
 #define LCD_CS A11 // Chip Select - Pin analogico 3
 #define LCD_CD A10 // Command/Data - Pin Analogico 2
 #define LCD_WR A9 // LCD Write - Pin Analogico 1
@@ -20,8 +21,8 @@ class WallSwitch
     private:
       Adafruit_TFTLCD* mTFT;
       StateMachine<WallSwitch>* mStateMachine;
-      WallSwitch();  
-  
+      WallSwitch();
+
     public:
       static WallSwitch* Instance();
       void update();
