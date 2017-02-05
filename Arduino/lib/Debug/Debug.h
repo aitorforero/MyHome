@@ -13,10 +13,11 @@ public:
       delay(1000);
   }
 
-  static void debug(char* Text)
+
+  static void debug(const char* Text)
   {
     Serial.println(Text);
-  }
+  };
 };
 
 #endif
