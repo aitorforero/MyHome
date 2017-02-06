@@ -5,31 +5,19 @@
 #include <StateMachine.h>
 
 
-// Pines de conexion del LCD
-#define LCD_CS A11 // Chip Select - Pin analogico 3
-#define LCD_CD A10 // Command/Data - Pin Analogico 2
-#define LCD_WR A9 // LCD Write - Pin Analogico 1
-#define LCD_RD A8 // LCD Read - Pin Analogico 0
-#define LCD_RESET A12 // LCD Reset - Pin Analogico 4
-
-
-
-
 class WallSwitch
 {
     private:
       Adafruit_TFTLCD* mTFT;
       StateMachine<WallSwitch>* mStateMachine;
       WallSwitch();
-      void initializeTFT();
 
     public:
       static WallSwitch* Instance();
       void update();
-      StateMachine<WallSwitch>*  getStateMachine()const{return mStateMachine;}
-      void initialize();
-
-
+      StateMachine<WallSwitch>*  getStateMachine() const {return mStateMachine;}
+      void setTFT(Adafruit_TFTLCD* newTFT)  {mTFT = newTFT;}
+      Adafruit_TFTLCD*  getTFT() const {return mTFT;}
 };
 
 #endif
