@@ -24,12 +24,12 @@ class InitializingState : public State<WallSwitch>
 {
 	private:
 		InitializingState(){};
-		void initializeTFT();
+		void initializeTFT(WallSwitch* ws);
 		bool loadConfiguration();
 
 
-  public:
-	  static InitializingState* Instance();
+	public:
+	  	static InitializingState* Instance();
 		void enter(WallSwitch* ws);
 		void execute(WallSwitch* ws);
 		void exit(WallSwitch* ws);

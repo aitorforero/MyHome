@@ -12,18 +12,18 @@ MainState* MainState::Instance()
 
 void MainState::enter(WallSwitch* ws)
 {
-		Debug::debug("Enter main state");
+		Debug::debug("Enter in main state");
 
 };
 
 void MainState::execute(WallSwitch* ws)
 {
-  Debug::debug("Executing main in state");
+  Debug::debug("Executing main state");
 
 };
 
 void MainState::exit(WallSwitch* ws)
 {
-  Debug::debug("Exiting main in state");
+  Debug::debug("Exiting from main state");
 
 };
