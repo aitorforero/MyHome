@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "Configuration.h"
 #include <EEPROM.h>
+#include <Debug.h>
 
 ConfigData Configuration::mConfiguration;
 
@@ -27,7 +28,36 @@ void Configuration::saveToEEPROM()
     
 bool Configuration::load()
 {
-    return readFromEEPROM();
+    bool res = readFromEEPROM();
+    
+    if(res)
+    {
+        Debug::debug("Read configuration:"); 
+        Debug::debug(30,"MAC Address: %X:%X:%X:%X:%X",
+                     mConfiguration.MACAddress[0],
+                     mConfiguration.MACAddress[1],
+                     mConfiguration.MACAddress[2],
+                     mConfiguration.MACAddress[3],
+                     mConfiguration.MACAddress[4],
+                     mConfiguration.MACAddress[5]); 
+        Debug::debug(30,"IP Address: %d.%d.%d.%d",
+                     mConfiguration.IPAddress[0],
+                     mConfiguration.IPAddress[1],
+                     mConfiguration.IPAddress[2],
+                     mConfiguration.IPAddress[3]); 
+        Debug::debug(40,"Zone: %", mConfiguration.zone);
+        Debug::debug(40,"MQTT Server: %d.%d.%d.%d:%d",
+                     mConfiguration.server.IPAddress[0],
+                     mConfiguration.server.IPAddress[1],
+                     mConfiguration.server.IPAddress[2],
+                     mConfiguration.server.IPAddress[3],
+                     mConfiguration.server.port);
+        
+    }
+
+    
+    
+    return res;
 };
 void Configuration::save()
 {

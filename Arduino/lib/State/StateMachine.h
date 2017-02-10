@@ -1,8 +1,6 @@
 #ifndef _StateMachine_h
 #define _StateMachine_h
 
-#include <Arduino.h>
-#include <Debug.h>
 #include "State.h"
 
 template <class entity_type>

@@ -44,7 +44,8 @@ void setup()
   wdt_disable();
   //Initialize serial communications for debugin
 
-  Debug::debug("Initializing...");
+  Debug::debug("System starting...");
+    
   /* Enable watchdog.
      If the loop last more than 8s restart the hardware */
   wdt_enable(WDTO_8S);
