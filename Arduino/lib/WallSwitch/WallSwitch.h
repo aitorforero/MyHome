@@ -3,6 +3,7 @@
 
 #include <Adafruit_TFTLCD.h>
 #include <StateMachine.h>
+#include <Event.h>
 
 
 class WallSwitch
