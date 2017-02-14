@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "List.h"
 
 
@@ -44,7 +45,7 @@ void List<T>::remove(T* item)
 		int sourcePos = destPos + size;
 		int copySize = (_count - pos) * size;
 			
-		memcpy(destPos,sourcePos, copySize);	
+		memcpy(destPos, sourcePos, copySize);	
 		
 		// Replace current with new array
 		delete [] _items;
@@ -59,7 +60,8 @@ void List<T>::remove(T* item)
 template <class T> 
 int List<T>::indexOf(T* item)
 {
-	for(int index = 0;index<_count;index++)
+	int index;
+	for(index = 0;index<_count;index++)
 	{
 		if(&(_items[index])==&item)
 		{
@@ -82,7 +84,7 @@ bool List<T>::contains(T* item)
 }
 
 template <class T> 
-int List<T>::Count()
+int List<T>::count()
 {
 	return _count;
 }
