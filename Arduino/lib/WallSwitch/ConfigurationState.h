@@ -3,10 +3,24 @@
 
 #include <State.h>
 #include <WallSwitch.h>
+#include <EventArgs.h>
+#include <Menu.h>
+#include <MenuItem.h>
+
+
+
 class ConfigurationState : public State<WallSwitch>
 {
+
 private:
-  ConfigurationState(){};
+  Menu* configMenu;
+  MenuItem* MACMenuItem;
+  MenuItem* MQTTMenuItem;
+  MenuItem* zoneMenuItem;
+  ConfigurationState();
+  void onMACMenuItemClick(EventArgs* e);
+  void onMQTTMenuItemClick(EventArgs* e);
+  void onZoneMenuItemClick(EventArgs* e);
 
 public:
   static ConfigurationState* Instance();
@@ -14,6 +28,8 @@ public:
   void execute(WallSwitch* ws);
   void exit(WallSwitch* ws);
 };
+
+
 
 
 #endif

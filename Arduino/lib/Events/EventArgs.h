@@ -6,7 +6,7 @@ class EventArgs
 public:
     void* sender;     
     virtual ~EventArgs();        //destructor
-    EventArgs(void* sender) (this->sender=sender);
+    EventArgs(void* sender) {this->sender=sender;};
 };
 
 #endif

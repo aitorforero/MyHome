@@ -1,14 +1,17 @@
 #define byte uint8_t
 
-
 #include <Arduino.h>
 #include <avr/wdt.h>
 
 // This libraries are here to avoid PlatformIO compiling error
 // due not file found
+#include <FastDelegate.h>
 #include <SPI.h>
 #include <EEPROM.h>
 #include <Configuration.h>
+#include <Event.h>
+#include <Menu.h>
+
 
 #include <Debug.h>
 #include <HomeAutomation.h>
