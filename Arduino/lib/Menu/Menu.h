@@ -7,36 +7,20 @@
 
 class Menu
 {
-   // typedef etl::vector<MenuItem*, 10> MenuItemCollection;
-
 	private:
 		List<MenuItem>* menuItems;
+		int _x; 
+		int _y;
+		int _width;
+		int _heigh;
+		int _cols;
+		int _rows;
+	
 	public:
-		Menu()
-		{
-//			menuItems = new MenuItemCollection;
-		};
-
-		void addItem(MenuItem* item)
-		{
-//			menuItems->push_back(item);
-		};
-
-		void removeItem(MenuItem* item)
-		{
-		//	menuItems->remove(item);
-		};
-
-
-		void draw(Adafruit_TFTLCD* TFT, int x, int y)
-		{
-			for(int i= 0; i<menuItems->count(); i++)
-			{
-				// TODO: Draw each in his place
-	//			menuItems->item(i)->draw(TFT,x,y);
-			}
-		};
-
+		Menu(int x, int y, int width, int heigh,int cols ,int rows);
+		void addItem(const MenuItem& item);
+		void removeItem(const MenuItem& item);
+		void draw(Adafruit_TFTLCD* TFT);
 };
 
 #endif

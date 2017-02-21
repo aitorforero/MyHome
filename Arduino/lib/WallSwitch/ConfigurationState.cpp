@@ -11,18 +11,18 @@ using namespace fastdelegate;
 
 ConfigurationState::ConfigurationState()
 {
-		configMenu = new Menu();
+		configMenu = new Menu(0, 0, 320, 240, 3, 2);
 	
 	  MACMenuItem = new MenuItem("MAC");
-	  configMenu->addItem(MACMenuItem);	
+	  configMenu->addItem(*MACMenuItem);	
 	  MACMenuItem->click()->addHandler(MakeDelegate(this, &ConfigurationState::onMACMenuItemClick));
 
 		MQTTMenuItem = new MenuItem("MQTT");
-	  configMenu->addItem(MQTTMenuItem);	
+	  configMenu->addItem(*MQTTMenuItem);	
 	  MQTTMenuItem->click()->addHandler(MakeDelegate(this, &ConfigurationState::onMQTTMenuItemClick));
 
 		zoneMenuItem = new MenuItem("Zone");
-	  configMenu->addItem(zoneMenuItem);	
+	  configMenu->addItem(*zoneMenuItem);	
 	  zoneMenuItem->click()->addHandler(MakeDelegate(this, &ConfigurationState::onZoneMenuItemClick));
 };
 
@@ -35,7 +35,7 @@ ConfigurationState* ConfigurationState::Instance()
 void ConfigurationState::enter(WallSwitch* ws)
 {
 		Debug::debug("Enter in configuration state");
-		configMenu->draw(ws->getTFT(), 0,0);
+		configMenu->draw(ws->getTFT());
 };
 
 void ConfigurationState::execute(WallSwitch* ws)
