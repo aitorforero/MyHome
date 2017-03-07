@@ -25,6 +25,7 @@ class InitializingState : public State<WallSwitch>
 	private:
 		InitializingState(){};
 		void initializeTFT(WallSwitch* ws);
+		void initializeButton(WallSwitch* ws);
 		bool loadConfiguration();
 
 

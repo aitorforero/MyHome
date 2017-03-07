@@ -1,6 +1,7 @@
 #ifndef _Event_h
 #define _Event_h
 
+#include <Debug.h>
 #include <FastDelegate.h>
 #include <List.h>
 
@@ -23,8 +24,12 @@ class Event
 		};
 
 		void raise(TEventArgs* args) {
+				Debug::debug("raise");
 				for(int i=0;i<handlers->count();i++)
-					(handlers->item(i))(args);
+				{
+					Debug::debug("item");		
+					(handlers->item(i))(args);				
+				}
 		};
 
 		Event()

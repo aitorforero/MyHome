@@ -1,6 +1,8 @@
+#include <Arduino.h>
 #include <Adafruit_GFX.h>    // Core graphics library
 #include <pin_magic.h>
 #include <Adafruit_TFTLCD.h>
+#include <RotaryEncoder.h>
 #include "InitializingState.h"
 #include "ConfigurationState.h"
 #include <WallSwitch.h>
@@ -24,7 +26,10 @@ void InitializingState::execute(WallSwitch* ws)
 {
 
 		Debug::debug("Initializing...");
+		initializeButton(ws);
 		initializeTFT(ws);
+	  // let see splash screen
+	  delay(2000);
 		if(loadConfiguration())
 		{
 			ws->getStateMachine()->changeState(MainState::Instance());
@@ -33,32 +38,6 @@ void InitializingState::execute(WallSwitch* ws)
 		{
 			ws->getStateMachine()->changeState(ConfigurationState::Instance());
 		}
-
-
-
-		// TODO: Show splash screen
-/*
-	  // Try to load configuration
-   if(Configuration::load())
-	 {
-    homeAutomation = new HomeAutomation(
-      Configuration::getMACAddress(),
-      Configuration::getServer().IPAddress,
-      Configuration::getServer().port,
-      IPAddress(
-        Configuration::getIPAddress()[0],
-        Configuration::getIPAddress()[1],
-        Configuration::getIPAddress()[2],
-        Configuration::getIPAddress()[3]));
-
-    rotaryEncoder = new RotaryEncoder(A_PIN, B_PIN, SW_PIN);
-	 }
-	 else
-	 {
-	 }
-
-*/
-
 
 };
 
@@ -91,6 +70,13 @@ void InitializingState::initializeTFT(WallSwitch* ws)
 	mTFT->println("by Aitor Forero");
  	//tft->drawXBitmap(0, 0, photo, photo_width,  photo_height, 0x00);
 };
+
+void InitializingState::initializeButton(WallSwitch* ws)
+{  
+  	Debug::debug("Initializing Button...");
+	RotaryEncoder* mButton = new RotaryEncoder(A_PIN, B_PIN, SW_PIN);
+	ws->setButton(mButton);
+}
 
 bool InitializingState::loadConfiguration()
 {

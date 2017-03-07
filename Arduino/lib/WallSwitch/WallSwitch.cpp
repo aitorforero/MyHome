@@ -4,8 +4,12 @@
 #include <Adafruit_TFTLCD.h>
 #include <Configuration.h>
 #include <StateMachine.h>
+
+
 #include "InitializingState.h"
 #include "WallSwitch.h"
+
+
 
 
 
@@ -16,7 +20,6 @@ WallSwitch::WallSwitch()
 
   mStateMachine = new StateMachine<WallSwitch>(this);
   mStateMachine->changeState(InitializingState::Instance());
-
 };
 
 WallSwitch* WallSwitch::Instance()

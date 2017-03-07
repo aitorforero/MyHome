@@ -1,4 +1,6 @@
 #include "RotaryEncoder.h"
+#include <Event.h>
+#include <EventArgs.h>
 #include <PciManager.h>
 #include <PciListenerImp2.h>
 #include <IPciChangeHandler.h>
@@ -19,9 +21,8 @@ void RotaryEncoder::onB(byte changeKind)
 void RotaryEncoder::onSW(byte changeKind)
 {
     if(!changeKind){
-        Serial.println("Pulsado ");
     } else {
-        Serial.println("Suelto");
+        onClick();
     }
 }
 
@@ -61,20 +62,22 @@ RotaryEncoder::RotaryEncoder(byte pinA, byte pinB, byte pinSW)
 
 
 
-void RotaryEncoder::setOnClick(EventCallback eventCallback)
+Event<EventArgs>* RotaryEncoder::click()
 {
-  onClick = eventCallback;
-}
+	return this->_click;
+};
 
-void RotaryEncoder::setOnClockWise(EventCallback eventCallback)
-{
-  onClockWise = eventCallback;
-}
 
-void RotaryEncoder::setOnCounterClockWise(EventCallback eventCallback)
+Event<EventArgs>* RotaryEncoder::clockWise()
 {
-    onCounterClockWise = eventCallback;
-}
+	return this->_clockWise;
+};
+
+Event<EventArgs>* RotaryEncoder::counterClockWise() 
+{
+	return this->_counterClockWise;
+};
+
 
 
 void RotaryEncoder::pciHandleChange(byte changedTo, PciListenerImp2* listener){
@@ -91,3 +94,21 @@ void RotaryEncoder::pciHandleChange(byte changedTo, PciListenerImp2* listener){
     onSW(changedTo);
   }
 }
+
+
+void RotaryEncoder::onClick()
+{
+	EventArgs e = new EventArgs(this);
+	this->click()->raise(&e);
+};
+
+void RotaryEncoder::onClockWise()
+{
+	EventArgs e = new EventArgs(this);
+	this->clockWise()->raise(&e);
+};
+void RotaryEncoder::onCounterClockWise()
+{
+	EventArgs e = new EventArgs(this);
+	this->counterClockWise()->raise(&e);
+};

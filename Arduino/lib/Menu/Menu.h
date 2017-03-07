@@ -8,19 +8,21 @@
 class Menu
 {
 	private:
-		List<MenuItem>* menuItems;
+		List<MenuItem*>* menuItems;
 		int _x; 
 		int _y;
 		int _width;
 		int _heigh;
 		int _cols;
 		int _rows;
+		int _focusedIndex;
 	
 	public:
 		Menu(int x, int y, int width, int heigh,int cols ,int rows);
-		void addItem(const MenuItem& item);
-		void removeItem(const MenuItem& item);
+		void addItem(const MenuItem* item);
+		void removeItem(const MenuItem* item);
 		void draw(Adafruit_TFTLCD* TFT);
+		void doClick();
 };
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <State.h>
 #include <WallSwitch.h>
+#include <Event.h>
 #include <EventArgs.h>
 #include <Menu.h>
 #include <MenuItem.h>
