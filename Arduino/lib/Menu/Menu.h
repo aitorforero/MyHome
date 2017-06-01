@@ -23,6 +23,8 @@ class Menu
 		void removeItem(const MenuItem* item);
 		void draw(Adafruit_TFTLCD* TFT);
 		void doClick();
+		void doPrevious();
+		void doNext();
 };
 
 #endif

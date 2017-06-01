@@ -41,8 +41,7 @@ void ConfigurationState::enter(WallSwitch* ws)
 
 void ConfigurationState::execute(WallSwitch* ws)
 {
-	Debug::debug("ConfigurationState::execute"); 
-	configMenu->doClick();
+	configMenu->doNext();
 };
 
 void ConfigurationState::exit(WallSwitch* ws)

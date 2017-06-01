@@ -16,9 +16,11 @@ class MenuItem
 		Image* icon;
 		const char* text;
 		Event<EventArgs>* _click;
+		int _x,_y,_width,_height;
 
 		void initialize(const char* text, Image* icon);
 		void onClick();
+		
 
 	public:
 		MenuItem();
@@ -28,7 +30,10 @@ class MenuItem
 
 		Event<EventArgs>* click();
 		void doClick();
-		void draw(Adafruit_TFTLCD* TFT, int x, int y, int width, int height, uint16_t borderColor);
+		void setBounds( int x, int y, int width, int height);
+		void draw(Adafruit_TFTLCD* TFT);
+		void drawFocus(Adafruit_TFTLCD* TFT, uint16_t borderColor)
+
 };
 
 #endif

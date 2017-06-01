@@ -25,17 +25,7 @@ void Menu::removeItem(const MenuItem *item)
 	menuItems->remove(item);
 };
 
-void Menu::doClick()
-{
-	Debug::debug("Menu doClick");
-	if(_focusedIndex > -1)
-	{
-		menuItems->item(_focusedIndex)->doClick();
-	}
-};
-
-
-void Menu::draw(Adafruit_TFTLCD* TFT)
+void Menu::calculateBounds()
 {
 	if(menuItems->count() > 0)
 	{
@@ -53,23 +43,60 @@ void Menu::draw(Adafruit_TFTLCD* TFT)
 	int y= 0;
 	int colWidth = _width / _cols;
 	int colHeight = _heigh / _rows;
-
-	for(int i= 0; i<menuItems->count(); i++)
-	{
-		MenuItem* current = menuItems->item(i);
-			
-		
-		uint16_t borderColor = (_focusedIndex == i) ? 0xFFFF : 0xCC00;
+			uint16_t borderColor = (_focusedIndex == i) ? 0xFFFF : 0xCC00;
 		x = colWidth * col;
 		y = colHeight * row;
 		
-		current->draw(TFT, x, y, colWidth, colHeight, borderColor);
+		current
 		
 		col++;
 		if(col==_cols)
 		{
 			row++;
 			col=0;
+		}	
+};
+
+void Menu::doClick()
+{
+	if(_focusedIndex > -1)
+	{
+		menuItems->item(_focusedIndex)->doClick();
+	}
+};
+
+void Menu::doNext()
+{
+	if(_focusedIndex > -1)
+	{
+		_focusedIndex++;
+		if(_focusedIndex = menuItems->count())
+		{
+			_focusedIndex = 0;
 		}
 	}
 };
+
+void Menu::doPrevious()
+{
+	if(_focusedIndex > -1)
+	{
+		_focusedIndex--;
+		if(_focusedIndex = -1)
+		{
+			_focusedIndex = (menuItems->count() - 1);
+		}
+	}
+};
+
+
+void Menu::draw(Adafruit_TFTLCD* TFT)
+{
+	TFT->fillScreen(0x0);
+
+	for(int i= 0; i<menuItems->count(); i++) 
+		menuItems->item(i)->draw(TFT);
+
+};
+
+		current->draw(TFT, x, y, colWidth, colHeight, borderColor);
