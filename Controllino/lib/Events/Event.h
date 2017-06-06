@@ -1,6 +1,7 @@
 #ifndef _Event_h
 #define _Event_h
 
+#include <Arduino.h>
 #include <FastDelegate.h>
 #include <List.h>
 
@@ -35,12 +36,15 @@ class Event
 
 		void raise(TEventArgs* args) {
 				for(int i=0;i<handlers->count();i++)
-				{
+				{   
+					//Serial.println("raise FastDelegate");
 					(handlers->item(i))(args);				
 				}
-				for(int i=0;i<callbackHandlers->count();i++)
+//				for(int i=0;i<callbackHandlers->count();i++)
+				for(int i=0;i<0;i++)
 				{
-					(callbackHandlers->item(i))(args);				
+					Serial.println(i);
+					//(callbackHandlers->item(i))(args);				
 				}
 		};
 

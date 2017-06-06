@@ -7,7 +7,7 @@
  
 class Timer {
     public:
-        static Timer* Create(unsigned long period);
+        static Timer* create(unsigned long period);
         static void loop();
         Event<EventArgs>* tick();
         void enable();
@@ -19,7 +19,7 @@ class Timer {
         Timer(unsigned long period);
         bool isEnabled;
         unsigned long _period;
-        unsigned long elapsedTime;
+        unsigned long startTime;
         void onTick();
         Event<EventArgs>* _tick;
         Timer* nextTimer;

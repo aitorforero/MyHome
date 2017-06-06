@@ -3,6 +3,7 @@
 
 // http://codereview.stackexchange.com/questions/60484/stl-vector-implementation
 
+#include <string.h>
 
 template <class T> 
 class List

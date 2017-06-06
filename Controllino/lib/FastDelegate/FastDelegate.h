@@ -51,6 +51,8 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#include <string.h>
+
 //#include <memory.h> // to allow <,> comparisons
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -5,7 +5,10 @@
 
 Timer* Timer::timers = NULL;
 
-Timer* Timer::Create(unsigned long period) {
+Timer* Timer::create(unsigned long period) {
+	Serial.print("Creating timer for ");
+	Serial.print(period);
+	Serial.println("ms...");
     Timer* newTimer = new Timer(period);
     
     newTimer->_period = period;
@@ -26,13 +29,14 @@ Timer* Timer::Create(unsigned long period) {
 }
 
 void Timer::loop(){
-    unsigned long now = millis();
+	unsigned long now = millis();
     
+	
     Timer* currentTimer = Timer::timers;
-    while(currentTimer->nextTimer != NULL) {
-        if(currentTimer->isEnabled && (currentTimer->elapsedTime + now)>=currentTimer->_period) {
-            currentTimer->onTick();
-        }
+    while(currentTimer) {
+        if(currentTimer->isEnabled && (now - currentTimer->startTime)>=currentTimer->_period) {
+			currentTimer->onTick();
+		}
         currentTimer = currentTimer->nextTimer;
     }
 }
@@ -43,13 +47,12 @@ Event<EventArgs>* Timer::tick(){
 
 
 void Timer::enable(){
-    this->elapsedTime = 0;
+    this->startTime = millis();
     this->isEnabled = true;
 }
 
 
 void Timer::disable(){
-    this->elapsedTime = 0;
     this->isEnabled = false;
 }
 
@@ -75,51 +78,17 @@ void Timer::destroy(){
 };
 
 
-
-
 Timer::Timer(unsigned long period) {
-    isEnabled = false;
-    _period = period;
-    _tick = new Event<EventArgs>;
-    elapsedTime = 0;
+    this->isEnabled = false;
+    this->_period = period;
+    this->_tick = new Event<EventArgs>;
+	this->nextTimer=NULL;
 }
 
-void Timer::onTick(){
-	elapsedTime = 0;
-    EventArgs e = new EventArgs(this);
+void Timer::onTick(){ 
+	unsigned long i = 0;
+	startTime = millis();
+    EventArgs e(this);
 	this->_tick->raise(&e);
 }
 
-/*
-#ifndef Timer_h
-#define Timer_h
-
-#include <Arduino.h>
-#include <Event.h>
-#include <EventArgs.h>
-
-class Timer {
-    public:
-        static Timer* Create(unsigned long period);
-        static void loop();
-        Event<EventArgs>* tick();
-        void enable();
-        void disable();
-        void destroy();
-
-    
-    private:
-        Timer(unsigned long period);
-        bool isEnabled;
-        unsigned long _period;
-        unsigned long elapsedTime;
-        void onTick();
-        Event<EventArgs>* _tick;
-        Timer* nextTimer;
-        Timer* previousTimer;
-        static Timer* timers;
-};
-
-#endif
- 
- */
