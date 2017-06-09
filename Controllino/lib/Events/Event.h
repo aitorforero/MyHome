@@ -12,7 +12,6 @@ class Event
 {
 	public:
 		typedef FastDelegate1<TEventArgs*, void> Handler;
-		typedef void(*callbackHandler)(TEventArgs*);
 
 		void addHandler(Handler h)
 		{
@@ -24,40 +23,21 @@ class Event
 				handlers->remove(h);
 		};
 		
-		void addHandler(callbackHandler h)
-		{
-				callbackHandlers->add(h);
-		};
-
-		void removeHandler(callbackHandler h)
-		{
-				callbackHandlers->remove(h);
-		};
-
 		void raise(TEventArgs* args) {
 				for(int i=0;i<handlers->count();i++)
 				{   
-					//Serial.println("raise FastDelegate");
 					(handlers->item(i))(args);				
-				}
-//				for(int i=0;i<callbackHandlers->count();i++)
-				for(int i=0;i<0;i++)
-				{
-					Serial.println(i);
-					//(callbackHandlers->item(i))(args);				
 				}
 		};
 
 		Event()
 		{
 				handlers = new List<Handler>;
-				callbackHandlers = new List<callbackHandler>;
 		};
 
 	
 		private:
 			List<Handler>* handlers;
-			List<callbackHandler>* callbackHandlers;
 };
 
 #endif

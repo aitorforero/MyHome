@@ -6,12 +6,14 @@
 #include <Controllino.h>
 #include <Button.h>
 #include <Timer.h>
+#include <FastDelegate.h>
+#include <DebugUtils.h>
 
 #include "PLC.h"
 
 
-//#define USE_MQTT
-//#define USE_ETHERNET
+#define USE_MQTT
+#define USE_ETHERNET
 #define USE_INPUTS
 
 #define INVALID_VALUE -99
@@ -29,11 +31,12 @@ bool ON = false;
 
 EthernetClient PLC::ethClient;
 PubSubClient PLC::mqttClient(ethClient);
-Button* PLC::button[19];
+List<Input*> PLC::inputs;
 
 void PLC::setup() {
 
-  Serial.println("Inicializando PLC");
+  DEBUG_PRINT("Inicializando PLC");
+   
 #ifdef USE_MQTT
   PLC::initializeMQTT();
 #endif
@@ -44,12 +47,13 @@ void PLC::setup() {
   PLC::initializeInputs();
 #endif
     
-  Serial.println("PLC inicializado");
+  DEBUG_PRINT("PLC inicializado");
 
 }
  
 void PLC::loop() {
-#ifdef USE_MQTT
+    DEBUG_PRINT("loop start");
+ #ifdef USE_MQTT
     bool connected  = true;
 
     if (!mqttClient.connected()) {
@@ -61,46 +65,69 @@ void PLC::loop() {
 #ifdef USE_INPUTS
     Timer::loop();
 #endif
+    DEBUG_PRINT("loop end");
 }
 
 void PLC::initializeMQTT() {
-  Serial.println("Inicializando cliente MQTT...");
+  INFO_PRINT("Inicializando cliente MQTT...");
   PLC::mqttClient.setServer(server, 1883);
   PLC::mqttClient.setCallback(PLC::onMQTTMessage);
 }
 
 void PLC::initializeEthernet() {
-  Serial.println("Inicializando ethernet...");
+  INFO_PRINT("Inicializando ethernet...");
   Ethernet.begin(mac,ip);
   // Allow the hardware to sort itself out
   delay(1500);
 }
 
 void PLC::initializeInputs() {  
-  	Serial.println("Inicializando entradas...");
-
-    button[0] = new Button(CONTROLLINO_A0, LOW, true, 10);
-    button[0]->click()->addHandler(PLC::onButtonClick);
-    Serial.println(CONTROLLINO_A0);
+  	INFO_PRINT("Inicializando entradas...");
+	
+/*	Button * newButton = new Button(CONTROLLINO_A0 , LOW, true, &PLC::onButtonClick, 10);
+	Input * newInput = new Input("A0", newButton);
+	PLC::inputs.add(newInput);
+	
+	*/
+	PLC::inputs.add(new Input("A0", new Button(CONTROLLINO_A0 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A1", new Button(CONTROLLINO_A1 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A2", new Button(CONTROLLINO_A2 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A3", new Button(CONTROLLINO_A3 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A4", new Button(CONTROLLINO_A4 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A5", new Button(CONTROLLINO_A5 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A6", new Button(CONTROLLINO_A6 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A7", new Button(CONTROLLINO_A7 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A8", new Button(CONTROLLINO_A8 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A9", new Button(CONTROLLINO_A9 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A10", new Button(CONTROLLINO_A10 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A11", new Button(CONTROLLINO_A11 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A12", new Button(CONTROLLINO_A12 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A13", new Button(CONTROLLINO_A13 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A14", new Button(CONTROLLINO_A14 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A15", new Button(CONTROLLINO_A15 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("I16", new Button(CONTROLLINO_I16 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("I17", new Button(CONTROLLINO_I17 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("I18", new Button(CONTROLLINO_I18 , LOW, true, &PLC::onButtonClick, 10)));
+	
 }
 
 bool PLC::reconnect() {
     bool res;
     // Loop until we're reconnected
-    Serial.print("Conectando con servidor MQTT...");
+    INFO_PRINT("Conectando con servidor MQTT...");
     // Attempt to connect
     if (mqttClient.connect(PLC_Topic)) {
       // Once connected, publish an announcement...
         log("Conectado!");
         // ... and resubscribe
         mqttClient.subscribe(subscribe_Topic);
-        Serial.print("Suscrito a: ");
-        Serial.println(subscribe_Topic); 
+        INFO_PRINT("Suscrito a: ");
+        INFO_PRINT(subscribe_Topic); 
         res = true;
     } else {
-        Serial.print("Error!, rc=");
-        Serial.print(mqttClient.state());
-        Serial.println(" reintentando en 5 segundos");
+        INFO_PRINT("Error!, rc=");
+        INFO_PRINT(mqttClient.state());
+        INFO_PRINT(" reintentando en 5 segundos");
         // Wait 5 seconds before retrying
         delay(5000);
         res = false;
@@ -110,25 +137,25 @@ bool PLC::reconnect() {
 
 void PLC::log(const char* errorMsg)
 {
-    Serial.println(errorMsg);
+    INFO_PRINT(errorMsg);
     if (mqttClient.connected()) {
          mqttClient.publish(log_Topic, errorMsg);
     }
 }
 
 void PLC::onMQTTMessage(char* topic, byte* payload, unsigned int length) {
-    Serial.print("Message arrived [");
-    Serial.print(topic);
-    Serial.print("] ");
+    DEBUG_PRINT("Message arrived [");
+    DEBUG_PRINT(topic);
+    DEBUG_PRINT("] ");
     for (int i=0;i<length;i++) {
-        Serial.print((char)payload[i]);
+        DEBUG_PRINT((char)payload[i]);
     }
-    Serial.println();
+    DEBUG_PRINT();
 
     char command[10];
     if (getOuput(topic, command)) {
-        Serial.print("Comando: ");
-        Serial.println(command);
+        DEBUG_PRINT("Comando: ");
+        DEBUG_PRINT(command);
         int newState = getValue(payload, length);
         
         if(command[0]=='R') {
@@ -136,7 +163,7 @@ void PLC::onMQTTMessage(char* topic, byte* payload, unsigned int length) {
         }
 
   } else {
-      Serial.println("Mensaje de estado");
+      DEBUG_PRINT("Mensaje de estado");
   }
 }
 
@@ -159,22 +186,54 @@ void PLC::updateRelay(char* relayName,int newState) {
     int relayNumber = strRelayName.substring(1).toInt();
     if(relayNumber>=0 && relayNumber<16) {
         int relayPort = CONTROLLINO_RELAY_00 + relayNumber;
+		pinMode(relayPort,OUTPUT);
         digitalWrite(relayPort, newState);
-        String stateTopic = String(root_Topic) + String("/") + String(PLC_Topic) + String("/") + String(relayName)+String("/state");
-        char topic[(stateTopic.length()+1)];
-        char value[2];
+
+		char value[2];
         itoa(newState,value,10);
-        stateTopic.toCharArray(topic, stateTopic.length()+1); 
-        mqttClient.publish(topic, value);      
+		PLC::publish(relayName, "state", value);
     } else {
         log("Numero de rele incorrecto");
     }
 
 }
 
-void PLC::onButtonClick(EventArgs* e){
-    Serial.println("Click!");
+void PLC::publish(const char* portName,const char* messageType, const char* payload ){
+	// Create message topic
+	String topicString = String(root_Topic);
+	topicString += String("/");
+	topicString += String(PLC_Topic);
+	topicString += String("/");
+	topicString += String(portName);
+	topicString += String("/");
+	topicString += String(messageType);
+	
+	int topicLength = topicString.length()+1;
+
+	char topic[topicLength];
+	topicString.toCharArray(topic, topicLength); 
+
+	mqttClient.publish(topic, payload);  
 }
+
+void PLC::onButtonClick(EventArgs* e){
+	INFO_PRINT("Click!!!");
+	INFO_PRINT(((Button*)e->sender)->pin());
+	
+	int i;
+	for(i=0;i<PLC::inputs.count();i++) {
+		Input* current = inputs.item(i);
+		if (current->button->pin()==((Button*)e->sender)->pin()) {
+			INFO_PRINT(current->topic);
+			PLC::publish(current->topic, "command", "click");
+			break;
+		}
+	}
+}
+
+
+
+
 
 
 int PLC::getValue(byte* payload, unsigned int length) {

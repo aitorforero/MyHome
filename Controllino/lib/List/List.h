@@ -2,6 +2,21 @@
 #define _List_h
 
 // http://codereview.stackexchange.com/questions/60484/stl-vector-implementation
+#include <Arduino.h>
+
+template <class T>
+class ListItem {
+	public:
+		ListItem<T> *previous;
+	    ListItem<T> *next;
+	    T item;
+		ListItem(const T& newItem) {
+			item = newItem;
+			previous = NULL;
+			next = NULL;
+		}
+	
+};
 
 
 template <class T> 
@@ -9,56 +24,53 @@ class List
 {
 	private:
 	 int _count;
-	 T* _items;
+	 ListItem<T> * _items;
 	
 public:
 	List()
 	{	
 		_count = 0;
-		_items = new T[0];
+		_items = NULL;
 	};
 
 	void add(const T& item)
 	{
-		if(!contains(item))
-		{
-			// Create the new array
-			T* newArr = new T[_count + 1];
-
-			// Copy old array to the new one
-			memcpy(newArr, _items, _count * sizeof(T) );
-
-			// Replace current with new array
-			delete [] _items;
-			_items = newArr;
-
-			// Add item
-			_items[_count] = item;
-			_count++;
-		};
+		ListItem<T>*  newItem = new ListItem<T>(item); 
+		if(!_items) {
+			_items = newItem;
+		} else {
+			ListItem<T> *last = _items;
+			while(last->next){
+				last = last->next;
+			}
+			last->next = newItem;
+		}		
+		
+		_count++;
 	};
 
-	void remove(const T& item)
-	{
-		int pos = indexOf(item);
-		if (pos>=0) 
-		{
-				// Create the new array
-			T* newArr = new T[_count - 1];
+	void remove(const T& item) {
+	    ListItem<T>* toDestroy;
+		
+		if (_items->item == item) {
+			toDestroy = _items;
+			_items = toDestroy->next;
+		} else {
+			bool destroy = false;
+			ListItem<T>* current = _items;
+			while(!destroy && current->next != NULL) {
+				if(current->item == item) {
+					toDestroy = current;
+				   	current->previous->next = current->next;
+					destroy = true;
+				} else {
+					current = current->next;      
+				}
+			}
+		}
 
-			int size =  sizeof(T);
-			int destPos = pos * size;
-			int sourcePos = destPos + size;
-			int copySize = (_count - pos) * size;
-
-			memcpy(destPos, sourcePos, copySize);	
-
-			// Replace current with new array
-			delete [] _items;
-			_items = newArr;
-
-			_count--;
-		};
+		delete toDestroy;
+		count--;
 	};
 
 	int indexOf(const T& item)
@@ -66,7 +78,7 @@ public:
 		int index;
 		for(index = 0;index<_count;index++)
 		{
-			if(&(_items[index])==&item)
+			if(_items[index]->item==item)
 			{
 				break;
 			};
@@ -93,7 +105,7 @@ public:
 
 	T item(int index)
 	{
-		return _items[index];	
+		return _items[index].item;	
 	};
 
 };

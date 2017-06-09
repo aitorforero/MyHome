@@ -8,6 +8,18 @@
 #include <Controllino.h>
 #include <Button.h>
 #include <Timer.h>
+#include <List.h>
+
+class Input {
+    public:
+        Button* button;
+        char* topic;
+        Input(const char* t, Button* b){
+            this->button = b;
+            this->topic = t;
+        }
+};
+
 
 class PLC {
     public:
@@ -17,7 +29,7 @@ class PLC {
     private:
         static EthernetClient ethClient;
         static PubSubClient mqttClient;
-        static Button* button[];
+        static List<Input*> inputs;
         static void initializeMQTT();
         static void initializeEthernet();
         static void initializeInputs();
@@ -28,6 +40,7 @@ class PLC {
         static void updateRelay(char* relayName,int newState);
         static void onButtonClick(EventArgs* e);
         static int getValue(byte* payload, unsigned int length);
+        static void publish(const char* portName,const char* messageType, const char* payload);
 
 };
 #endif
