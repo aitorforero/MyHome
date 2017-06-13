@@ -9,6 +9,7 @@
 #include <Button.h>
 #include <Timer.h>
 #include <List.h>
+#include <DebugUtils.h>
 
 class Input {
     public:
@@ -41,6 +42,5 @@ class PLC {
         static void onButtonClick(EventArgs* e);
         static int getValue(byte* payload, unsigned int length);
         static void publish(const char* portName,const char* messageType, const char* payload);
-
 };
 #endif

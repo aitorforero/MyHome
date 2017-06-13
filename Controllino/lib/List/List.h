@@ -1,9 +1,7 @@
 #ifndef _List_h
 #define _List_h
-
-// http://codereview.stackexchange.com/questions/60484/stl-vector-implementation
 #include <Arduino.h>
-
+#include <DebugUtils.h>
 template <class T>
 class ListItem {
 	public:
@@ -20,11 +18,12 @@ class ListItem {
 
 
 template <class T> 
-class List
+class 
+List
 {
 	private:
 	 int _count;
-	 ListItem<T> * _items;
+	 ListItem<T> * _items= NULL;
 	
 public:
 	List()
@@ -36,14 +35,15 @@ public:
 	void add(const T& item)
 	{
 		ListItem<T>*  newItem = new ListItem<T>(item); 
-		if(!_items) {
-			_items = newItem;
+		if(!this->_items) {
+			this->_items = newItem;
 		} else {
-			ListItem<T> *last = _items;
+			ListItem<T>* last = this->_items;
 			while(last->next){
 				last = last->next;
 			}
 			last->next = newItem;
+			newItem->previous = last;
 		}		
 		
 		_count++;
@@ -105,7 +105,14 @@ public:
 
 	T item(int index)
 	{
-		return _items[index].item;	
+		T res;
+		int i = 0;
+		ListItem<T>* current = _items;
+		while (i<index) {
+			current = current->next;
+			i++;
+		};
+		return current->item;	
 	};
 
 };

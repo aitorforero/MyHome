@@ -23,6 +23,7 @@ Timer* Timer::create(unsigned long period) {
         }
         
         currentTimer->nextTimer = newTimer;
+		newTimer->previousTimer = currentTimer;
     }
     
     

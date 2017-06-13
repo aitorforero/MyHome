@@ -8,26 +8,16 @@
 #include <Timer.h>
 #include <FastDelegate.h>
 #include <DebugUtils.h>
-
+#include <List.h>
+#include <Configuration.h>
 #include "PLC.h"
 
 
-#define USE_MQTT
-#define USE_ETHERNET
-#define USE_INPUTS
-
 #define INVALID_VALUE -99
 
-byte mac[]  = {0x1A, 0x6B, 0xE7, 0x45, 0xB9, 0x26};
-IPAddress ip(192, 168, 1, 20);
-IPAddress server(192, 168, 1, 10);
-const char* root_Topic = "casa";
-const char* PLC_Topic = "N2";
-const char* command_Topic = "command";
-const char* state_Topic = "state";
-const char* log_Topic = "casa/log/N2";
-const char* subscribe_Topic = "casa/N2/#";
-bool ON = false;
+
+
+
 
 EthernetClient PLC::ethClient;
 PubSubClient PLC::mqttClient(ethClient);
@@ -35,48 +25,51 @@ List<Input*> PLC::inputs;
 
 void PLC::setup() {
 
-  DEBUG_PRINT("Inicializando PLC");
-   
-#ifdef USE_MQTT
-  PLC::initializeMQTT();
-#endif
-#ifdef USE_ETHERNET
-  PLC::initializeEthernet();
-#endif
-#ifdef USE_INPUTS
-  PLC::initializeInputs();
-#endif
-    
-  DEBUG_PRINT("PLC inicializado");
+	DEBUG_PRINT("Inicializando PLC");
+
+	Configuration::load();	
+
+	if(Configuration::isValid) {
+		PLC::initializeMQTT();
+		PLC::initializeEthernet();
+		PLC::initializeInputs();
+	} else {
+		INFO_PRINT("PLC sin configurar");
+	}
+	DEBUG_PRINT("PLC inicializado");
 
 }
  
 void PLC::loop() {
     DEBUG_PRINT("loop start");
- #ifdef USE_MQTT
-    bool connected  = true;
+	
+	Configuration::loop();
+	
+	if(Configuration::isValid) {
+		bool connected  = true;
 
-    if (!mqttClient.connected()) {
-        connected = reconnect();
-    }
-    
-    if (connected) mqttClient.loop();
-#endif
-#ifdef USE_INPUTS
-    Timer::loop();
-#endif
+		if (!mqttClient.connected()) {
+			connected = reconnect();
+		}
+
+		if (connected) mqttClient.loop();
+		Timer::loop();
+	}
+	
     DEBUG_PRINT("loop end");
 }
 
 void PLC::initializeMQTT() {
   INFO_PRINT("Inicializando cliente MQTT...");
-  PLC::mqttClient.setServer(server, 1883);
+  IPAddress server(Configuration::server[0], Configuration::server[1], Configuration::server[2], Configuration::server[3]);
+  PLC::mqttClient.setServer(server, Configuration::port);
   PLC::mqttClient.setCallback(PLC::onMQTTMessage);
 }
 
 void PLC::initializeEthernet() {
   INFO_PRINT("Inicializando ethernet...");
-  Ethernet.begin(mac,ip);
+  IPAddress ip(Configuration::ip[0], Configuration::ip[1], Configuration::ip[2], Configuration::ip[3]);
+  Ethernet.begin(Configuration::mac,ip);
   // Allow the hardware to sort itself out
   delay(1500);
 }
@@ -84,11 +77,6 @@ void PLC::initializeEthernet() {
 void PLC::initializeInputs() {  
   	INFO_PRINT("Inicializando entradas...");
 	
-/*	Button * newButton = new Button(CONTROLLINO_A0 , LOW, true, &PLC::onButtonClick, 10);
-	Input * newInput = new Input("A0", newButton);
-	PLC::inputs.add(newInput);
-	
-	*/
 	PLC::inputs.add(new Input("A0", new Button(CONTROLLINO_A0 , LOW, true, &PLC::onButtonClick, 10)));
 	PLC::inputs.add(new Input("A1", new Button(CONTROLLINO_A1 , LOW, true, &PLC::onButtonClick, 10)));
 	PLC::inputs.add(new Input("A2", new Button(CONTROLLINO_A2 , LOW, true, &PLC::onButtonClick, 10)));
@@ -108,7 +96,7 @@ void PLC::initializeInputs() {
 	PLC::inputs.add(new Input("I16", new Button(CONTROLLINO_I16 , LOW, true, &PLC::onButtonClick, 10)));
 	PLC::inputs.add(new Input("I17", new Button(CONTROLLINO_I17 , LOW, true, &PLC::onButtonClick, 10)));
 	PLC::inputs.add(new Input("I18", new Button(CONTROLLINO_I18 , LOW, true, &PLC::onButtonClick, 10)));
-	
+	INFO_PRINT("Entradas inicializadas: ");
 }
 
 bool PLC::reconnect() {
@@ -116,10 +104,13 @@ bool PLC::reconnect() {
     // Loop until we're reconnected
     INFO_PRINT("Conectando con servidor MQTT...");
     // Attempt to connect
-    if (mqttClient.connect(PLC_Topic)) {
+    if (mqttClient.connect(Configuration::PLC_Topic)) {
       // Once connected, publish an announcement...
         log("Conectado!");
         // ... and resubscribe
+		int topicLength = strlen(Configuration::root_Topic) +  strlen(Configuration::PLC_Topic)+4;
+		char subscribe_Topic[topicLength]; 
+        sprintf(subscribe_Topic, "%s/%s/#", Configuration::root_Topic, Configuration::PLC_Topic);
         mqttClient.subscribe(subscribe_Topic);
         INFO_PRINT("Suscrito a: ");
         INFO_PRINT(subscribe_Topic); 
@@ -127,9 +118,9 @@ bool PLC::reconnect() {
     } else {
         INFO_PRINT("Error!, rc=");
         INFO_PRINT(mqttClient.state());
-        INFO_PRINT(" reintentando en 5 segundos");
+        //INFO_PRINT(" reintentando en 5 segundos");
         // Wait 5 seconds before retrying
-        delay(5000);
+        //delay(5000);
         res = false;
     }
     return res;
@@ -139,7 +130,10 @@ void PLC::log(const char* errorMsg)
 {
     INFO_PRINT(errorMsg);
     if (mqttClient.connected()) {
-         mqttClient.publish(log_Topic, errorMsg);
+		int topicLength = strlen(Configuration::root_Topic) +  strlen(Configuration::log_Topic)+ strlen(Configuration::PLC_Topic)+3;
+		char log_Topic[topicLength]; 
+        sprintf(log_Topic, "%s/%s/%s", Configuration::root_Topic, Configuration::log_Topic, Configuration::PLC_Topic);
+        mqttClient.publish(log_Topic, errorMsg);
     }
 }
 
@@ -170,10 +164,12 @@ void PLC::onMQTTMessage(char* topic, byte* payload, unsigned int length) {
 
 bool PLC::getOuput(char* topic,char* ouput) {
     String sTopic(topic);
-    if(!sTopic.endsWith(command_Topic)) {
+    if(!sTopic.endsWith(Configuration::command_Topic)) {
         return false;
     }
-    
+	int topicLength = strlen(Configuration::root_Topic) +  strlen(Configuration::PLC_Topic)+4;
+	char subscribe_Topic[topicLength]; 
+	sprintf(subscribe_Topic, "%s/%s/#", Configuration::root_Topic,  Configuration::PLC_Topic);
     String sOutput = sTopic.substring(strlen(subscribe_Topic)-1);
     sOutput = sOutput.substring(0,sOutput.indexOf("/"));
   
@@ -191,7 +187,7 @@ void PLC::updateRelay(char* relayName,int newState) {
 
 		char value[2];
         itoa(newState,value,10);
-		PLC::publish(relayName, "state", value);
+		PLC::publish(relayName, Configuration::state_Topic, value);
     } else {
         log("Numero de rele incorrecto");
     }
@@ -200,9 +196,9 @@ void PLC::updateRelay(char* relayName,int newState) {
 
 void PLC::publish(const char* portName,const char* messageType, const char* payload ){
 	// Create message topic
-	String topicString = String(root_Topic);
+	String topicString = String(Configuration::root_Topic);
 	topicString += String("/");
-	topicString += String(PLC_Topic);
+	topicString += String(Configuration::PLC_Topic);
 	topicString += String("/");
 	topicString += String(portName);
 	topicString += String("/");
@@ -251,7 +247,7 @@ int PLC::getValue(byte* payload, unsigned int length) {
                 break;
         }
     }  else  {
-        log("Error en formato del mensaje");
+       DEBUG_PRINT("Comando ignorado");
     }
     
     return value;
