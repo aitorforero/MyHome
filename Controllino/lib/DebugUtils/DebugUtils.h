@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        Serial.print(':');      \
        Serial.print(__LINE__);     \
        Serial.print(' ');      \
-       Serial.println(str); \ 
+       Serial.println(str); \
        delay(DEBUG_DELAY);
 #else
     #define DEBUG_PRINT(str)
@@ -56,7 +56,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
        Serial.print(':');      \
        Serial.print(__LINE__);     \
        Serial.print(' ');      \
-       Serial.println(str); \ 
+       Serial.println(str); \
        delay(DEBUG_DELAY);
 #else
     #define INFO_PRINT(str)

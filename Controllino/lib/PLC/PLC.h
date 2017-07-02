@@ -1,11 +1,15 @@
 #ifndef _PLC_h
 #define _PLC_h
 
+#define CONTROLLINO_MEGA
+
+
+
 #include <Arduino.h>
+#include <Controllino.h>
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
-#include <Controllino.h>
 #include <Button.h>
 #include <Timer.h>
 #include <List.h>
@@ -31,7 +35,8 @@ class PLC {
         static EthernetClient ethClient;
         static PubSubClient mqttClient;
         static List<Input*> inputs;
-        static void initializeMQTT();
+        static long millisLastAttempt;
+    static void initializeMQTT();
         static void initializeEthernet();
         static void initializeInputs();
         static bool reconnect();
@@ -42,5 +47,6 @@ class PLC {
         static void onButtonClick(EventArgs* e);
         static int getValue(byte* payload, unsigned int length);
         static void publish(const char* portName,const char* messageType, const char* payload);
+
 };
 #endif

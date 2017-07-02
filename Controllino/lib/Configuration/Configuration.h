@@ -5,6 +5,7 @@
 
 #define CONFIG_SIGNATURE "PLC00"
 #define CONFIG_SIGNATURE_LENGTH 5
+#define CONFIG_MAX_LENGTH 100
 
 namespace Configuration {
     enum States {
@@ -22,16 +23,17 @@ namespace Configuration {
         logTopicState
     };
 
-    extern char PLC_Topic[100];
-    extern char root_Topic[100];
-    extern char command_Topic[100];
-    extern char state_Topic[100];
-    extern char log_Topic[100];
+    extern char PLC_Topic[CONFIG_MAX_LENGTH];
+    extern char root_Topic[CONFIG_MAX_LENGTH];
+    extern char command_Topic[CONFIG_MAX_LENGTH];
+    extern char state_Topic[CONFIG_MAX_LENGTH];
+    extern char log_Topic[CONFIG_MAX_LENGTH];
     extern byte mac[6];
     extern byte ip[4];
     extern byte server[4];
     extern int port;
     extern bool isValid;
+    extern bool isConfiguring;
     extern char signature[CONFIG_SIGNATURE_LENGTH+1];
     
     void initial(String readedString);
@@ -60,10 +62,10 @@ namespace Configuration {
     
     void save();
     void saveCharArray(int &offset, char* charArray);
-    void saveByteArray(int &offset, byte* byteArray);
+    void saveByteArray(int &offset, byte* byteArray, int length);
     void load();
-    void readCharArray(int &offset, char* charArray);
-    void saveByteArray(int &offset, byte* byteArray);
+    void readCharArray(int &offset, char* charArray, int maxLength);
+    void saveByteArray(int &offset, byte* byteArrayv, int length);
 }
 
 #endif

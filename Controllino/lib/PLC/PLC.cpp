@@ -1,9 +1,10 @@
 #define CONTROLLINO_MEGA
 #include <Arduino.h>
+#include <Controllino.h>
+#undef SPI_HAS_EXTENDED_CS_PIN_HANDLING
 #include <SPI.h>
 #include <Ethernet.h>
 #include <PubSubClient.h>
-#include <Controllino.h>
 #include <Button.h>
 #include <Timer.h>
 #include <FastDelegate.h>
@@ -22,6 +23,7 @@
 EthernetClient PLC::ethClient;
 PubSubClient PLC::mqttClient(ethClient);
 List<Input*> PLC::inputs;
+long PLC::millisLastAttempt = 0;
 
 void PLC::setup() {
 
@@ -45,14 +47,19 @@ void PLC::loop() {
 	
 	Configuration::loop();
 	
-	if(Configuration::isValid) {
+	if(Configuration::isValid && !Configuration::isConfiguring) {
 		bool connected  = true;
 
-		if (!mqttClient.connected()) {
+		if (!mqttClient.connected() && (millisLastAttempt ==0 || ((millis() - millisLastAttempt) >= 5000))) {
+			millisLastAttempt = millis();
 			connected = reconnect();
 		}
 
-		if (connected) mqttClient.loop();
+		if (connected) {
+			mqttClient.loop();
+		}  else {
+			INFO_PRINT("Reintentando dentro de cinco segun");
+		}
 		Timer::loop();
 	}
 	
@@ -72,30 +79,33 @@ void PLC::initializeEthernet() {
   Ethernet.begin(Configuration::mac,ip);
   // Allow the hardware to sort itself out
   delay(1500);
+
+    Serial.println(Ethernet.localIP());
+	
 }
 
 void PLC::initializeInputs() {  
   	INFO_PRINT("Inicializando entradas...");
 	
-	PLC::inputs.add(new Input("A0", new Button(CONTROLLINO_A0 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A1", new Button(CONTROLLINO_A1 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A2", new Button(CONTROLLINO_A2 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A3", new Button(CONTROLLINO_A3 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A4", new Button(CONTROLLINO_A4 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A5", new Button(CONTROLLINO_A5 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A6", new Button(CONTROLLINO_A6 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A7", new Button(CONTROLLINO_A7 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A8", new Button(CONTROLLINO_A8 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A9", new Button(CONTROLLINO_A9 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A10", new Button(CONTROLLINO_A10 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A11", new Button(CONTROLLINO_A11 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A12", new Button(CONTROLLINO_A12 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A13", new Button(CONTROLLINO_A13 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A14", new Button(CONTROLLINO_A14 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A15", new Button(CONTROLLINO_A15 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("I16", new Button(CONTROLLINO_I16 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("I17", new Button(CONTROLLINO_I17 , LOW, true, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("I18", new Button(CONTROLLINO_I18 , LOW, true, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A0", new Button(CONTROLLINO_A0 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A1", new Button(CONTROLLINO_A1 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A2", new Button(CONTROLLINO_A2 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A3", new Button(CONTROLLINO_A3 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A4", new Button(CONTROLLINO_A4 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A5", new Button(CONTROLLINO_A5 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A6", new Button(CONTROLLINO_A6 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A7", new Button(CONTROLLINO_A7 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A8", new Button(CONTROLLINO_A8 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A9", new Button(CONTROLLINO_A9 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A10", new Button(CONTROLLINO_A10 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A11", new Button(CONTROLLINO_A11 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A12", new Button(CONTROLLINO_A12 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A13", new Button(CONTROLLINO_A13 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A14", new Button(CONTROLLINO_A14 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("A15", new Button(CONTROLLINO_A15 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("I16", new Button(CONTROLLINO_I16 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("I17", new Button(CONTROLLINO_I17 , HIGH, false, &PLC::onButtonClick, 10)));
+	PLC::inputs.add(new Input("I18", new Button(CONTROLLINO_I18 , HIGH, false, &PLC::onButtonClick, 10)));
 	INFO_PRINT("Entradas inicializadas: ");
 }
 
@@ -141,7 +151,7 @@ void PLC::onMQTTMessage(char* topic, byte* payload, unsigned int length) {
     DEBUG_PRINT("Message arrived [");
     DEBUG_PRINT(topic);
     DEBUG_PRINT("] ");
-    for (int i=0;i<length;i++) {
+    for (unsigned int i=0;i<length;i++) {
         DEBUG_PRINT((char)payload[i]);
     }
     DEBUG_PRINT();

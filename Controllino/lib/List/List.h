@@ -105,7 +105,6 @@ public:
 
 	T item(int index)
 	{
-		T res;
 		int i = 0;
 		ListItem<T>* current = _items;
 		while (i<index) {

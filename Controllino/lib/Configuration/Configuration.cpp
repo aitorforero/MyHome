@@ -8,16 +8,17 @@ namespace Configuration {
     
     States state = undefinedState;
     
-    char PLC_Topic[100] = "N2"; 
-    char root_Topic[100] = "casa"; 
-    char command_Topic[100] = "command";
-    char state_Topic[100] = "state";
-    char log_Topic[100]= "log";
+    char PLC_Topic[CONFIG_MAX_LENGTH] = "N2"; 
+    char root_Topic[CONFIG_MAX_LENGTH] = "casa"; 
+    char command_Topic[CONFIG_MAX_LENGTH] = "command";
+    char state_Topic[CONFIG_MAX_LENGTH] = "state";
+    char log_Topic[CONFIG_MAX_LENGTH]= "log";
     byte mac[6]  = {0x1A, 0x6B, 0xE7, 0x45, 0xB9, 0x26}; 
     byte ip[4] = {192, 168, 1, 20}; 
     byte server[4] = {192, 168, 1, 10}; 
     int port = 1883;
     bool isValid = false;
+    bool isConfiguring = false;
     char signature[CONFIG_SIGNATURE_LENGTH+1] = CONFIG_SIGNATURE;
 
     
@@ -28,9 +29,9 @@ namespace Configuration {
         saveCharArray(currentAddress, root_Topic);
         saveCharArray(currentAddress, command_Topic);
         saveCharArray(currentAddress, log_Topic);
-        saveByteArray(currentAddress, mac);
-        saveByteArray(currentAddress, ip);
-        saveByteArray(currentAddress, server);
+        saveByteArray(currentAddress, mac, 6);
+        saveByteArray(currentAddress, ip, 4);
+        saveByteArray(currentAddress, server, 4);
         EEPROM.put(currentAddress, port);
     }
    
@@ -50,22 +51,22 @@ namespace Configuration {
     }
     
     
-    void saveByteArray(int &offset,byte* byteArray){
+    void saveByteArray(int &offset,byte* byteArray, int length){
         int i = 0;
-        for(i=0;i<sizeof(byteArray);i++){
+        for(i=0;i<length;i++){
              EEPROM.update(offset+i,byteArray[i]);
         }
         offset +=i;
     }
     
-    void readCharArray(int &offset, char* charArray){
+    void readCharArray(int &offset, char* charArray, int maxLength){
         String aux("");
         int i = 0;
         bool finish = false;
         while(!finish) {
             char signatureChar = 0;
             EEPROM.get(offset+i, signatureChar);
-            if(!signatureChar) {
+            if(!signatureChar || i >= (maxLength-1)) {
                 aux.toCharArray(charArray,i+1);
                 finish = true;
             } else {
@@ -77,36 +78,43 @@ namespace Configuration {
         offset +=i;
     }
     
-    void readByteArray(int &offset,byte* byteArray){
+    void readByteArray(int &offset,byte* byteArray, int length){
         int i = 0;
-        for(i=0;i<sizeof(byteArray);i++){
+        for(i=0;i<length;i++){
              EEPROM.get(offset+i,byteArray[i]);
         }
         offset +=i;
     }
     
     void load() {
-        Serial.println("Loading configuration...");
+        Serial.print("Loading configuration...");
         int currentAddress = 0;
-        char aux[100];
+        char aux[CONFIG_SIGNATURE_LENGTH+1];
         isValid = true;
 
         // signature
-        readCharArray(currentAddress, aux);
+        readCharArray(currentAddress, aux, CONFIG_SIGNATURE_LENGTH+1);
         if(strcmp(aux,signature)) {
+            Serial.print("signature ");
+            Serial.print(aux);
+            Serial.print(" invalid!!!");
             isValid = false;
+        } else {
+            Serial.print("found...");
+            readCharArray(currentAddress, PLC_Topic, CONFIG_MAX_LENGTH);
+            readCharArray(currentAddress, root_Topic, CONFIG_MAX_LENGTH);
+            readCharArray(currentAddress, command_Topic, CONFIG_MAX_LENGTH);
+            readCharArray(currentAddress, log_Topic, CONFIG_MAX_LENGTH);
+            readByteArray(currentAddress, mac, 6);
+            readByteArray(currentAddress, ip, 4);
+            readByteArray(currentAddress, server, 4);
+            EEPROM.get(currentAddress, port);
+            Serial.println("OK");
         }
-        readCharArray(currentAddress, PLC_Topic);
-        readCharArray(currentAddress, root_Topic);
-        readCharArray(currentAddress, command_Topic);
-        readCharArray(currentAddress, log_Topic);
-        readByteArray(currentAddress, mac);
-        readByteArray(currentAddress, ip);
-        readByteArray(currentAddress, server);
-        EEPROM.get(currentAddress, port);
    }
 
     void setInitialState() {
+       isConfiguring = false;
        Serial.println("Para entrar en modo configuracion pulse C");
        state = initialState;
     }
@@ -120,6 +128,7 @@ namespace Configuration {
     }
     
     void setMenuState() {
+        isConfiguring = true;
         Serial.println("*** MENU PRINCIPAL CONFIGURACION ***");
         Serial.println();
         
