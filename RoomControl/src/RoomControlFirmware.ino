@@ -1,3 +1,36 @@
+#define CONTROLLINO_MEGA
+
+
+#include <Arduino.h>
+#include <EEPROM.h>
+#include <RoomControl.h>
+#include <DebugUtils.h>
+#include <Configuration.h>
+
+
+void setup()
+{
+  Serial.begin(115200);
+ // wdt_disable();
+  //Initialize serial communications for debugin
+  DEBUG_PRINT("System starting...");
+    
+  /* Enable watchdog.
+     If the loop last more than 8s restart the hardware */
+//  wdt_enable(WDTO_8S);
+}
+
+void loop()
+{
+    RoomControl::Instance()->loop();
+    
+    //    wdt_reset();
+}
+
+
+
+
+/*
 #include "U8glib.h"
 
 U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE);
@@ -9,7 +42,7 @@ void draw()
   u8g.setFont(u8g_font_profont15);
   u8g.drawStr(3, 15, "Bienvenido");
   u8g.setFont(u8g_font_profont12);
-  u8g.drawStr(2, 37, "Encender");
+  u8g.drawStr(2, 37, "Encender"); 
   u8g.drawStr(2, 57, "Apagar");
  u8g.drawStr(2, 77, "Apagar");
  u8g.drawStr(2, 97, "Apagar");
@@ -42,3 +75,4 @@ void loop(void)
    
   delay(50);
 }
+*/

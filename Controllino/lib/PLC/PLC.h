@@ -36,7 +36,7 @@ class PLC {
         static PubSubClient mqttClient;
         static List<Input*> inputs;
         static long millisLastAttempt;
-    static void initializeMQTT();
+        static void initializeMQTT();
         static void initializeEthernet();
         static void initializeInputs();
         static bool reconnect();

@@ -43,7 +43,7 @@ unsigned long time;
 
 void setup()
 {
-  Debug::initialize(9600);
+  Debug::initialize(115200);
   wdt_disable();
   //Initialize serial communications for debugin
 
