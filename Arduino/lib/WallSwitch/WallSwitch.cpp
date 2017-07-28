@@ -10,11 +10,6 @@
 #include "WallSwitch.h"
 
 
-
-
-
-
-
 WallSwitch::WallSwitch()
 {
 

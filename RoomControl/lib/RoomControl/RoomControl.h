@@ -5,21 +5,27 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Ethernet.h>
+#include <State.h>
 #include <StateMachine.h>
-
+#include <U8glib.h>
 #include <DebugUtils.h>
+
 
 
 class RoomControl {
     public:
-        void setup();
-        void loop();
         static RoomControl* Instance();
+        void loop();
+        U8GLIB_SH1106_128X64 *u8g;
+        EthernetClient* ethClient;
+        void changeState(State<RoomControl>* s);
+        void println(const char* text);
+       
    
     private:
-        static RoomControl* _instance;
+        RoomControl();
+        char buffer[5][81];
+        int line = 0;
         StateMachine<RoomControl>* mStateMachine;
-        EthernetClient ethClient;
-        void initializeEthernet();
 };
 #endif
