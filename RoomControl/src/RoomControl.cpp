@@ -3,9 +3,14 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Ethernet.h>
+#define DEBUG
 #include <DebugUtils.h>
+#include <Button.h>
+#include <EventArgs.h>
+#include <Timer.h>
 #include "InitializingState.h"
 #include "RoomControl.h"
+#include "ButtonEventHandler.h"
 
 
 #define INVALID_VALUE -99
@@ -26,7 +31,7 @@ RoomControl* RoomControl::Instance(){
  
 void RoomControl::loop() {
     DEBUG_PRINT("loop start");
-	
+    Timer::loop();
 	mStateMachine->update();
 	
     DEBUG_PRINT("loop end");
@@ -63,4 +68,15 @@ void RoomControl::println(const char* text){
 	if (line<5) {
 		line++;
 	}	
+}
+
+void RoomControl::onLeftButtonClick(EventArgs* e){
+	INFO_PRINT("Left Click!!!");
+	((ButtonEventHandler*)mStateMachine)->onLeftButtonClick(this);	
+    
+}
+
+void RoomControl::onRightButtonClick(EventArgs* e){
+	INFO_PRINT("Right Click!!!");
+	INFO_PRINT(((Button*)e->sender)->pin());
 }

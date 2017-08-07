@@ -2,13 +2,14 @@
 #define _InitializingState_h
 
 #include <State.h>
-#include <RoomControl.h>
+#include "RoomControl.h"
 class InitializingState : public State<RoomControl>
 {
     private:
       InitializingState(){};
       void initializeScreen(RoomControl* rc);
       void initializeEthernet(RoomControl* rc);
+      void initializeButtons(RoomControl* rc);
       
     public:
       static InitializingState* Instance();

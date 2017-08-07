@@ -1,13 +1,14 @@
 #include <string.h>
-#include "InitializingState.h"
-#include "MainState.h"
-#include <RoomControl.h>
-#include <Configuration.h>
 #include <DebugUtils.h>
 #include <U8glib.h>
 #include <SPI.h>
 #include <Ethernet.h>
-
+#include <FastDelegate.h>
+#include "InitializingState.h"
+#include "ConfigurationMenuState.h"
+#include "MainState.h"
+#include "RoomControl.h"
+#include "Configuration.h"
 
 
 
@@ -28,6 +29,17 @@ void InitializingState::execute(RoomControl* rc)
 	initializeScreen(rc);
 	
 	rc->println("Inicializando...");
+	initializeButtons(rc);
+	
+	
+	delay(2000);
+	
+	if(!Configuration::isValid){
+		rc->changeState(ConfigurationMenuState::Instance());
+		return;
+	}
+	
+	
 	initializeEthernet(rc);	
 	rc->println("Inicializado");
 	
@@ -76,3 +88,8 @@ void InitializingState::initializeEthernet(RoomControl* rc){
   rc->println(IPAddress);
 }
 
+void InitializingState::initializeButtons(RoomControl* rc) {  
+ 	rc->println("Inicializando botones...");
+	rc->leftButton = new Button(A0 , HIGH, false,MakeDelegate(rc, &RoomControl::onLeftButtonClick), 10);
+	rc->rightButton = new Button(A1 , HIGH, false, MakeDelegate(rc, &RoomControl::onRightButtonClick), 10);
+}

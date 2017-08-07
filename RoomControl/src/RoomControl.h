@@ -9,6 +9,8 @@
 #include <StateMachine.h>
 #include <U8glib.h>
 #include <DebugUtils.h>
+#include <Button.h>
+#include <EventArgs.h>
 
 
 
@@ -20,7 +22,11 @@ class RoomControl {
         EthernetClient* ethClient;
         void changeState(State<RoomControl>* s);
         void println(const char* text);
-       
+        Button* leftButton;
+        Button* rightButton; 
+        void onLeftButtonClick(EventArgs* e);
+        void onRightButtonClick(EventArgs* e);
+      
    
     private:
         RoomControl();

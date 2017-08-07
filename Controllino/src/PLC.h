@@ -8,12 +8,14 @@
 #include <Arduino.h>
 #include <Controllino.h>
 #include <SPI.h>
-#include <Ethernet.h>
 #include <PubSubClient.h>
 #include <Button.h>
 #include <Timer.h>
 #include <List.h>
 #include <DebugUtils.h>
+
+#include <Ethernet.h>
+
 
 class Input {
     public:

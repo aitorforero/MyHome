@@ -2,7 +2,7 @@
 #include <Event.h>
 #include <EventArgs.h>
 #include <FastDelegate.h>
-//#define DEBUG
+#define DEBUG
 #include <DebugUtils.h>
 
 
@@ -12,12 +12,11 @@ Button::Button(byte pin, byte pushedValue, bool usePullUp,  Event<EventArgs>::Ha
     this->_pin = pin;
     this->_pushedValue = pushedValue;
 	this->_click = new Event<EventArgs>;
-	this->_click->addHandler(h);
-    
-	DEBUG_PRINT("pin: ");
-    DEBUG_PRINT(this->_pin);
-	DEBUG_PRINT("pushedValue: ");
-    DEBUG_PRINT(this->_pushedValue);
+	this->_click->addHandler(h);    
+	INFO_PRINT("pin: ");
+    INFO_PRINT(this->_pin);
+	INFO_PRINT("pushedValue: ");
+    INFO_PRINT(this->_pushedValue);
 
     
     byte mode =  usePullUp ? INPUT_PULLUP : INPUT;
@@ -35,20 +34,20 @@ Event<EventArgs>* Button::click(){
 }
  
 void Button::onTick(EventArgs* e){
-	DEBUG_PRINT("				Button::onTick start");
+	INFO_PRINT("				Button::onTick start");
 	
     byte readValue = digitalRead(_pin);
 	byte value = !(readValue ^ this->_pushedValue);
-	DEBUG_PRINT("pin: ");
-    DEBUG_PRINT(_pin);
-	DEBUG_PRINT("pushedValue: ");
-    DEBUG_PRINT(this->_pushedValue);
-    DEBUG_PRINT("readValue: ");
-    DEBUG_PRINT(readValue);
-    DEBUG_PRINT("Value: ");
-    DEBUG_PRINT(value);
-    DEBUG_PRINT("devounceValue: ");
-    DEBUG_PRINT(this->devounceValue);
+	INFO_PRINT("pin: ");
+    INFO_PRINT(_pin);
+	INFO_PRINT("pushedValue: ");
+    INFO_PRINT(this->_pushedValue);
+    INFO_PRINT("readValue: ");
+    INFO_PRINT(readValue);
+    INFO_PRINT("Value: ");
+    INFO_PRINT(value);
+    INFO_PRINT("devounceValue: ");
+    INFO_PRINT(this->devounceValue);
     if(this->devounceValue==0xFF && value==0) {
         this->devounceValue = 0;
         EventArgs eClick(this);
@@ -56,7 +55,7 @@ void Button::onTick(EventArgs* e){
 	} else {
 		this->devounceValue = (this->devounceValue << 1) | value; 
     } 
-	DEBUG_PRINT("				Button::onTick end");
+	INFO_PRINT("				Button::onTick end");
 }
 
 byte Button::pin(){
