@@ -8,10 +8,17 @@ Controllino is a PLC based on Arduino and in this project is used as actuator an
 
 
 Wallshitches  ==>  Controllino <=> Mosquitto <=> OpenHAB
+
                        ^^             ^^
+                       
                        ||             ||
+                       
 Roller Shutters =========             ||  
+
                        ||             ||
+                       
 Lights ==================             ||
+
                                       ||
+                                      
 Controllers   <=========================
