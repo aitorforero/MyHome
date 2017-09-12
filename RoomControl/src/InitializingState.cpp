@@ -18,10 +18,7 @@ InitializingState* InitializingState::Instance()
 	return &instance;
 };
 
-void InitializingState::enter(RoomControl* rc)
-{
-	DEBUG_PRINT("Enter in initializing state");
-};
+
 
 void InitializingState::execute(RoomControl* rc)
 {
@@ -34,7 +31,7 @@ void InitializingState::execute(RoomControl* rc)
 	
 	delay(2000);
 	
-	if(!Configuration::isValid){
+	if(!Configuration::load()){
 		rc->changeState(ConfigurationMenuState::Instance());
 		return;
 	}
@@ -50,10 +47,6 @@ void InitializingState::execute(RoomControl* rc)
 
 
 
-void InitializingState::exit(RoomControl* rc)
-{
-	DEBUG_PRINT("Exiting from initializing state");
-};
 
 void InitializingState::initializeScreen(RoomControl* rc){
 	rc->u8g = new U8GLIB_SH1106_128X64(U8G_I2C_OPT_NONE);
@@ -79,7 +72,7 @@ void InitializingState::initializeEthernet(RoomControl* rc){
 
   rc->println("Inicializando ethernet...");
   rc->ethClient = new EthernetClient;
-  Ethernet.begin(Configuration::mac);
+  Ethernet.begin(Configuration::getMAC());
   // Allow the hardware to sort itself out
   delay(1500);
   char IPAddress [16];
@@ -90,6 +83,10 @@ void InitializingState::initializeEthernet(RoomControl* rc){
 
 void InitializingState::initializeButtons(RoomControl* rc) {  
  	rc->println("Inicializando botones...");
-	rc->leftButton = new Button(A0 , HIGH, false,MakeDelegate(rc, &RoomControl::onLeftButtonClick), 10);
-	rc->rightButton = new Button(A1 , HIGH, false, MakeDelegate(rc, &RoomControl::onRightButtonClick), 10);
+	rc->leftButton = new Button(A0 , LOW, true,MakeDelegate(rc, &RoomControl::onLeftButtonClick), 10);
+	rc->leftButton->down()->addHandler(MakeDelegate(rc, &RoomControl::onLeftButtonDown));
+	rc->leftButton->up()->addHandler(MakeDelegate(rc, &RoomControl::onLeftButtonUp));
+	rc->rightButton = new Button(A1 , LOW, true, MakeDelegate(rc, &RoomControl::onRightButtonClick), 10);
+	rc->rightButton->down()->addHandler(MakeDelegate(rc, &RoomControl::onRightButtonDown));
+	rc->rightButton->up()->addHandler(MakeDelegate(rc, &RoomControl::onRightButtonUp));
 }

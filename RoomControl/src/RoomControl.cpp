@@ -3,7 +3,8 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Ethernet.h>
-#define DEBUG
+#include <avr/wdt.h>
+//#define DEBUG
 #include <DebugUtils.h>
 #include <Button.h>
 #include <EventArgs.h>
@@ -17,7 +18,7 @@
 
 RoomControl::RoomControl(){
 	line = 0;
-	mStateMachine = new StateMachine<RoomControl>(this);
+	mStateMachine = new ButtonEventHandlerStateMachine<RoomControl>(this);
 	mStateMachine->changeState(InitializingState::Instance());
 };
 
@@ -32,13 +33,13 @@ RoomControl* RoomControl::Instance(){
 void RoomControl::loop() {
     DEBUG_PRINT("loop start");
     Timer::loop();
-	mStateMachine->update();
+    mStateMachine->update();
 	
     DEBUG_PRINT("loop end");
 }
 
 
-void RoomControl::changeState(State<RoomControl>* s){
+void RoomControl::changeState(ButtonEventHandlerState<RoomControl>* s){
 	mStateMachine->changeState(s);	
 }
 
@@ -71,12 +72,30 @@ void RoomControl::println(const char* text){
 }
 
 void RoomControl::onLeftButtonClick(EventArgs* e){
-	INFO_PRINT("Left Click!!!");
-	((ButtonEventHandler*)mStateMachine)->onLeftButtonClick(this);	
-    
+    mStateMachine->onLeftButtonClick(this);	   
 }
 
 void RoomControl::onRightButtonClick(EventArgs* e){
-	INFO_PRINT("Right Click!!!");
-	INFO_PRINT(((Button*)e->sender)->pin());
+	mStateMachine->onRightButtonClick(this);	   
+}
+
+void RoomControl::onLeftButtonDown(EventArgs* e){
+    mStateMachine->onLeftButtonDown(this);	   
+}
+
+void RoomControl::onRightButtonDown(EventArgs* e){
+	mStateMachine->onRightButtonDown(this);	   
+}
+
+void RoomControl::onLeftButtonUp(EventArgs* e){
+    mStateMachine->onLeftButtonUp(this);	   
+}
+
+void RoomControl::onRightButtonUp(EventArgs* e){
+	mStateMachine->onRightButtonUp(this);	   
+}
+
+void RoomControl::reset(){
+	wdt_enable(WDTO_60MS);
+	while(1) {}
 }

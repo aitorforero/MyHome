@@ -1,9 +1,9 @@
 #ifndef _InitializingState_h
 #define _InitializingState_h
 
-#include <State.h>
+#include "ButtonEventHandlerState.h"
 #include "RoomControl.h"
-class InitializingState : public State<RoomControl>
+class InitializingState : public ButtonEventHandlerState<RoomControl>
 {
     private:
       InitializingState(){};
@@ -13,9 +13,7 @@ class InitializingState : public State<RoomControl>
       
     public:
       static InitializingState* Instance();
-      void enter(RoomControl* rc);
       void execute(RoomControl* rc);
-      void exit(RoomControl* rc);
 };
 
 

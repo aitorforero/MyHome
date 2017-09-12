@@ -5,13 +5,13 @@
 #include <Arduino.h>
 #include <SPI.h>
 #include <Ethernet.h>
-#include <State.h>
-#include <StateMachine.h>
 #include <U8glib.h>
 #include <DebugUtils.h>
 #include <Button.h>
 #include <EventArgs.h>
 
+#include "ButtonEventHandlerState.h"
+#include "ButtonEventHandlerStateMachine.h"
 
 
 class RoomControl {
@@ -20,18 +20,23 @@ class RoomControl {
         void loop();
         U8GLIB_SH1106_128X64 *u8g;
         EthernetClient* ethClient;
-        void changeState(State<RoomControl>* s);
+        void changeState(ButtonEventHandlerState<RoomControl>* s);
         void println(const char* text);
         Button* leftButton;
         Button* rightButton; 
         void onLeftButtonClick(EventArgs* e);
         void onRightButtonClick(EventArgs* e);
+        void onLeftButtonDown(EventArgs* e);
+        void onRightButtonDown(EventArgs* e);
+        void onLeftButtonUp(EventArgs* e);
+        void onRightButtonUp(EventArgs* e);
+        void reset();
       
    
     private:
         RoomControl();
         char buffer[5][81];
         int line = 0;
-        StateMachine<RoomControl>* mStateMachine;
+        ButtonEventHandlerStateMachine<RoomControl>* mStateMachine;
 };
 #endif

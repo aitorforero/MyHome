@@ -10,17 +10,5 @@ MainState* MainState::Instance()
 	return &instance;
 };
 
-void MainState::enter(RoomControl* ws)
-{
-	DEBUG_PRINT("Enter in main state");
-};
 
-void MainState::execute(RoomControl* ws)
-{
-	DEBUG_PRINT("Executing main state");
-};
 
-void MainState::exit(RoomControl* ws)
-{
-	DEBUG_PRINT("Exiting from main state");
-};

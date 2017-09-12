@@ -1,5 +1,3 @@
-#define CONTROLLINO_MEGA
-
 
 #include <Arduino.h>
 #include <EEPROM.h>

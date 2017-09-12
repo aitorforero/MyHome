@@ -6,7 +6,7 @@
 template <class entity_type>
 class StateMachine
 {
-	private:
+	protected:
 
 		entity_type* _Owner;
 		State<entity_type>* _CurrentState;

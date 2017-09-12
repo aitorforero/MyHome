@@ -1,25 +1,24 @@
 #ifndef _ConfigurationMenuState_h
 #define _ConfigurationMenuState_h
 
-#include <State.h>
+
 #include "RoomControl.h"
-#include "ButtonEventHandler.h"
+#include "ButtonEventHandlerState.h"
 
-#define MENU_OPTION_COUNT 2
+#define MENU_OPTION_COUNT 5
 
-class ConfigurationMenuState : public State<RoomControl>, public ButtonEventHandler
-{
+class ConfigurationMenuState : public ButtonEventHandlerState<RoomControl>
+{ 
     private:
       ConfigurationMenuState();
       const char *menuOptions[MENU_OPTION_COUNT];
       int selectedOption;
       void drawMenu(RoomControl* rc);
+      void onTwoButtonsClick(RoomControl* rc);
 
     public:
       static ConfigurationMenuState* Instance();
       void enter(RoomControl* rc);
-      void execute(RoomControl* rc);
-      void exit(RoomControl* rc);
       void onLeftButtonClick(RoomControl* rc);
       void onRightButtonClick(RoomControl* rc);
 };

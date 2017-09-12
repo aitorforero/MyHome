@@ -7,41 +7,26 @@
 #define CONFIG_SIGNATURE_LENGTH 7
 #define CONFIG_MAX_LENGTH 100
 
-namespace Configuration {
-     enum States {
-        undefinedState, 
-        initialState, 
-        menuState, 
-        PLCTopicState,
-        MACState,
-        IPState,
-        serverState,
-        portState,
-        rootTopicState,
-        commandTopicState,
-        stateTopicState,
-        logTopicState
-    };
+class Configuration {
+    private:
+        static const char * _signature = "RCtrl00";
+        static byte _mac[6]; 
+        static char _Name[9]; 
+        static byte _MQTTserverIP[4];
+        static int _MQTTserverPort;
     
-    extern byte mac[6];
-    extern bool isValid;
-    extern bool isConfiguring;
-    extern char signature[CONFIG_SIGNATURE_LENGTH+1];
     
-    void initial(String readedString);
-    void menu(String readedString);
-    void MAC(String readedString);
-    void setMenuState();
-    void setInitialState();
-    void setMACState();
-    void loop();
-    
-    void save();
-    void saveCharArray(int &offset, char* charArray);
-    void saveByteArray(int &offset, byte* byteArray, int length);
-    void load();
-    void readCharArray(int &offset, char* charArray, int maxLength);
-    void saveByteArray(int &offset, byte* byteArrayv, int length);
-}
+
+    public:
+        static byte* getMAC();
+        static char* getName();
+        static byte* getMQTTServerIP();
+        static int getMQTTServerPort();
+        static void save();
+        static bool load();
+};
 
 #endif
+
+
+    

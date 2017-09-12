@@ -1,11 +1,14 @@
 #ifndef BUTTONEVENTHANDLER_H
 #define BUTTONEVENTHANDLER_H
 
-
-class ButtonEventHandler {
+template <class t> class ButtonEventHandler {
     public:
-        virtual void onLeftButtonClick(RoomControl* rc) = 0;
-        virtual void onRightButtonClick(RoomControl* rc) = 0;
+        virtual void onLeftButtonClick(t* rc) = 0;
+        virtual void onRightButtonClick(t* rc) = 0;
+        virtual void onLeftButtonDown(t* rc) = 0;
+        virtual void onRightButtonDown(t* rc) = 0;
+        virtual void onLeftButtonUp(t* rc) = 0;
+        virtual void onRightButtonUp(t* rc) = 0;
 };
 
 #endif
