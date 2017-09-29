@@ -1,8 +1,10 @@
 #ifndef BUTTONEVENTHANDLERSTATE_H
 #define BUTTONEVENTHANDLERSTATE_H
 
+#include <DebugUtils.h>
 #include <State.h>
 #include "ButtonEventHandler.h"
+
 
 template <class t> class ButtonEventHandlerState : public State<t>, public ButtonEventHandler<t>
 {

@@ -4,7 +4,7 @@
 
 
 byte Configuration::_mac[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; 
-char Configuration::_Name[9] = "";
+char Configuration::_Name[9] = "ANONIMO";
 byte Configuration::_MQTTserverIP[4] = {0,0,0,0};
 int Configuration::_MQTTserverPort = 0;
 

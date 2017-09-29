@@ -46,7 +46,7 @@ void RoomControl::changeState(ButtonEventHandlerState<RoomControl>* s){
 
 void RoomControl::println(const char* text){
 	int i;
-	u8g->setFont(u8g_font_profont10);
+	u8g->setFont(u8g_font_profont10r);
 
 	if (line==5) {
 		for(i=0;i<4;i++){

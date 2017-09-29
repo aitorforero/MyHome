@@ -6,15 +6,19 @@
 #include <IconDone.h>
 #include "ConfigurationMenuState.h"
 #include "ConfigurationEditNameState.h"
+#include "Controls/Label.h"
 #include "RoomControl.h"
 #include "Configuration.h"
 
-ConfigurationMenuState::ConfigurationMenuState(){
+ConfigurationMenuState::ConfigurationMenuState():Title(0, 0, 128, 16, "Configuracion"){
     menuOptions[0]="Nombre";
     menuOptions[1]="MAC";
     menuOptions[2]="Servidor MQTT";
     menuOptions[3]="Puerto MQTT";
     menuOptions[4]="Salir";
+	
+		
+    getChildControls()->add(Title);
 }
 
 
@@ -39,16 +43,12 @@ void ConfigurationMenuState::drawMenu(RoomControl* rc)
 	rc->u8g->firstPage();  
 	do
 	{
+		drawChildren(rc->u8g);
   		rc->u8g->setColorIndex(1); 
-        rc->u8g->drawBox(0,0,128,16);
-        rc->u8g->setFont(u8g_font_profont12);
-  		rc->u8g->setColorIndex(0); 
-        rc->u8g->drawStr(2, 12, "Configuracion");
-  		rc->u8g->setColorIndex(1); 
-        rc->u8g->setFont(u8g_font_profont15);
+        rc->u8g->setFont(u8g_font_profont15r);
 		int xPos = (128-rc->u8g->getStrWidth(menuOptions[selectedOption])) / 2;
 		rc->u8g->drawStr(xPos, 32, menuOptions[selectedOption]);
-        rc->u8g->setFont(u8g_font_profont12);
+        rc->u8g->setFont(u8g_font_profont12r);
 		switch(selectedOption) {
 			case 0:
 				char* nameStr;
@@ -98,25 +98,30 @@ void ConfigurationMenuState::drawMenu(RoomControl* rc)
 void ConfigurationMenuState::onLeftButtonClick(RoomControl* rc){
 	if(rc->rightButton->isPushed()) {
 		this->onTwoButtonsClick(rc);
-	} else if(selectedOption>0){
-		selectedOption--;
 	} else {
-		selectedOption = MENU_OPTION_COUNT - 1;
+		if(selectedOption>0){
+			selectedOption--;
+		} else {
+			selectedOption = MENU_OPTION_COUNT - 1;
+		}
+		drawMenu(rc);
 	}
   
-	drawMenu(rc);
 }
 
 void ConfigurationMenuState::onRightButtonClick(RoomControl* rc){
 	if(rc->leftButton->isPushed()) {
 		this->onTwoButtonsClick(rc);
-	} else if(selectedOption < MENU_OPTION_COUNT - 1) {
-		selectedOption++;
-	} else {
-		selectedOption = 0;
+	} else	{
+		if(selectedOption < MENU_OPTION_COUNT - 1) {
+			selectedOption++;
+		} else {
+			selectedOption = 0;
+		}
+		drawMenu(rc);
 	}
 	
-	drawMenu(rc);
+
 }
 
 void ConfigurationMenuState::onTwoButtonsClick(RoomControl* rc){
