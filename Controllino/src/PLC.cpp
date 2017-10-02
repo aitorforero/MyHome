@@ -86,26 +86,26 @@ void PLC::initializeEthernet() {
 
 void PLC::initializeInputs() {  
   	INFO_PRINT("Inicializando entradas...");
+	char *names[19] = {"A0","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11","A12","A13","A14","A15","I16","I17","I18"};
+	byte pins[19] = {
+		CONTROLLINO_A0,  CONTROLLINO_A1,  CONTROLLINO_A2,
+		CONTROLLINO_A3,	 CONTROLLINO_A4,  CONTROLLINO_A5,
+		CONTROLLINO_A6,	 CONTROLLINO_A7,  CONTROLLINO_A8,
+		CONTROLLINO_A9,	 CONTROLLINO_A10, CONTROLLINO_A11,
+		CONTROLLINO_A12, CONTROLLINO_A13, CONTROLLINO_A14,
+		CONTROLLINO_A15, CONTROLLINO_I16, CONTROLLINO_I17,
+		CONTROLLINO_I18
+	};
 	
-	PLC::inputs.add(new Input("A0", new Button(CONTROLLINO_A0 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A1", new Button(CONTROLLINO_A1 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A2", new Button(CONTROLLINO_A2 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A3", new Button(CONTROLLINO_A3 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A4", new Button(CONTROLLINO_A4 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A5", new Button(CONTROLLINO_A5 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A6", new Button(CONTROLLINO_A6 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A7", new Button(CONTROLLINO_A7 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A8", new Button(CONTROLLINO_A8 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A9", new Button(CONTROLLINO_A9 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A10", new Button(CONTROLLINO_A10 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A11", new Button(CONTROLLINO_A11 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A12", new Button(CONTROLLINO_A12 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A13", new Button(CONTROLLINO_A13 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A14", new Button(CONTROLLINO_A14 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("A15", new Button(CONTROLLINO_A15 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("I16", new Button(CONTROLLINO_I16 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("I17", new Button(CONTROLLINO_I17 , HIGH, false, &PLC::onButtonClick, 10)));
-	PLC::inputs.add(new Input("I18", new Button(CONTROLLINO_I18 , HIGH, false, &PLC::onButtonClick, 10)));
+	for(int i=0;i<=18;i++) {
+		Button *button = new Button(pins[i] , HIGH, false, &PLC::onButtonClick, 10);
+		button->down()->addHandler(&PLC::onButtonDown);
+		button->up()->addHandler(&PLC::onButtonUp);
+		Input *input = new Input(names[i], button);
+		PLC::inputs.add(input);
+	}
+	
+
 	INFO_PRINT("Entradas inicializadas: ");
 }
 
@@ -232,6 +232,36 @@ void PLC::onButtonClick(EventArgs* e){
 		if (current->button->pin()==((Button*)e->sender)->pin()) {
 			INFO_PRINT(current->topic);
 			PLC::publish(current->topic, "command", "click");
+			break;
+		}
+	}
+}
+
+void PLC::onButtonDown(EventArgs* e){
+	INFO_PRINT("Down!!!");
+	INFO_PRINT(((Button*)e->sender)->pin());
+	
+	int i;
+	for(i=0;i<PLC::inputs.count();i++) {
+		Input* current = inputs.item(i);
+		if (current->button->pin()==((Button*)e->sender)->pin()) {
+			INFO_PRINT(current->topic);
+			PLC::publish(current->topic, "command", "down");
+			break;
+		}
+	}
+}
+
+void PLC::onButtonUp(EventArgs* e){
+	INFO_PRINT("Up!!!");
+	INFO_PRINT(((Button*)e->sender)->pin());
+	
+	int i;
+	for(i=0;i<PLC::inputs.count();i++) {
+		Input* current = inputs.item(i);
+		if (current->button->pin()==((Button*)e->sender)->pin()) {
+			INFO_PRINT(current->topic);
+			PLC::publish(current->topic, "command", "up");
 			break;
 		}
 	}

@@ -47,6 +47,8 @@ class PLC {
         static bool getOuput(char* topic,char* ouput);
         static void updateRelay(char* relayName,int newState);
         static void onButtonClick(EventArgs* e);
+        static void onButtonDown(EventArgs* e);
+        static void onButtonUp(EventArgs* e);
         static int getValue(byte* payload, unsigned int length);
         static void publish(const char* portName,const char* messageType, const char* payload);
 
