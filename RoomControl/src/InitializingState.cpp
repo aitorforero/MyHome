@@ -28,19 +28,13 @@ void InitializingState::execute(RoomControl* rc)
 	rc->println("Inicializando...");
 	initializeButtons(rc);
 	
-	
-	delay(2000);
-	
 	if(!Configuration::load()){
 		rc->changeState(ConfigurationMenuState::Instance());
 		return;
 	}
 	
-	
 	initializeEthernet(rc);	
 	rc->println("Inicializado");
-	
-	
 	
 	rc->changeState(MainState::Instance());
 };

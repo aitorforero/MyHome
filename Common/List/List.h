@@ -70,7 +70,7 @@ public:
 		}
 
 		delete toDestroy;
-		count--;
+		_count--;
 	};
 
 	int indexOf(const T& item)

@@ -7,7 +7,18 @@
     
 class Container : public ControlContainer, public Control {
     public:
+        void addChild(Control* item) {
+            item->setParent(this);
+            ControlContainer::addChild(item);
+        };
+    
+        void removeChild(Control* item) {
+            ControlContainer::removeChild(item);
+            item->setParent(0);
+        };
+    
         Container(int x, int y, int width, int height):Control(x,y,width,height){};
+    
         void draw(U8GLIB_SH1106_128X64 *g){
             Control::draw(g);
             ControlContainer::drawChildren(g);

@@ -1,11 +1,16 @@
+#include <Arduino.h>
 #include "Control.h"
 
 Control::Control(int x, int y, int width, int height) {
+
     this->_x = x;
     this->_y = y;
     this->_width = width;
     this->_height = height;
     this->setPadding(2);
+    
+    this->_backColor = 0;
+    this->_foreColor = 1;
 }
 
 void Control::draw(U8GLIB_SH1106_128X64 *g){
@@ -17,7 +22,9 @@ void Control::drawMe(U8GLIB_SH1106_128X64 *g){
         g->drawBox(_x,_y,_width,_height);
 }
 
-
+void Control::setParent(Control* Parent){
+      	this->parent = Parent;
+}
 
 
                    
@@ -56,8 +63,3 @@ void Control::getClientBounds(int& x, int& y, int& width, int& height) {
     width = this->_width - x;
     height = this->_height - y;
 }
-         
-             
-                   
-                  
-                  

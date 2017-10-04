@@ -9,13 +9,19 @@
 
 #define MENU_OPTION_COUNT 5
 
-class ConfigurationMenuState : public ButtonEventHandlerState<RoomControl>, public ControlContainer
+class ConfigurationMenuState : public ButtonEventHandlerState<RoomControl>, private ControlContainer
 { 
     private:
-      Label Title;  
-      ConfigurationMenuState();
+      Label titleLabel;  
+      Label optionNameLabel;  
+      Label optionValueLabel;  
+      
       const char *menuOptions[MENU_OPTION_COUNT];
       int selectedOption;
+      
+      ConfigurationMenuState();
+      
+      void changeSelectedOption(RoomControl* rc,int value);
       void drawMenu(RoomControl* rc);
       void onTwoButtonsClick(RoomControl* rc);
       

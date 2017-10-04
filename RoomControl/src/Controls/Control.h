@@ -2,13 +2,11 @@
 #define CONTROL_H
 
 #include <U8glib.h>
-    
-class Control  {
-    private:
 
     
+class Control  {
+   
     public:
-        Control(){};
         Control(int x, int y, int width, int height);
         void draw(U8GLIB_SH1106_128X64 *g);
         void setPosition(int x, int y);
@@ -16,6 +14,7 @@ class Control  {
         void setForeColor(int value);
         void setBackColor(int value);   
         void setPadding(int value);   
+        void setParent(Control* parent);
         void setPadding(int leftPadding, int topPadding, int rightPadding, int bottomPadding);   
     
     protected:
@@ -30,8 +29,11 @@ class Control  {
         int _topPadding;
         int _bottomPadding;
         void getClientBounds(int& x, int& y, int& width, int& height);
+       
+        Control* parent;
     
         virtual void drawMe(U8GLIB_SH1106_128X64 *g);
+        
 };
 
 #endif

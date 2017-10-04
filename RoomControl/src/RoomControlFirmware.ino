@@ -2,7 +2,6 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 #include <DebugUtils.h>
-
 #include "RoomControl.h"
 
 #include "Configuration.h"
