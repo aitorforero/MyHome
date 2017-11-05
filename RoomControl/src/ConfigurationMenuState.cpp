@@ -9,15 +9,19 @@
 #include <DebugUtils.h>
 #include "ConfigurationMenuState.h"
 #include "ConfigurationEditNameState.h"
-#include "Controls/Label.h"
 #include "RoomControl.h"
 #include "Configuration.h"
 #include "Controls/HorizontalAlign.h"
 
+
 ConfigurationMenuState::ConfigurationMenuState()
 	: titleLabel(0, 0, 128, 16, "Configuracion"),
-      optionNameLabel(0, 17, 128, 30, "d"),
-      optionValueLabel(0, 54, 128, 16, "s")
+      optionNameLabel(0, 16, 128, 19, ""),
+      optionValueLabel(0, 35, 128, 16, ""),
+	  moveLeftIcon(0,0, icon_previous_width, icon_previous_height, icon_previous_bits),
+	  moveRightIcon(0,0, icon_next_width, icon_next_height, icon_next_bits),
+	  selectIcon(0,0, icon_create_width, icon_create_height, icon_create_bits),		
+	  menuButtonBar(0, 54, 128, 10)
 {
     menuOptions[0]="Nombre";
     menuOptions[1]="MAC";
@@ -39,50 +43,40 @@ ConfigurationMenuState::ConfigurationMenuState()
 	optionValueLabel.setFont(u8g_font_profont12r);
 	optionValueLabel.setHorizontalAlign(center);
     addChild(&optionValueLabel);
+	
+	menuButtonBar.setLeftIcon(&moveLeftIcon);
+	menuButtonBar.setRightIcon(&moveRightIcon);
+	menuButtonBar.setCenterIcon(&selectIcon);
+    menuButtonBar.setPadding(2, 0, 2, 0);
+	addChild(&menuButtonBar);
+		 
 }
 
 
 
-ConfigurationMenuState* ConfigurationMenuState::Instance()
-{
-	static ConfigurationMenuState   instance;
-	return &instance;
-};
-
 void ConfigurationMenuState::enter(RoomControl* rc)
 {
-	rc->println("ConfigurationMenuState::enter");
     changeSelectedOption(rc, 0);
-	drawMenu(rc);
 };
 
 
 
-void ConfigurationMenuState::drawMenu(RoomControl* rc)
+void ConfigurationMenuState::drawMenu(U8GLIB_SH1106_128X64 *u8g)
 {
-	
-	rc->u8g->firstPage();  
+	u8g->firstPage();  
 	do
 	{
-		drawChildren(rc->u8g);
-
-		
-		rc->u8g->setColorIndex(1); 
-		rc->u8g->drawXBMP(2, 54, icon_previous_width, icon_previous_height, icon_previous_bits);
-		if(selectedOption==(MENU_OPTION_COUNT - 1)) {
-			rc->u8g->drawXBMP(59, 54, icon_done_width, icon_done_height, icon_done_bits);			
-		} else {
-			rc->u8g->drawXBMP(59, 54, icon_create_width, icon_create_height, icon_create_bits);			
-		}
-
-		rc->u8g->drawXBMP(116, 54, icon_next_width, icon_next_height, icon_next_bits);
-
-	} while(rc->u8g->nextPage());
-
-	//rc->println("OK");
+		drawChildren();
+	} while(u8g->nextPage());
+/*  
+	char xValue[24];
+	sprintf(xValue, "%d %d %d %d %d %d",  moveRightIcon.getX(), moveRightIcon.getY(), moveRightIcon.getWidth(), moveRightIcon.getHeight());
+	rc->println(xValue);
+*/	
+	
 };
 
-void ConfigurationMenuState::changeSelectedOption(RoomControl* rc, int value){
+void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int value){
 	selectedOption += value;
 	if(selectedOption < 0){
 		selectedOption = MENU_OPTION_COUNT - 1;
@@ -92,7 +86,8 @@ void ConfigurationMenuState::changeSelectedOption(RoomControl* rc, int value){
 	
 
     optionNameLabel.setText(menuOptions[selectedOption]);
-
+	
+	selectIcon.setBitmap(icon_create_width, icon_create_height, icon_create_bits);	
 	char valueStr[18];
 	switch(selectedOption) {
 		case 0:
@@ -112,34 +107,25 @@ void ConfigurationMenuState::changeSelectedOption(RoomControl* rc, int value){
 			sprintf(valueStr, "%d", Configuration::getMQTTServerPort());
 			break;
 		case 4:
+			selectIcon.setBitmap(icon_done_width, icon_done_height, icon_done_bits);	
 			sprintf(valueStr,"%s","");
 			break;
 	}
-	
-    optionValueLabel.setText(valueStr);
+
+	optionValueLabel.setText(valueStr);
 
 
-	drawMenu(rc);
+	drawMenu(u8g);
 }
 
 void ConfigurationMenuState::onLeftButtonClick(RoomControl* rc){
-	if(rc->rightButton->isPushed()) {
-		this->onTwoButtonsClick(rc);
-	} else {
-		changeSelectedOption(rc, -1);
-	} 
+	changeSelectedOption(rc->u8g, -1);
 }
 
 void ConfigurationMenuState::onRightButtonClick(RoomControl* rc){
-	if(rc->leftButton->isPushed()) {
-		this->onTwoButtonsClick(rc);
-	} else	{
-		changeSelectedOption(rc, 1);
-	}
-	
-
+	changeSelectedOption(rc->u8g, 1);
 }
 
 void ConfigurationMenuState::onTwoButtonsClick(RoomControl* rc){
-	rc->changeState(ConfigurationEditNameState::Instance());
+	owner->changeState(ConfigurationEditNameState.Instance());
 }

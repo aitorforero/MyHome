@@ -8,18 +8,26 @@ Label::Label(int x, int y, int width, int height, const char* text)
     this->_text = text;
 };
 
-void Label::drawMe(U8GLIB_SH1106_128X64 *g){ 
+void Label::drawMe( U8GLIB_SH1106_128X64 *g){ 
     Control::drawMe(g);
-    g->setFont(_font);
-    g->setFontRefHeightAll();
-    int h = g->getFontAscent()-g->getFontDescent();
+
     int yPos;
     int xPos;
     int totWidth;
     int totHeight;
-    getClientBounds(xPos, yPos, totWidth, totHeight);
+    getDrawingArea(xPos, yPos, totWidth, totHeight);
+
+    int xPosOrg = xPos;
+    int yPosOrg = yPos;
     
-    yPos += (totHeight - h) / 2 + g->getFontAscent();
+    g->setFont(_font);
+    g->setFontRefHeightAll();
+
+    
+    int h = g->getFontAscent() - g->getFontDescent();
+    
+    yPos += (totHeight - h)  / 2 + g->getFontAscent();
+
     int textWidth = g->getStrWidth(_text);
     switch(_horizontalAlign) {
         case center:
@@ -36,6 +44,7 @@ void Label::drawMe(U8GLIB_SH1106_128X64 *g){
     
     g->setColorIndex(_foreColor); 
     g->drawStr(xPos, yPos, _text);
+    
 }
 
 void Label::setText(const char* text){

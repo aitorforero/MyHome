@@ -3,27 +3,36 @@
 
 
 #include "RoomControl.h"
-#include "ButtonEventHandlerState.h"
+#include "RoomControlState.h"
+#include "Controls/Label.h"
+#include "Controls/Icon.h"
+#include "Controls/ButtonBar.h"
+#include "Controls/TextBox.h"
 
-#define MIN_NUMBER 48 
-#define MAX_NUMBER 57 
-#define MIN_UPPER_CASE 65 
-#define MAX_UPPER_CASE 90
-#define MIN_LOWER_CASE 97 
-#define MAX_LOWER_CASE 122
 #define NAME_LENGTH 8
 
-class ConfigurationEditNameState : public ButtonEventHandlerState<RoomControl>
+class ConfigurationEditNameState : public RoomControlState, private ControlContainer
 { 
     private:
-      ConfigurationEditNameState();
-      void draw(RoomControl* rc);
-    
-      int pos;
+      Label titleLabel;  
+      TextBox nameTextBox;  
+      Icon  moveLeftIcon;
+      Icon  moveRightIcon;
+      Icon  selectIcon;
+      ButtonBar menuButtonBar;
+      
+      ConfigurationEditNameState();     
+      
+      void draw(U8GLIB_SH1106_128X64 *u8g);
+
 
     public:
       static ConfigurationEditNameState* Instance();
       void enter(RoomControl* rc);
+      void onLeftButtonClick(RoomControl* rc);
+      void onRightButtonClick(RoomControl* rc);
+      void onTwoButtonsClick(RoomControl* rc);
+
 };
 
 

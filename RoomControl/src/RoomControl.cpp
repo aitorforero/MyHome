@@ -11,15 +11,15 @@
 #include <Timer.h>
 #include "InitializingState.h"
 #include "RoomControl.h"
-#include "ButtonEventHandler.h"
+
 
 
 #define INVALID_VALUE -99
 
-RoomControl::RoomControl(){
+RoomControl::RoomControl(): ButtonEventController(this) {
 	line = 0;
-	mStateMachine = new ButtonEventHandlerStateMachine<RoomControl>(this);
-	mStateMachine->changeState(InitializingState::Instance());
+	mStateMachine = new RoomControlStateMachine(this);
+	mStateMachine->changeState(new InitializingState(this));
 };
 
 RoomControl* RoomControl::Instance(){
@@ -39,7 +39,7 @@ void RoomControl::loop() {
 }
 
 
-void RoomControl::changeState(ButtonEventHandlerState<RoomControl>* s){
+void RoomControl::changeState(RoomControlState* s){
 	mStateMachine->changeState(s);	
 }
 
@@ -72,27 +72,35 @@ void RoomControl::println(const char* text){
 }
 
 void RoomControl::onLeftButtonClick(EventArgs* e){
-    mStateMachine->onLeftButtonClick(this);	   
+  if(this->rightButton->isPushed()) {
+  		onClick(both); 
+	} else {
+  		onClick(left); 
+  }
 }
 
 void RoomControl::onRightButtonClick(EventArgs* e){
-	mStateMachine->onRightButtonClick(this);	   
+  if(this->rightButton->isPushed()) {
+  		onClick(both); 
+	} else {
+  		onClick(right); 
+  }
 }
 
 void RoomControl::onLeftButtonDown(EventArgs* e){
-    mStateMachine->onLeftButtonDown(this);	   
+  onDown(left);   
 }
 
 void RoomControl::onRightButtonDown(EventArgs* e){
-	mStateMachine->onRightButtonDown(this);	   
+  onDown(right);
 }
 
 void RoomControl::onLeftButtonUp(EventArgs* e){
-    mStateMachine->onLeftButtonUp(this);	   
+  onUp(left);
 }
 
 void RoomControl::onRightButtonUp(EventArgs* e){
-	mStateMachine->onRightButtonUp(this);	   
+  onUp(right);
 }
 
 void RoomControl::reset(){

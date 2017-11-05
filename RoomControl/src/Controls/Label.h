@@ -13,7 +13,7 @@ class Label : public Container {
     
     public:
         Label(int x, int y, int width, int height, const char* text);
-        void drawMe(U8GLIB_SH1106_128X64 *g);
+        void drawMe( U8GLIB_SH1106_128X64 *g);
         void setText(const char* text); 
         void setFont(const u8g_fntpgm_uint8_t* font);
         void setHorizontalAlign(HorizontalAlign horizontalAlign);
