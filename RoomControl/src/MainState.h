@@ -1,15 +1,14 @@
 #ifndef _MainState_h
 #define _MainState_h
 
-#include "ButtonEventHandlerState.h"
+#include "RoomControlState.h"
 #include "RoomControl.h"
-class MainState : public ButtonEventHandlerState<RoomControl>
+class MainState : public RoomControlState
 {
-    private:
-      MainState(){};
+   private:
 
     public:
-      static MainState* Instance();
+
 };
 
 

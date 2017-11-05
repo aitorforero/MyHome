@@ -10,17 +10,18 @@
 #include <Button.h>
 #include <EventArgs.h>
 
-#include "ButtonEventHandlerState.h"
-#include "ButtonEventHandlerStateMachine.h"
+#include "RoomControlState.h"
+#include "RoomControlStateMachine.h"
+#include "ButtonEvents.h"
 
 
-class RoomControl {
+class RoomControl : ButtonEventsController {
     public:
         static RoomControl* Instance();
         void loop();
         U8GLIB_SH1106_128X64 *u8g;
         EthernetClient* ethClient;
-        void changeState(ButtonEventHandlerState<RoomControl>* s);
+        void changeState(RoomControlState* s);
         void println(const char* text);
         Button* leftButton;
         Button* rightButton; 
@@ -37,6 +38,6 @@ class RoomControl {
         RoomControl();
         char buffer[5][81];
         int line = 0;
-        ButtonEventHandlerStateMachine<RoomControl>* mStateMachine;
+        RoomControlStateMachine* mStateMachine;
 };
 #endif

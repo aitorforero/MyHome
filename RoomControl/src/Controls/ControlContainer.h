@@ -20,7 +20,7 @@ class ControlContainer {
             _childControls.remove(item);
         };
     
-        void drawChildren(U8GLIB_SH1106_128X64 *g) {
+        virtual void drawChildren(U8GLIB_SH1106_128X64 *g) {
             for(int i = 0;i<this->_childControls.count();i++) {
                 this->_childControls.item(i)->draw(g);
             }

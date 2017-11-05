@@ -7,36 +7,30 @@
 #include "InitializingState.h"
 #include "ConfigurationMenuState.h"
 #include "MainState.h"
+#include "MainState.h"
 #include "RoomControl.h"
 #include "Configuration.h"
 
 
-
-InitializingState* InitializingState::Instance()
-{
-	static InitializingState   instance;
-	return &instance;
-};
-
-
-
-void InitializingState::execute(RoomControl* rc)
+State<RoomControl>* InitializingState::execute()
 {
 	DEBUG_PRINT("Executing initializing state");
-	initializeScreen(rc);
+	initializeScreen();
 	
 	rc->println("Inicializando...");
-	initializeButtons(rc);
+	initializeButtons();
 	
 	if(!Configuration::load()){
 		rc->changeState(ConfigurationMenuState::Instance());
-		return;
+		return this;
 	}
 	
-	initializeEthernet(rc);	
+	initializeEthernet();	
 	rc->println("Inicializado");
 	
 	rc->changeState(MainState::Instance());
+	
+	return NULL;
 };
 
 

@@ -5,7 +5,7 @@ class EventArgs
 {
 public:
     void* sender;     
-    EventArgs(void* sender) {this->sender=sender;};
+    EventArgs(void* sender) : sender(sender){} ;
 };
 
 #endif

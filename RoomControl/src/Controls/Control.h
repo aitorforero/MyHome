@@ -1,10 +1,11 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
+#include "TwoButtonsEventHandler.h"
 #include <U8glib.h>
 
     
-class Control  {
+class Control : TwoButtonsEventHandler  {
    
     public:
         Control(int x, int y, int width, int height);
@@ -15,7 +16,11 @@ class Control  {
         void setBackColor(int value);   
         void setPadding(int value);   
         void setParent(Control* parent);
-        void setPadding(int leftPadding, int topPadding, int rightPadding, int bottomPadding);   
+        void setPadding(int leftPadding, int topPadding, int rightPadding, int bottomPadding);  
+        int getWidth();
+        int getHeight();
+        int getX();
+        int getY();
     
     protected:
         int _x;
@@ -28,11 +33,12 @@ class Control  {
         int _rightPadding;
         int _topPadding;
         int _bottomPadding;
-        void getClientBounds(int& x, int& y, int& width, int& height);
+        void getDrawingArea(int& x, int& y, int& width, int& height);
        
         Control* parent;
     
         virtual void drawMe(U8GLIB_SH1106_128X64 *g);
+        virtual void calculateLayout();
         
 };
 

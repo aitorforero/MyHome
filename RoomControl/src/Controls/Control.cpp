@@ -8,6 +8,7 @@ Control::Control(int x, int y, int width, int height) {
     this->_width = width;
     this->_height = height;
     this->setPadding(2);
+    this->parent = 0;
     
     this->_backColor = 0;
     this->_foreColor = 1;
@@ -26,16 +27,20 @@ void Control::setParent(Control* Parent){
       	this->parent = Parent;
 }
 
+void Control::calculateLayout(){};
+
 
                    
 void Control::setPosition(int x, int y){
     this->_x = x;
-    this->_y = y;        
+    this->_y = y; 
+    this->calculateLayout();
 }
                    
 void Control::setSize(int width, int height){
     this->_width = width;
     this->_height = height;    
+    this->calculateLayout();
 }
                    
 void Control::setForeColor(int value){
@@ -55,11 +60,36 @@ void Control::setPadding(int leftPadding, int topPadding, int rightPadding, int 
     this->_topPadding = topPadding;
     this->_rightPadding = rightPadding;
     this->_bottomPadding = bottomPadding;
+    this->calculateLayout();
 }
 
-void Control::getClientBounds(int& x, int& y, int& width, int& height) {
+void Control::getDrawingArea(int& x, int& y, int& width, int& height) {
     x = this->_x + this->_leftPadding;
     y = this->_y + this->_topPadding;
-    width = this->_width - x;
-    height = this->_height - y;
+    if(this->parent != 0) {
+        int yPos;
+        int xPos;
+        int totWidth;
+        int totHeight;
+        this->parent->getDrawingArea(xPos, yPos, totWidth, totHeight);
+
+        x += xPos;
+        y += yPos;
+    }
+    width = this->_width -  (this->_leftPadding + this->_rightPadding);
+    height = this->_height - (this->_topPadding + this->_bottomPadding);
 }
+
+int Control::getWidth(){
+    return _width;
+};
+int Control::getHeight(){
+    return _height;
+};
+
+int Control::getX(){
+    return _x;
+};
+int Control::getY(){
+    return _y;
+};
