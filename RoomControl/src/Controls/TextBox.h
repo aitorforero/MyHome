@@ -39,9 +39,10 @@ class TextBox : public Control {
         void addCharacterRange(int min, int max);
         void setFont(const u8g_fntpgm_uint8_t* font);
         void drawMe(U8GLIB_SH1106_128X64 *g);
-        void onLeftButtonClick(EventArgs* e);
-        void onRightButtonClick(EventArgs* e);
-        void onTwoButtonsClick(EventArgs* e);
+        
+        void doLeft();
+        void doRight();
+        void doSelect();
 };
 
 

@@ -12,7 +12,7 @@
 #include "Configuration.h"
 
 
-State<RoomControl>* InitializingState::execute()
+ RoomControlState* InitializingState::execute(RoomControl* rc)
 {
 	DEBUG_PRINT("Executing initializing state");
 	initializeScreen();
@@ -21,8 +21,7 @@ State<RoomControl>* InitializingState::execute()
 	initializeButtons();
 	
 	if(!Configuration::load()){
-		rc->changeState(ConfigurationMenuState::Instance());
-		return this;
+		return new ConfigurationMenuState();
 	}
 	
 	initializeEthernet();	

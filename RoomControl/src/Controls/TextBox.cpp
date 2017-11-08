@@ -87,13 +87,13 @@ void TextBox::changePos( U8GLIB_SH1106_128X64 *g, int value){
 
 
 
-void TextBox::onLeftButtonClick(EventArgs* e){
+void TextBox::doLeft(){
     this->changePos(-1);
 };
-void TextBox::onRightButtonClick(EventArgs* e){
+void TextBox::doRight(){
     this->changePos(1);    
 };
 
-void TextBox::onTwoButtonsClick(EventArgs* e){
+void TextBox::doSelect(){
     
 };

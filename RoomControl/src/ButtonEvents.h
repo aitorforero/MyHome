@@ -7,9 +7,9 @@
 
 class RoomControl;
 
-enum ButtonName {left, right, both};
+enum ButtonName {leftButton, rightButton, bothButtons};
 
-class ButtonEventArgs : EventArgs
+class ButtonEventArgs : public EventArgs
 {
     
     private:

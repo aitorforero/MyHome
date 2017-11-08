@@ -35,9 +35,9 @@ class ConfigurationMenuState : public RoomControlState, private ControlContainer
       ConfigurationMenuState();      
       
     protected:
-      void onLeftButtonClick(RoomControl* rc);
-      void onRightButtonClick(RoomControl* rc);
-      void onTwoButtonsClick(RoomControl* rc);
+      void handleButtonClick(ButtonEventArgs* e);
+      void handleButtonDown(ButtonEventArgs* e);
+      void handleButtonUp(ButtonEventArgs* e);
 };
 
 

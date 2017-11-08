@@ -4,11 +4,7 @@
 #include "ConfigurationEditNameState.h"
 #include "Configuration.h"
 
-ConfigurationEditNameState* ConfigurationEditNameState::Instance()
-{
-	static ConfigurationEditNameState instance;
-	return &instance;
-};
+
 
 ConfigurationEditNameState::ConfigurationEditNameState()
 	: titleLabel(0, 0, 128, 16, "Nombre"),
@@ -36,8 +32,9 @@ ConfigurationEditNameState::ConfigurationEditNameState()
 
 void ConfigurationEditNameState::enter(RoomControl* rc)
 {
+    RoomControlState::enter(rc);
 	nameTextBox.setValue(Configuration::getName());
-	draw(rc);
+	draw(rc->u8g);
 };
 
 
@@ -50,14 +47,19 @@ void ConfigurationEditNameState::draw(U8GLIB_SH1106_128X64 *u8g)
 	} while(u8g->nextPage());
 };
 
-void ConfigurationEditNameState::onLeftButtonClick(RoomControl* rc){
-	nameTextBox.onLeftButtonClick(e);
-}
+void ConfigurationEditNameState::handleButtonClick(ButtonEventArgs* e){
+  //  RoomControl* rc = (RoomControl*)(e->getSender());
+    
+    switch(e->getButtonName()) {
+        case rightButton:
+	        nameTextBox.doRight();
+            break;
+        case leftButton:
+	        nameTextBox.doLeft();
+            break;
+        case bothButtons:
+	        nameTextBox.doSelect();
+            break;
+    };
+};
 
-void ConfigurationEditNameState::onRightButtonClick(RoomControl* rc){
-	nameTextBox.onRightButtonClick(e);
-}
-
-void ConfigurationEditNameState::onTwoButtonsClick(RoomControl* rc){
-	nameTextBox.onTwoButtonsClick(e);
-}

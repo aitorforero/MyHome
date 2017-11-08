@@ -56,7 +56,8 @@ ConfigurationMenuState::ConfigurationMenuState()
 
 void ConfigurationMenuState::enter(RoomControl* rc)
 {
-    changeSelectedOption(rc, 0);
+    RoomControlState::enter(rc);
+    changeSelectedOption(rc->u8g, 0);
 };
 
 
@@ -66,7 +67,7 @@ void ConfigurationMenuState::drawMenu(U8GLIB_SH1106_128X64 *u8g)
 	u8g->firstPage();  
 	do
 	{
-		drawChildren();
+		drawChildren(u8g);
 	} while(u8g->nextPage());
 /*  
 	char xValue[24];
@@ -118,14 +119,18 @@ void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int
 	drawMenu(u8g);
 }
 
-void ConfigurationMenuState::onLeftButtonClick(RoomControl* rc){
-	changeSelectedOption(rc->u8g, -1);
-}
-
-void ConfigurationMenuState::onRightButtonClick(RoomControl* rc){
-	changeSelectedOption(rc->u8g, 1);
-}
-
-void ConfigurationMenuState::onTwoButtonsClick(RoomControl* rc){
-	owner->changeState(ConfigurationEditNameState.Instance());
-}
+void ConfigurationMenuState::handleButtonClick(ButtonEventArgs* e){
+    RoomControl* rc = (RoomControl*)e->getSender();
+    
+    switch(e->getButtonName()) {
+        case leftButton:
+            changeSelectedOption(rc->u8g, -1);
+            break;
+        case rightButton:
+            changeSelectedOption(rc->u8g, 1);
+            break;
+        case bothButtons:
+            rc->changeState(ConfigurationEditNameState.Instance());
+            break;
+    }
+};

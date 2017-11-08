@@ -12,7 +12,7 @@ class InitializingState : public RoomControlState
       
     public:
       InitializingState() {};
-      State<RoomControl>* execute(RoomControl* rc);
+      RoomControlState* execute(RoomControl* rc);
 };
 
 

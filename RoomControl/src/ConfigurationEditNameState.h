@@ -20,18 +20,17 @@ class ConfigurationEditNameState : public RoomControlState, private ControlConta
       Icon  moveRightIcon;
       Icon  selectIcon;
       ButtonBar menuButtonBar;
-      
-      ConfigurationEditNameState();     
-      
+
       void draw(U8GLIB_SH1106_128X64 *u8g);
 
 
     public:
-      static ConfigurationEditNameState* Instance();
+      ConfigurationEditNameState();     
       void enter(RoomControl* rc);
-      void onLeftButtonClick(RoomControl* rc);
-      void onRightButtonClick(RoomControl* rc);
-      void onTwoButtonsClick(RoomControl* rc);
+      
+      void handleButtonClick(ButtonEventArgs* e);
+      void handleButtonDown(ButtonEventArgs* e);
+      void handleButtonUp(ButtonEventArgs* e);
 
 };
 

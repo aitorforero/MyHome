@@ -10,10 +10,13 @@ class StateMachine
 	protected:
 		entity_type* _Owner;
 		Stack<State<entity_type>*> _StateStack;
-
-		void pushState(State<entity_type>* s) {
-			_StateStack.push(s);
-			s->enter(_Owner);
+		
+		State<entity_type>* getCurrent() {
+		    if(_StateStack.isEmpty()){
+		        return NULL;
+		    } else {
+		        return _StateStack.peek();
+		    };  
 		}
 
 
@@ -23,7 +26,7 @@ class StateMachine
 			_Owner = owner;
 		};
 
-		virtual void revertState() {
+		virtual void revert() {
 			if(!_StateStack.isEmpty()){
 				State<entity_type>* currentState = _StateStack.pop();
 				currentState->exit(_Owner);
@@ -34,12 +37,13 @@ class StateMachine
 			}
 		}
 		
-		virtual void switchState(State<entity_type>* s){
-			if( !_StateStack.isEmpty()){
+		virtual void (State<entity_type>* s){
+			if( !.isEmpty()){
 				State<entity_type>* currentState = _StateStack.pop();
-				currentState->exit(_Owner);
+				currentState->(_Owner);
 			}
-			pushState(s);		
+			
+				
 		}
 
 		virtual void changeState(State<entity_type>* s)	{

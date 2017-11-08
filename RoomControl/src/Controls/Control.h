@@ -1,11 +1,10 @@
 #ifndef CONTROL_H
 #define CONTROL_H
 
-#include "TwoButtonsEventHandler.h"
 #include <U8glib.h>
 
     
-class Control : TwoButtonsEventHandler  {
+class Control {
    
     public:
         Control(int x, int y, int width, int height);

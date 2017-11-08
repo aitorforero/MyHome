@@ -8,37 +8,40 @@
 class RoomControl;		  
 typedef FastDelegate1<ButtonEventArgs*, void> Handler;
 
-class RoomControlState : public State<RoomControl>, ButtonEventsHandler
+class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
 {
     private:
-      Handler clickHndlr;
-      Handler upHndlr;
-      Handler downHndlr;
+        Handler clickHndlr;
+        Handler upHndlr;
+        Handler downHndlr;
 
     protected:
-      RoomControlState(): State<RoomControl>() {}; 
-
+        RoomControlState(){};
+  
     public:
-      virtual void enter(RoomControl* rc){
-        DEBUG_PRINT("Enter");
-        
-        downHndlr = MakeDelegate(rc, &ButtonEventsHandler::handleButtonDown);
-	      ((ButtonEventsController*)rc)->downEvent()->addHandler(MakeDelegate(rc, &ButtonEventsHandler::handleButtonDown));        
-        ((ButtonEventsController*)rc)->clickEvent()->addHandler(MakeDelegate(rc, &ButtonEventsHandler::handleButtonClick));        
-	      ((ButtonEventsController*)rc)->upEvent()->addHandler(MakeDelegate(rc, &ButtonEventsHandler::handleButtonUp));        
-      };
+        virtual void enter(RoomControl* rc){
+            downHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonDown);
+            clickHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonClick);
+            upHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonUp);
+ 
+            ((ButtonEventsController*)rc)->downEvent()->addHandler(downHndlr);        
+            ((ButtonEventsController*)rc)->clickEvent()->addHandler(clickHndlr);        
+            ((ButtonEventsController*)rc)->upEvent()->addHandler(upHndlr);        
+        };
       
-      virtual State<RoomControl>* execute(RoomControl* rc){
-        DEBUG_PRINT("Execute"); 
-        return NULL;
-      };
+       virtual State<RoomControl>* execute(RoomControl* rc){
+            return NULL;
+        };
       
       virtual void exit(RoomControl* rc){
-        DEBUG_PRINT("Exit");
-        ((ButtonEventsController*)rc)->downEvent()->addHandler(MakeDelegate(rc, &ButtonEventsHandler::handleButtonDown));        
-        ((ButtonEventsController*)rc)->clickEvent()->addHandler(MakeDelegate(rc, &ButtonEventsHandler::handleButtonClick));        
-	      ((ButtonEventsController*)rc)->upEvent()->addHandler(MakeDelegate(rc, &ButtonEventsHandler::handleButtonUp));        
+            ((ButtonEventsController*)rc)->downEvent()->removeHandler(downHndlr);        
+            ((ButtonEventsController*)rc)->clickEvent()->removeHandler(clickHndlr);        
+            ((ButtonEventsController*)rc)->upEvent()->removeHandler(upHndlr);        
       };
+      
+     virtual void suspend(RoomControl* rc){};
+    virtual void resume(RoomControl* rc){};
+
 };
 
 #endif

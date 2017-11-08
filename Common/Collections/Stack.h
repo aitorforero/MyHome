@@ -22,12 +22,12 @@ class Stack {
 			return _items.item(_items.count()-1);
 		};
 	
-		push(const &T item) {
-			_tems.add(item);
+		void push(const T& item) {
+			_items.add(item);
 		};
 	
 		bool isEmpty() {
 			return (_items.count()==0);
 		};
 };   
-	#endif
+#endif

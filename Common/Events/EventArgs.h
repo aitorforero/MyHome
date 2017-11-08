@@ -6,6 +6,10 @@ class EventArgs
 public:
     void* sender;     
     EventArgs(void* sender) : sender(sender){} ;
+    void* getSender() {
+        return sender;
+    };
+
 };
 
 #endif

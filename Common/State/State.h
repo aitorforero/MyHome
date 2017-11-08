@@ -8,6 +8,8 @@ class State
 	public:
 		virtual void enter(entity_type* owner)=0;
 		virtual State<entity_type>* execute(entity_type* owner)=0;
+		virtual void suspend(entity_type* owner)=0;
+		virtual void resume(entity_type* owner)=0;
 		virtual void exit(entity_type* owner)=0;
 };
 
