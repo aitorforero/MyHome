@@ -6,13 +6,13 @@
 class InitializingState : public RoomControlState
 {
     private:
-      void initializeScreen(RoomControl* rc);
-      void initializeEthernet(RoomControl* rc);
-      void initializeButtons(RoomControl* rc);
+      void initializeScreen();
+      void initializeEthernet();
+      void initializeButtons();
       
     public:
-      InitializingState() {};
-      RoomControlState* execute(RoomControl* rc);
+      InitializingState(RoomControl* rc):RoomControlState(rc){};
+      void execute();
 };
 
 

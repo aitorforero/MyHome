@@ -10,6 +10,7 @@ class StateMachine
 	protected:
 		entity_type* _Owner;
 		Stack<State<entity_type>*> _StateStack;
+		List<State<entity_type>*> _statesToDelete;
 		
 		State<entity_type>* getCurrent() {
 		    if(_StateStack.isEmpty()){
@@ -27,38 +28,44 @@ class StateMachine
 		};
 
 		virtual void revert() {
-			if(!_StateStack.isEmpty()){
-				State<entity_type>* currentState = _StateStack.pop();
-				currentState->exit(_Owner);
+			if( !_StateStack.isEmpty()){
+				getCurrent()->exit();
+				_statesToDelete.add(_StateStack.pop());
 			}
-			if(!_StateStack.isEmpty()) {
-				State<entity_type>* previousState = _StateStack.peek();
-				previousState->enter(_Owner);
-			}
+			getCurrent()->resume();
 		}
 		
-		virtual void (State<entity_type>* s){
-			if( !.isEmpty()){
-				State<entity_type>* currentState = _StateStack.pop();
-				currentState->(_Owner);
+		virtual void moveTo(State<entity_type>* s){
+			if( !_StateStack.isEmpty()){
+				getCurrent()->suspend();
 			}
 			
-				
+			_StateStack.push(s);
+			getCurrent()->enter();
 		}
 
-		virtual void changeState(State<entity_type>* s)	{
+		virtual void changeTo(State<entity_type>* s)	{
 			if( !_StateStack.isEmpty()){
-				State<entity_type>* currentState = _StateStack.peek();
-				currentState->exit(_Owner);
+				getCurrent()->exit();
+				_statesToDelete.add(_StateStack.pop());
 			}
-			pushState(s);
+			
+			_StateStack.push(s);
+			getCurrent()->enter();
 		};
 
 
 		virtual void update()
 		{
+			while(_statesToDelete.count()>0) {
+				State<entity_type>* toDelete = _statesToDelete.item(0);
+				_statesToDelete.remove(toDelete);
+				delete toDelete;
+				
+			}
+			
 			if( !_StateStack.isEmpty()){
-				_StateStack.peek()->execute(_Owner);
+				_StateStack.peek()->execute();
 			}
 		};
 

@@ -12,68 +12,67 @@
 #include "Configuration.h"
 
 
- RoomControlState* InitializingState::execute(RoomControl* rc)
+void InitializingState::execute()
 {
 	DEBUG_PRINT("Executing initializing state");
 	initializeScreen();
 	
-	rc->println("Inicializando...");
+	_owner->println("Inicializando...");
 	initializeButtons();
 	
 	if(!Configuration::load()){
-		return new ConfigurationMenuState();
+		_owner->changeToState(new ConfigurationMenuState(_owner));
 	}
 	
 	initializeEthernet();	
-	rc->println("Inicializado");
+	_owner->println("Inicializado");
 	
-	rc->changeState(MainState::Instance());
+	_owner->changeToState(new MainState(_owner));
 	
-	return NULL;
 };
 
 
 
 
-void InitializingState::initializeScreen(RoomControl* rc){
-	rc->u8g = new U8GLIB_SH1106_128X64(U8G_I2C_OPT_NONE);
+void InitializingState::initializeScreen(){
+	_owner->u8g = new U8GLIB_SH1106_128X64(U8G_I2C_OPT_NONE);
 	
-	switch (rc->u8g->getMode()) {
+	switch (_owner->u8g->getMode()) {
 		case U8G_MODE_R3G3B2:
-			rc->u8g->setColorIndex(255);     // White
+			_owner->u8g->setColorIndex(255);     // White
 			break;
 		case U8G_MODE_GRAY2BIT:
-    		rc->u8g->setColorIndex(3);       // max intensity
+    		_owner->u8g->setColorIndex(3);       // max intensity
 			break;
 		case U8G_MODE_BW:
-    		rc->u8g->setColorIndex(1);         // pixel on
+    		_owner->u8g->setColorIndex(1);         // pixel on
 			break;
 		case U8G_MODE_HICOLOR:
-    		rc->u8g->setHiColorByRGB(255,255,255);
+    		_owner->u8g->setHiColorByRGB(255,255,255);
 			break;
   	}
 	
 };
 
-void InitializingState::initializeEthernet(RoomControl* rc){
+void InitializingState::initializeEthernet(){
 
-  rc->println("Inicializando ethernet...");
-  rc->ethClient = new EthernetClient;
+  _owner->println("Inicializando ethernet...");
+  _owner->ethClient = new EthernetClient;
   Ethernet.begin(Configuration::getMAC());
   // Allow the hardware to sort itself out
   delay(1500);
   char IPAddress [16];
   sprintf(IPAddress,"%d.%d.%d.%d",Ethernet.localIP()[0],Ethernet.localIP()[1],Ethernet.localIP()[2],Ethernet.localIP()[3]);
 	
-  rc->println(IPAddress);
+  _owner->println(IPAddress);
 }
 
-void InitializingState::initializeButtons(RoomControl* rc) {  
- 	rc->println("Inicializando botones...");
-	rc->leftButton = new Button(A0 , LOW, true,MakeDelegate(rc, &RoomControl::onLeftButtonClick), 10);
-	rc->leftButton->down()->addHandler(MakeDelegate(rc, &RoomControl::onLeftButtonDown));
-	rc->leftButton->up()->addHandler(MakeDelegate(rc, &RoomControl::onLeftButtonUp));
-	rc->rightButton = new Button(A1 , LOW, true, MakeDelegate(rc, &RoomControl::onRightButtonClick), 10);
-	rc->rightButton->down()->addHandler(MakeDelegate(rc, &RoomControl::onRightButtonDown));
-	rc->rightButton->up()->addHandler(MakeDelegate(rc, &RoomControl::onRightButtonUp));
+void InitializingState::initializeButtons() {  
+ 	_owner->println("Inicializando botones...");
+	_owner->leftButton = new Button(A0 , LOW, true,MakeDelegate(_owner, &RoomControl::onLeftButtonClick), 10);
+	_owner->leftButton->down()->addHandler(MakeDelegate(_owner, &RoomControl::onLeftButtonDown));
+	_owner->leftButton->up()->addHandler(MakeDelegate(_owner, &RoomControl::onLeftButtonUp));
+	_owner->rightButton = new Button(A1 , LOW, true, MakeDelegate(_owner, &RoomControl::onRightButtonClick), 10);
+	_owner->rightButton->down()->addHandler(MakeDelegate(_owner, &RoomControl::onRightButtonDown));
+	_owner->rightButton->up()->addHandler(MakeDelegate(_owner, &RoomControl::onRightButtonUp));
 }

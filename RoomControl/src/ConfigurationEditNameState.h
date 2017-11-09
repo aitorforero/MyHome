@@ -25,13 +25,10 @@ class ConfigurationEditNameState : public RoomControlState, private ControlConta
 
 
     public:
-      ConfigurationEditNameState();     
-      void enter(RoomControl* rc);
+      ConfigurationEditNameState(RoomControl* rc);     
+      void enter();
       
       void handleButtonClick(ButtonEventArgs* e);
-      void handleButtonDown(ButtonEventArgs* e);
-      void handleButtonUp(ButtonEventArgs* e);
-
 };
 
 

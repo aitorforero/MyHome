@@ -87,13 +87,13 @@ void TextBox::changePos( U8GLIB_SH1106_128X64 *g, int value){
 
 
 
-void TextBox::doLeft(){
-    this->changePos(-1);
+void TextBox::doLeft(U8GLIB_SH1106_128X64 *g){
+    this->changePos(g, -1);
 };
-void TextBox::doRight(){
-    this->changePos(1);    
+void TextBox::doRight(U8GLIB_SH1106_128X64 *g){
+    this->changePos(g, 1);    
 };
 
-void TextBox::doSelect(){
+void TextBox::doSelect(U8GLIB_SH1106_128X64 *g){
     
 };

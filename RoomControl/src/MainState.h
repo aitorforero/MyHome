@@ -5,9 +5,8 @@
 #include "RoomControl.h"
 class MainState : public RoomControlState
 {
-   private:
-
     public:
+        MainState(RoomControl* rc):RoomControlState(rc){};
 
 };
 

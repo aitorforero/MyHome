@@ -39,9 +39,9 @@ class ButtonEventsController
     
     public:
         ButtonEventsController(RoomControl* owner):_owner(owner){};
-        Event<ButtonEventArgs>* downEvent();  
-        Event<ButtonEventArgs>* upEvent();  
-        Event<ButtonEventArgs>* clickEvent();
+        Event<ButtonEventArgs>* downEvent(){return _down;};  
+        Event<ButtonEventArgs>* upEvent(){return _up;};  
+        Event<ButtonEventArgs>* clickEvent(){return _click;};  
        
     protected:
         void onDown(ButtonName _button) {

@@ -5,7 +5,8 @@
 #include <State.h>
 #include "ButtonEvents.h"
 
-class RoomControl;		  
+class RoomControl;		 
+
 typedef FastDelegate1<ButtonEventArgs*, void> Handler;
 
 class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
@@ -14,33 +15,30 @@ class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
         Handler clickHndlr;
         Handler upHndlr;
         Handler downHndlr;
-
-    protected:
-        RoomControlState(){};
   
     public:
-        virtual void enter(RoomControl* rc){
+        RoomControlState(RoomControl* rc):State<RoomControl>(rc){};
+
+        virtual void enter(){
             downHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonDown);
             clickHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonClick);
             upHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonUp);
  
-            ((ButtonEventsController*)rc)->downEvent()->addHandler(downHndlr);        
-            ((ButtonEventsController*)rc)->clickEvent()->addHandler(clickHndlr);        
-            ((ButtonEventsController*)rc)->upEvent()->addHandler(upHndlr);        
+            ((ButtonEventsController*)_owner)->downEvent()->addHandler(downHndlr);        
+            ((ButtonEventsController*)_owner)->clickEvent()->addHandler(clickHndlr);        
+            ((ButtonEventsController*)_owner)->upEvent()->addHandler(upHndlr);        
         };
       
-       virtual State<RoomControl>* execute(RoomControl* rc){
-            return NULL;
-        };
+       virtual void execute(){};
       
-      virtual void exit(RoomControl* rc){
-            ((ButtonEventsController*)rc)->downEvent()->removeHandler(downHndlr);        
-            ((ButtonEventsController*)rc)->clickEvent()->removeHandler(clickHndlr);        
-            ((ButtonEventsController*)rc)->upEvent()->removeHandler(upHndlr);        
+      virtual void exit(){
+            ((ButtonEventsController*)_owner)->downEvent()->removeHandler(downHndlr);        
+            ((ButtonEventsController*)_owner)->clickEvent()->removeHandler(clickHndlr);        
+            ((ButtonEventsController*)_owner)->upEvent()->removeHandler(upHndlr);        
       };
       
-     virtual void suspend(RoomControl* rc){};
-    virtual void resume(RoomControl* rc){};
+    virtual void suspend(){};
+    virtual void resume(){};
 
 };
 

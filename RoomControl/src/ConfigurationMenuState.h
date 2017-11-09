@@ -31,13 +31,12 @@ class ConfigurationMenuState : public RoomControlState, private ControlContainer
       void drawMenu(U8GLIB_SH1106_128X64 *u8g);
 
     public:
-      void enter(RoomControl* rc);
-      ConfigurationMenuState();      
+      void enter();
+      ConfigurationMenuState(RoomControl* rc);
+     
       
     protected:
       void handleButtonClick(ButtonEventArgs* e);
-      void handleButtonDown(ButtonEventArgs* e);
-      void handleButtonUp(ButtonEventArgs* e);
 };
 
 

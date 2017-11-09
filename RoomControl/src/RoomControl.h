@@ -21,7 +21,9 @@ class RoomControl : ButtonEventsController {
         void loop();
         U8GLIB_SH1106_128X64 *u8g;
         EthernetClient* ethClient;
-        void changeState(RoomControlState* s);
+        void changeToState(RoomControlState* s);
+        void moveToState(RoomControlState* s);
+        void revertState();
         void println(const char* text);
         Button* leftButton;
         Button* rightButton; 

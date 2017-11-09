@@ -6,8 +6,9 @@
 
 
 
-ConfigurationEditNameState::ConfigurationEditNameState()
-	: titleLabel(0, 0, 128, 16, "Nombre"),
+ConfigurationEditNameState::ConfigurationEditNameState(RoomControl*  rc)
+	: RoomControlState(rc),
+	  titleLabel(0, 0, 128, 16, "Nombre"),
 	  menuButtonBar(0, 54, 128, 10),
 	  moveLeftIcon(0,0, icon_previous_width, icon_previous_height, icon_previous_bits),
 	  moveRightIcon(0,0, icon_next_width, icon_next_height, icon_next_bits),
@@ -30,11 +31,11 @@ ConfigurationEditNameState::ConfigurationEditNameState()
 	addChild(&menuButtonBar);	  
 }
 
-void ConfigurationEditNameState::enter(RoomControl* rc)
+void ConfigurationEditNameState::enter()
 {
-    RoomControlState::enter(rc);
+    RoomControlState::enter();
 	nameTextBox.setValue(Configuration::getName());
-	draw(rc->u8g);
+	draw(_owner->u8g);
 };
 
 
@@ -48,17 +49,17 @@ void ConfigurationEditNameState::draw(U8GLIB_SH1106_128X64 *u8g)
 };
 
 void ConfigurationEditNameState::handleButtonClick(ButtonEventArgs* e){
-  //  RoomControl* rc = (RoomControl*)(e->getSender());
+   RoomControl* rc = (RoomControl*)(e->getSender());
     
     switch(e->getButtonName()) {
         case rightButton:
-	        nameTextBox.doRight();
+	        nameTextBox.doRight(rc->u8g);
             break;
         case leftButton:
-	        nameTextBox.doLeft();
+	        nameTextBox.doLeft(rc->u8g);
             break;
         case bothButtons:
-	        nameTextBox.doSelect();
+	        nameTextBox.doSelect(rc->u8g);
             break;
     };
 };

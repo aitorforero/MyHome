@@ -16,10 +16,10 @@
 
 #define INVALID_VALUE -99
 
-RoomControl::RoomControl(): ButtonEventController(this) {
+RoomControl::RoomControl() : ButtonEventsController(this) {
 	line = 0;
 	mStateMachine = new RoomControlStateMachine(this);
-	mStateMachine->changeState(new InitializingState(this));
+	mStateMachine->changeTo(new InitializingState(this));
 };
 
 RoomControl* RoomControl::Instance(){
@@ -39,8 +39,16 @@ void RoomControl::loop() {
 }
 
 
-void RoomControl::changeState(RoomControlState* s){
-	mStateMachine->changeState(s);	
+void RoomControl::changeToState(RoomControlState* s){
+	mStateMachine->changeTo(s);	
+}
+
+void RoomControl::moveToState(RoomControlState* s){
+	mStateMachine->moveTo(s);	
+}
+
+void RoomControl::revertState(){
+	mStateMachine->revert();	
 }
 
 

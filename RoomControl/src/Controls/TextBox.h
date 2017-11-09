@@ -26,7 +26,7 @@ class TextBox : public Control {
         const u8g_fntpgm_uint8_t* _font;
         bool _isEditing;
         int _pos;
-        void changePos(int value);
+        void changePos( U8GLIB_SH1106_128X64 *g,int value);
         
         
             
@@ -40,9 +40,9 @@ class TextBox : public Control {
         void setFont(const u8g_fntpgm_uint8_t* font);
         void drawMe(U8GLIB_SH1106_128X64 *g);
         
-        void doLeft();
-        void doRight();
-        void doSelect();
+        void doLeft(U8GLIB_SH1106_128X64 *g);
+        void doRight(U8GLIB_SH1106_128X64 *g);
+        void doSelect(U8GLIB_SH1106_128X64 *g);
 };
 
 

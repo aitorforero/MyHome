@@ -14,8 +14,9 @@
 #include "Controls/HorizontalAlign.h"
 
 
-ConfigurationMenuState::ConfigurationMenuState()
-	: titleLabel(0, 0, 128, 16, "Configuracion"),
+ConfigurationMenuState::ConfigurationMenuState(RoomControl*  rc)
+	: RoomControlState(rc),
+      titleLabel(0, 0, 128, 16, "Configuracion"),
       optionNameLabel(0, 16, 128, 19, ""),
       optionValueLabel(0, 35, 128, 16, ""),
 	  moveLeftIcon(0,0, icon_previous_width, icon_previous_height, icon_previous_bits),
@@ -54,10 +55,10 @@ ConfigurationMenuState::ConfigurationMenuState()
 
 
 
-void ConfigurationMenuState::enter(RoomControl* rc)
+void ConfigurationMenuState::enter()
 {
-    RoomControlState::enter(rc);
-    changeSelectedOption(rc->u8g, 0);
+    RoomControlState::enter();
+    changeSelectedOption(_owner->u8g, 0);
 };
 
 
@@ -130,7 +131,7 @@ void ConfigurationMenuState::handleButtonClick(ButtonEventArgs* e){
             changeSelectedOption(rc->u8g, 1);
             break;
         case bothButtons:
-            rc->changeState(ConfigurationEditNameState.Instance());
+            rc->moveToState(new ConfigurationEditNameState(rc));
             break;
     }
 };
