@@ -7,7 +7,7 @@ class MainState : public RoomControlState
 {
     public:
         MainState(RoomControl* rc):RoomControlState(rc){};
-
+ 
 };
 
 

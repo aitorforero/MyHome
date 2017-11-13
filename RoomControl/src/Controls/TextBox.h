@@ -5,6 +5,8 @@
 #include <U8glib.h>
 #include "Control.h"
 #include "ButtonBar.h"
+#include "Icon.h"
+
 
 class IntRange {
     public:
@@ -27,11 +29,15 @@ class TextBox : public Control {
         bool _isEditing;
         int _pos;
         void changePos( U8GLIB_SH1106_128X64 *g,int value);
+        Icon selectIcon;
+        Icon editIcon;
+        void setEditing(bool value);
+        char curr[2] = {0};
         
         
             
     public:
-        TextBox(int x, int y, int width, int height, int MaxLength, ButtonBar *_buttonBar);
+        TextBox(int x, int y, int width, int height, int MaxLength, ButtonBar *buttonBar);
         ~TextBox();
     
         void setValue(const char* value);
@@ -42,7 +48,7 @@ class TextBox : public Control {
         
         void doLeft(U8GLIB_SH1106_128X64 *g);
         void doRight(U8GLIB_SH1106_128X64 *g);
-        void doSelect(U8GLIB_SH1106_128X64 *g);
+        bool doSelect(U8GLIB_SH1106_128X64 *g);
 };
 
 

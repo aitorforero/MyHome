@@ -5,7 +5,6 @@
 #include <IconNext.h>
 #include <IconDone.h>
 #include <U8glib.h>
-#define DEBUG
 #include <DebugUtils.h>
 #include "ConfigurationMenuState.h"
 #include "ConfigurationEditNameState.h"
@@ -16,49 +15,49 @@
 
 ConfigurationMenuState::ConfigurationMenuState(RoomControl*  rc)
 	: RoomControlState(rc),
-      titleLabel(0, 0, 128, 16, "Configuracion"),
-      optionNameLabel(0, 16, 128, 19, ""),
-      optionValueLabel(0, 35, 128, 16, ""),
+	  titleLabel(0, 0, 128, 16, "Configuracion"),
+	  optionNameLabel(0, 16, 128, 19, ""), 
+	  optionValueLabel(0, 35, 128, 16, ""),
 	  moveLeftIcon(0,0, icon_previous_width, icon_previous_height, icon_previous_bits),
 	  moveRightIcon(0,0, icon_next_width, icon_next_height, icon_next_bits),
 	  selectIcon(0,0, icon_create_width, icon_create_height, icon_create_bits),		
 	  menuButtonBar(0, 54, 128, 10)
 {
-    menuOptions[0]="Nombre";
-    menuOptions[1]="MAC";
-    menuOptions[2]="Servidor MQTT";
-    menuOptions[3]="Puerto MQTT";
-    menuOptions[4]="Salir";
+	menuOptions[0]="Nombre";
+	menuOptions[1]="MAC";
+	menuOptions[2]="Servidor MQTT";
+	menuOptions[3]="Puerto MQTT";
+	menuOptions[4]="Salir";
 
-    selectedOption = 0;
+	selectedOption = 0;
 		
 	titleLabel.setFont(u8g_font_profont12r);
-    titleLabel.setBackColor(1);
-    titleLabel.setForeColor(0);
-    addChild(&titleLabel);
+	titleLabel.setBackColor(1);
+	titleLabel.setForeColor(0);
+	addChild(&titleLabel);
 		  
 	optionNameLabel.setFont(u8g_font_profont15r);
 	optionNameLabel.setHorizontalAlign(center);
-    addChild(&optionNameLabel);
+	addChild(&optionNameLabel);
 		  
 	optionValueLabel.setFont(u8g_font_profont12r);
 	optionValueLabel.setHorizontalAlign(center);
-    addChild(&optionValueLabel);
+	addChild(&optionValueLabel);
 	
 	menuButtonBar.setLeftIcon(&moveLeftIcon);
 	menuButtonBar.setRightIcon(&moveRightIcon);
 	menuButtonBar.setCenterIcon(&selectIcon);
-    menuButtonBar.setPadding(2, 0, 2, 0);
+	menuButtonBar.setPadding(2, 0, 2, 0);
 	addChild(&menuButtonBar);
-		 
 }
 
 
 
 void ConfigurationMenuState::enter()
 {
-    RoomControlState::enter();
-    changeSelectedOption(_owner->u8g, 0);
+	RoomControlState::enter();
+	_owner->println("Entrando en modo configuracion...");
+	changeSelectedOption(_owner->u8g, 0);
 };
 
 
@@ -70,7 +69,8 @@ void ConfigurationMenuState::drawMenu(U8GLIB_SH1106_128X64 *u8g)
 	{
 		drawChildren(u8g);
 	} while(u8g->nextPage());
-/*  
+  
+/*
 	char xValue[24];
 	sprintf(xValue, "%d %d %d %d %d %d",  moveRightIcon.getX(), moveRightIcon.getY(), moveRightIcon.getWidth(), moveRightIcon.getHeight());
 	rc->println(xValue);
@@ -79,7 +79,7 @@ void ConfigurationMenuState::drawMenu(U8GLIB_SH1106_128X64 *u8g)
 };
 
 void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int value){
-	selectedOption += value;
+/*	selectedOption += value;
 	if(selectedOption < 0){
 		selectedOption = MENU_OPTION_COUNT - 1;
 	} else if(selectedOption >= MENU_OPTION_COUNT ) {
@@ -87,7 +87,7 @@ void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int
 	}
 	
 
-    optionNameLabel.setText(menuOptions[selectedOption]);
+	optionNameLabel.setText(menuOptions[selectedOption]);
 	
 	selectIcon.setBitmap(icon_create_width, icon_create_height, icon_create_bits);	
 	char valueStr[18];
@@ -115,23 +115,23 @@ void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int
 	}
 
 	optionValueLabel.setText(valueStr);
-
+*/
 
 	drawMenu(u8g);
 }
 
 void ConfigurationMenuState::handleButtonClick(ButtonEventArgs* e){
-    RoomControl* rc = (RoomControl*)e->getSender();
-    
-    switch(e->getButtonName()) {
-        case leftButton:
-            changeSelectedOption(rc->u8g, -1);
-            break;
-        case rightButton:
-            changeSelectedOption(rc->u8g, 1);
-            break;
-        case bothButtons:
-            rc->moveToState(new ConfigurationEditNameState(rc));
-            break;
-    }
+/*	RoomControl* rc = (RoomControl*)e->getSender();
+	
+	switch(e->getButtonName()) {
+		case leftButton:
+			changeSelectedOption(rc->u8g, -1);
+			break;
+		case rightButton:
+			changeSelectedOption(rc->u8g, 1);
+			break;
+		case bothButtons:
+			rc->moveToState(new ConfigurationEditNameState(rc));
+			break;
+	}*/
 };

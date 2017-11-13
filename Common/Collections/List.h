@@ -51,26 +51,38 @@ public:
 
 	void remove(const T& item) {
 	    ListItem<T>* toDestroy;
-		
+		bool destroy = false;
+
 		if (_items->item == item) {
+			INFO_PRINT("Found first")
 			toDestroy = _items;
 			_items = toDestroy->next;
+			destroy = true;
 		} else {
-			bool destroy = false;
 			ListItem<T>* current = _items;
 			while(!destroy && current->next != NULL) {
 				if(current->item == item) {
+					INFO_PRINT("Found!")
 					toDestroy = current;
 				   	current->previous->next = current->next;
 					destroy = true;
 				} else {
-					current = current->next;      
+					INFO_PRINT("This is not")
+					current = current->next;
 				}
 			}
 		}
 
-		delete toDestroy;
-		_count--;
+		if (destroy)
+		{
+			INFO_PRINT("destroying")
+			delete toDestroy;
+			_count--;
+		}
+		else
+		{
+			INFO_PRINT("Not found!")
+		}
 	};
 
 	int indexOf(const T& item)

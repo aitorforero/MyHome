@@ -21,7 +21,9 @@ void InitializingState::execute()
 	initializeButtons();
 	
 	if(!Configuration::load()){
+		_owner->println("Error en configuracion...");
 		_owner->changeToState(new ConfigurationMenuState(_owner));
+		return;
 	}
 	
 	initializeEthernet();	

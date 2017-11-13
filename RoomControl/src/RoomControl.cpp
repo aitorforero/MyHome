@@ -31,16 +31,16 @@ RoomControl* RoomControl::Instance(){
 
  
 void RoomControl::loop() {
-    DEBUG_PRINT("loop start");
-    Timer::loop();
-    mStateMachine->update();
+	DEBUG_PRINT("loop start");
+	Timer::loop();
+	mStateMachine->update();
 	
-    DEBUG_PRINT("loop end");
+	DEBUG_PRINT("loop end");
 }
 
 
 void RoomControl::changeToState(RoomControlState* s){
-	mStateMachine->changeTo(s);	
+	mStateMachine->changeTo(s);
 }
 
 void RoomControl::moveToState(RoomControlState* s){
@@ -81,17 +81,17 @@ void RoomControl::println(const char* text){
 
 void RoomControl::onLeftButtonClick(EventArgs* e){
   if(this->rightButton->isPushed()) {
-  		onClick(ButtonName::bothButtons); 
+		onClick(ButtonName::bothButtons); 
 	} else {
-  		onClick(ButtonName::leftButton); 
+		onClick(ButtonName::leftButton); 
   }
 }
 
 void RoomControl::onRightButtonClick(EventArgs* e){
   if(this->rightButton->isPushed()) {
-  		onClick(ButtonName::bothButtons); 
+		onClick(ButtonName::bothButtons); 
 	} else {
-  		onClick(ButtonName::rightButton); 
+		onClick(ButtonName::rightButton); 
   }
 }
 

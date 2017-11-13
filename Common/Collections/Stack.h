@@ -9,7 +9,7 @@ class Stack {
 	private:
 		List<T> _items;
    
-  	public:
+	public:
 		Stack(){};
 	
 		T pop() {

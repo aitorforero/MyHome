@@ -23,9 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef DEBUGUTILS_H
 #define DEBUGUTILS_H
 
-#ifndef INFO
-#define INFO
-#endif
+
 
 #define DEBUG_DELAY 1
 
@@ -46,20 +44,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     #define DEBUG_PRINT(str)
 #endif
 
-#ifdef INFO
-    #define INFO_PRINT(str)    \
-       Serial.print(millis());     \
-       Serial.print(" : INFO  : ");    \
-       Serial.print(__PRETTY_FUNCTION__); \
-       Serial.print(' ');      \
-       Serial.print(__FILE__);     \
-       Serial.print(':');      \
-       Serial.print(__LINE__);     \
-       Serial.print(' ');      \
-       Serial.println(str); \
-       delay(DEBUG_DELAY);
-#else
-    #define INFO_PRINT(str)
-#endif
+
+#define INFO_PRINT(str)    \
+    Serial.print(millis());     \
+    Serial.print(" : INFO  : ");    \
+    Serial.print(str); \
+    Serial.print(" : ");      \
+    Serial.println(__PRETTY_FUNCTION__); \
+    delay(DEBUG_DELAY);
+
 
 #endif
