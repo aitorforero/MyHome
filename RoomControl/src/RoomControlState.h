@@ -24,8 +24,7 @@ class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
 			downHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonDown);
 			clickHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonClick);
 			upHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonUp);
- 
-			((ButtonEventsController*)_owner)->downEvent()->addHandler(downHndlr);        
+			((ButtonEventsController*)_owner)->downEvent()->addHandler(downHndlr);
 			((ButtonEventsController*)_owner)->clickEvent()->addHandler(clickHndlr);        
 			((ButtonEventsController*)_owner)->upEvent()->addHandler(upHndlr);        
 			INFO_PRINT("Entered!")

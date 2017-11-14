@@ -79,7 +79,7 @@ void ConfigurationMenuState::drawMenu(U8GLIB_SH1106_128X64 *u8g)
 };
 
 void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int value){
-/*	selectedOption += value;
+	selectedOption += value;
 	if(selectedOption < 0){
 		selectedOption = MENU_OPTION_COUNT - 1;
 	} else if(selectedOption >= MENU_OPTION_COUNT ) {
@@ -115,13 +115,13 @@ void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int
 	}
 
 	optionValueLabel.setText(valueStr);
-*/
 
+	
 	drawMenu(u8g);
 }
 
 void ConfigurationMenuState::handleButtonClick(ButtonEventArgs* e){
-/*	RoomControl* rc = (RoomControl*)e->getSender();
+	RoomControl* rc = (RoomControl*)e->getSender();
 	
 	switch(e->getButtonName()) {
 		case leftButton:
@@ -133,5 +133,5 @@ void ConfigurationMenuState::handleButtonClick(ButtonEventArgs* e){
 		case bothButtons:
 			rc->moveToState(new ConfigurationEditNameState(rc));
 			break;
-	}*/
+	}
 };

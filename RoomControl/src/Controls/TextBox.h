@@ -13,10 +13,17 @@ class IntRange {
         int min;
         int max;
 
-        IntRange(int newMin, int newMax){
+        IntRange(int newMin, int newMax)
+		{
             this->min = newMin;
             this->max = newMax;
         }
+        
+        bool contains(int character)
+        {
+  	      return !((min > character) || (max < character));
+		}
+       	
 };
 
 class TextBox : public Control {
@@ -28,6 +35,8 @@ class TextBox : public Control {
         const u8g_fntpgm_uint8_t* _font;
         bool _isEditing;
         int _pos;
+        int _currentRange;
+        void changeCharacter( int value);
         void changePos( U8GLIB_SH1106_128X64 *g,int value);
         Icon selectIcon;
         Icon editIcon;

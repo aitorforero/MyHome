@@ -2,20 +2,20 @@
 #define _List_h
 #include <Arduino.h>
 #include <DebugUtils.h>
+
 template <class T>
 class ListItem {
 	public:
 		ListItem<T> *previous;
 	    ListItem<T> *next;
-	    T item;
-		ListItem(const T& newItem) {
+	    T * item;
+		ListItem(T * newItem) {
 			item = newItem;
-			previous = NULL;
-			next = NULL;
+			previous = 0;
+			next = 0;
 		}
 	
 };
-
 
 template <class T> 
 class 
@@ -23,22 +23,23 @@ List
 {
 	private:
 	 int _count;
-	 ListItem<T> * _items= NULL;
+	 ListItem<T> * _items;
 	
 public:
 	List()
 	{	
 		_count = 0;
-		_items = NULL;
+		_items = 0;
 	};
 
 	void add(const T& item)
 	{
-		ListItem<T>*  newItem = new ListItem<T>(item); 
-		if(!this->_items) {
-			this->_items = newItem;
+		ListItem<T>*  newItem = new ListItem<T>((T*)&item); 
+
+		if(_count==0) {
+			_items = newItem;
 		} else {
-			ListItem<T>* last = this->_items;
+			ListItem<T>* last = _items;
 			while(last->next){
 				last = last->next;
 			}
@@ -47,27 +48,26 @@ public:
 		}		
 		
 		_count++;
+		INFO_PRINT("Created new item!")
+		INFO_PRINT((int)newItem)
 	};
 
 	void remove(const T& item) {
 	    ListItem<T>* toDestroy;
 		bool destroy = false;
 
-		if (_items->item == item) {
-			INFO_PRINT("Found first")
+		if (_items->item == &item) {
 			toDestroy = _items;
 			_items = toDestroy->next;
 			destroy = true;
 		} else {
-			ListItem<T>* current = _items;
-			while(!destroy && current->next != NULL) {
-				if(current->item == item) {
-					INFO_PRINT("Found!")
+			ListItem<T>* current = _items->next;
+			while(!(destroy || !current)) {
+				if(current->item == &item) {
 					toDestroy = current;
 				   	current->previous->next = current->next;
 					destroy = true;
 				} else {
-					INFO_PRINT("This is not")
 					current = current->next;
 				}
 			}
@@ -75,13 +75,8 @@ public:
 
 		if (destroy)
 		{
-			INFO_PRINT("destroying")
 			delete toDestroy;
 			_count--;
-		}
-		else
-		{
-			INFO_PRINT("Not found!")
 		}
 	};
 
@@ -90,7 +85,7 @@ public:
 		int index;
 		for(index = 0;index<_count;index++)
 		{
-			if(_items[index]->item==item)
+			if(_items[index]->item==&item)
 			{
 				break;
 			};
@@ -123,7 +118,7 @@ public:
 			current = current->next;
 			i++;
 		};
-		return current->item;	
+		return *(current->item);	
 	};
 
 };

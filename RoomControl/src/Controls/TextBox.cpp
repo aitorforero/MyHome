@@ -11,6 +11,7 @@ TextBox::TextBox(int x, int y, int width, int height, int maxLength, ButtonBar *
 	this->_maxLength = maxLength;
 	this->_value = new char[maxLength+1];
 	this->_pos = 0;
+	this->_currentRange = 0;
 	this->setValue("");
 	this->_buttonBar = buttonBar;
 	setEditing(false);
@@ -44,6 +45,7 @@ void TextBox::setValue(const char* value){
 	strncpy(this->_value, value, this->_maxLength );
 	_pos = 0;
 	curr[0] = value[0];
+	changeCharacter(0);
 };
 
 void TextBox::getValue(char* value){
@@ -75,7 +77,7 @@ void TextBox::drawMe( U8GLIB_SH1106_128X64 *g){
 	if(_pos>0){
 		strncpy(prev, this->_value, _pos-1);
 	}
-	strncpy(curr, this->_value + _pos + 1 , 1);
+	
 	if(_pos <= this->_maxLength){
 		strncpy(next, this->_value + _pos + 1, strlen(this->_value) - this->_pos - 1);
 	}
@@ -95,8 +97,8 @@ void TextBox::drawMe( U8GLIB_SH1106_128X64 *g){
 	
 	g->setColorIndex(_foreColor); 
 	g->drawStr(xPos, yPos, prev);
-	//g->drawStr(xPos + prevWidth, yPos, curr);
-	//g->drawStr(xPos + currWidth, yPos, next);
+	g->drawStr(xPos + prevWidth, yPos, curr);
+	g->drawStr(xPos + currWidth, yPos, next);
 	
 }
 
@@ -105,12 +107,29 @@ void TextBox::changePos( U8GLIB_SH1106_128X64 *g, int value){
 	this->draw(g);
 };
 
+void TextBox::changeCharacter( int value){
+	curr[0] +=value;
+	if(!characterRanges.item(_currentRange)->contains(curr[0]))
+	{
+		if(_currentRange==characterRanges.count())
+		{
+			_currentRange = 0;
+		}
+		else
+		{
+			_currentRange++;
+		}
+		
+		curr[0] += characterRanges.item(_currentRange)->min;
+	}
+};
+
 
 
 void TextBox::doLeft(U8GLIB_SH1106_128X64 *g){
 	if(_isEditing)
 	{
-		// change letter
+		changeCharacter(-1);
 	}
 	else
 	{
@@ -120,7 +139,7 @@ void TextBox::doLeft(U8GLIB_SH1106_128X64 *g){
 void TextBox::doRight(U8GLIB_SH1106_128X64 *g){
 	if(_isEditing)
 	{
-		// change letter
+		changeCharacter(1);
 	}
 	else
 	{

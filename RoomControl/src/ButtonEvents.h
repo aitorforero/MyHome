@@ -38,7 +38,22 @@ class ButtonEventsController
         Event<ButtonEventArgs>* _click;  
     
     public:
-        ButtonEventsController(RoomControl* owner):_owner(owner){};
+        ButtonEventsController(RoomControl* owner):_owner(owner)
+        {
+            _down = new Event<ButtonEventArgs>;
+            _up = new Event<ButtonEventArgs>;
+            _click = new Event<ButtonEventArgs>;
+        };
+
+        ~ButtonEventsController()
+        {
+            delete _down;
+            delete _up;
+            delete _click;
+        };
+
+
+
         Event<ButtonEventArgs>* downEvent(){return _down;};  
         Event<ButtonEventArgs>* upEvent(){return _up;};  
         Event<ButtonEventArgs>* clickEvent(){return _click;};  
