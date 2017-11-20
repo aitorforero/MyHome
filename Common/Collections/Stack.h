@@ -13,21 +13,26 @@ class Stack {
 		Stack(){};
 	
 		T pop() {
+			DEBUG_PRINT("popping...")
 			T value = peek();
 			_items.remove(value);
 			return value;
 		};
 	
 		T peek() {
-			return _items.item(_items.count()-1);
+			DEBUG_PRINT("Peeking value stored address:...")
+			T res = _items.item(_items.count()-1) ;
+			DEBUG_PRINT((int) &res)
+			return res;
 		};
 	
 		void push(const T& item) {
+			DEBUG_PRINT("Pushing...")
 			_items.add(item);
 		};
 	
 		bool isEmpty() {
-			return (_items.count()==0);
+			return _items.isEmpty();
 		};
 };   
 #endif

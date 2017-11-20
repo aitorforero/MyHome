@@ -64,7 +64,7 @@ void TextBox::setFont(const u8g_fntpgm_uint8_t* font){
 void TextBox::drawMe( U8GLIB_SH1106_128X64 *g){ 
 	Control::drawMe(g);
 	
-	int h = g->getFontAscent() - g->getFontDescent();
+	
 	int yPos;
 	int xPos;
 	int totWidth;
@@ -86,7 +86,9 @@ void TextBox::drawMe( U8GLIB_SH1106_128X64 *g){
 	
 	g->setFont(this->_font);
 	g->setFontRefHeightAll();
-	yPos += (totHeight - h) / 2 + g->getFontAscent();
+	int h = g->getFontAscent() - g->getFontDescent();
+	int yLetter = (totHeight - h) / 2;
+	yPos += yLetter + g->getFontAscent();
 	
 	
 	
@@ -98,6 +100,7 @@ void TextBox::drawMe( U8GLIB_SH1106_128X64 *g){
 	g->setColorIndex(_foreColor); 
 	g->drawStr(xPos, yPos, prev);
 	g->drawStr(xPos + prevWidth, yPos, curr);
+	g->drawFrame(xPos + prevWidth, yLetter, currWidth, h);
 	g->drawStr(xPos + currWidth, yPos, next);
 	
 }
@@ -149,4 +152,6 @@ void TextBox::doRight(U8GLIB_SH1106_128X64 *g){
 
 bool TextBox::doSelect(U8GLIB_SH1106_128X64 *g){
 	setEditing(!_isEditing);
+
+	return !_isEditing;
 };

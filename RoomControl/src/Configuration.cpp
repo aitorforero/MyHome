@@ -1,6 +1,7 @@
 #include "Configuration.h"
 #include <avr/wdt.h>
 #include <EEPROM.h>
+#include <string.h>
 
 
 byte Configuration::_mac[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; 
@@ -21,8 +22,12 @@ byte* Configuration::getMAC(){
     return _mac;
 };
 
-char* Configuration::getName(){
-    return _Name;
+void Configuration::getName(char* name){
+    strncpy(name, _Name, CONFIG_NAME_LENGTH );
+};
+
+void Configuration::setName(const char* value){
+    strncpy(_Name, value, CONFIG_NAME_LENGTH );
 };
 
 byte* Configuration::getMQTTServerIP(){

@@ -9,10 +9,10 @@ class ListItem {
 		ListItem<T> *previous;
 	    ListItem<T> *next;
 	    T * item;
-		ListItem(T * newItem) {
-			item = newItem;
-			previous = 0;
-			next = 0;
+		ListItem(T * item) {
+			this->item = item;
+			previous = nullptr;
+			next = nullptr;
 		}
 	
 };
@@ -29,7 +29,7 @@ public:
 	List()
 	{	
 		_count = 0;
-		_items = 0;
+		_items = nullptr;
 	};
 
 	void add(const T& item)
@@ -48,12 +48,14 @@ public:
 		}		
 		
 		_count++;
-		INFO_PRINT("Created new item!")
-		INFO_PRINT((int)newItem)
+		DEBUG_PRINT("Created new item!")
+		DEBUG_PRINT((int)(newItem->item))
 	};
 
 	void remove(const T& item) {
-	    ListItem<T>* toDestroy;
+	    DEBUG_PRINT("Remove item!")
+	    DEBUG_PRINT((int)&item)    
+        ListItem<T>* toDestroy;
 		bool destroy = false;
 
 		if (_items->item == &item) {
@@ -65,7 +67,7 @@ public:
 			while(!(destroy || !current)) {
 				if(current->item == &item) {
 					toDestroy = current;
-				   	current->previous->next = current->next;
+				    current->previous->next = current->next;
 					destroy = true;
 				} else {
 					current = current->next;
@@ -77,6 +79,7 @@ public:
 		{
 			delete toDestroy;
 			_count--;
+			DEBUG_PRINT("removed item!")
 		}
 	};
 
@@ -120,6 +123,20 @@ public:
 		};
 		return *(current->item);	
 	};
+
+    bool isEmpty() {
+		DEBUG_PRINT("Checking emptyness...")
+		if (_count == 0) 
+		{ 
+			DEBUG_PRINT("Empty!")
+			return true;
+		}
+		else
+		{
+			DEBUG_PRINT("Has items")
+			return false;
+		}
+    };
 
 };
 

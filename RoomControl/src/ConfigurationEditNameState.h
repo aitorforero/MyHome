@@ -27,6 +27,7 @@ class ConfigurationEditNameState : public RoomControlState, private ControlConta
     public:
       ConfigurationEditNameState(RoomControl* rc);     
       void enter();
+      void exit();
       
       void handleButtonClick(ButtonEventArgs* e);
 };

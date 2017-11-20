@@ -1,57 +1,56 @@
-
-/*
-DebugUtils.h - Simple debugging utilities.
-Copyright (C) 2011 Fabio Varesano <fabio at varesano dot net>
-
-Ideas taken from:
-http://www.arduino.cc/cgi-bin/yabb2/YaBB.pl?num=1271517197
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the version 3 GNU General Public License as
-published by the Free Software Foundation.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-*/
-
 #ifndef DEBUGUTILS_H
 #define DEBUGUTILS_H
 
-
-
-#define DEBUG_DELAY 1
-
-#ifdef DEBUG
-    #define INFO
-    #define DEBUG_PRINT(str)    \
-       Serial.print(millis());     \
-       Serial.print(" : DEBUG : ");    \
-       Serial.print(__PRETTY_FUNCTION__); \
-       Serial.print(' ');      \
-       Serial.print(__FILE__);     \
-       Serial.print(':');      \
-       Serial.print(__LINE__);     \
-       Serial.print(' ');      \
-       Serial.println(str); \
-       delay(DEBUG_DELAY);
-#else
-    #define DEBUG_PRINT(str)
-#endif
-
-
-#define INFO_PRINT(str)    \
+#define TRACE(type, str)    \
     Serial.print(millis());     \
-    Serial.print(" : INFO  : ");    \
+    Serial.print(" : "); \
+    Serial.print(type); \
+    Serial.print(" : ");  \
     Serial.print(str); \
     Serial.print(" : ");      \
     Serial.println(__PRETTY_FUNCTION__); \
-    delay(DEBUG_DELAY);
+    Serial.flush();
+
+#define TRACE_FORMATED(type, str, format)    \
+    Serial.print(millis());     \
+    Serial.print(" : "); \
+    Serial.print(type); \
+    Serial.print(" : ");  \
+    Serial.print(str,format); \
+    Serial.print(" : ");      \
+    Serial.println(__PRETTY_FUNCTION__); \
+    Serial.flush();
 
 
+#ifdef TRACE_LEVEL_DEBUG
+    #ifndef TRACE_LEVEL_ERROR
+        #define TRACE_LEVEL_ERROR
+    #endif
+    #define DEBUG_PRINT(str)  TRACE("DEBUG", str)
+    #define DEBUG_PRINT_FORMATED(str, format)   TRACE("DEBUG", str, format)
+#else
+    #define DEBUG_PRINT(str)
+    #define DEBUG_PRINT_FORMATED(str, format)
+#endif
+
+#ifdef TRACE_LEVEL_ERROR
+    #ifndef TRACE_LEVEL_INFO
+        #define TRACE_LEVEL_INFO
+    #endif
+    #define ERROR_PRINT(str)  TRACE("ERROR", str)
+    #define ERROR_PRINT_FORMATED(str, format)   TRACE("ERROR", str, format)
+#else
+    #define ERROR_PRINT(str)
+    #define ERROR_PRINT_FORMATED(str, format)
+#endif
+
+
+
+#ifdef TRACE_LEVEL_INFO
+    #define INFO_PRINT(str)  TRACE("INFO ", str)
+    #define INFO_PRINT_FORMATED(str, format)   TRACE("INFO ", str, format)
+#else
+    #define INFO_PRINT(str)
+    #define INFO_PRINT_FORMATED(str, format)
+#endif
 #endif

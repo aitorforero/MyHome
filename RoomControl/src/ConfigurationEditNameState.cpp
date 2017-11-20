@@ -34,10 +34,23 @@ ConfigurationEditNameState::ConfigurationEditNameState(RoomControl*  rc)
 void ConfigurationEditNameState::enter()
 {
     RoomControlState::enter();
-	nameTextBox.setValue(Configuration::getName());
+	char *name= new char[CONFIG_NAME_LENGTH+1];
+	Configuration::getName(name);
+	nameTextBox.setValue(name);
+	delete name;
 	draw(_owner->u8g);
 };
 
+
+void ConfigurationEditNameState::exit()
+{
+	char *newName = new char[CONFIG_NAME_LENGTH+1];
+	Configuration::getName(newName);
+	nameTextBox.getValue(newName);
+
+    Configuration::setName(newName);
+	delete newName;
+};
 
 void ConfigurationEditNameState::draw(U8GLIB_SH1106_128X64 *u8g)
 {

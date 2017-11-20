@@ -23,7 +23,7 @@ class Event
 				handlers->remove(h);
 		};
 		
-		void raise(TEventArgs* args) {
+		void raise(TEventArgs* args) { 
 				for(int i=0;i<handlers->count();i++)
 				{   
 					(handlers->item(i))(args);				

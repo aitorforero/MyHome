@@ -4,7 +4,7 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <avr/wdt.h>
-//#define DEBUG
+#define TRACE_LEVEL_DEBUG
 #include <DebugUtils.h>
 #include <Button.h>
 #include <EventArgs.h>
@@ -53,6 +53,7 @@ void RoomControl::revertState(){
 
 
 void RoomControl::println(const char* text){
+	INFO_PRINT(text)
 	int i;
 	u8g->setFont(u8g_font_profont10r);
 

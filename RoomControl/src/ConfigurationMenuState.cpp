@@ -93,7 +93,7 @@ void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int
 	char valueStr[18];
 	switch(selectedOption) {
 		case 0:
-			sprintf(valueStr,"%s",Configuration::getName());
+			Configuration::getName(valueStr);
 			break;
 		case 1: 
 			byte* mac;
