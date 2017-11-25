@@ -22,7 +22,6 @@ class Stack {
 		T peek() {
 			DEBUG_PRINT("Peeking value stored address:...")
 			T res = _items.item(_items.count()-1) ;
-			DEBUG_PRINT((int) &res)
 			return res;
 		};
 	

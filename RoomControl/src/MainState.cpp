@@ -5,4 +5,7 @@
 #include "Configuration.h"
 
 
-
+const char * MainState::getName()
+{
+    return "MainState";
+}

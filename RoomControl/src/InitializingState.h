@@ -13,6 +13,8 @@ class InitializingState : public RoomControlState
     public:
       InitializingState(RoomControl* rc):RoomControlState(rc){};
       void execute();
+      const char * getName();
+
 };
 
 

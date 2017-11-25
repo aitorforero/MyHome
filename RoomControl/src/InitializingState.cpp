@@ -33,6 +33,11 @@ void InitializingState::execute()
 	
 };
 
+const char * InitializingState::getName()
+{
+    return "InitializingState";
+};
+
 
 
 

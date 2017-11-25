@@ -2,10 +2,13 @@
 #include <Event.h>
 #include <EventArgs.h>
 #include <FastDelegate.h>
-#define DEBUG
+#define TRACE_LEVEL_DEBUG
 #include <DebugUtils.h>
 
 void Button::initialize(byte pin, byte pushedValue, bool usePullUp, unsigned long debounceTime){
+    DEBUG_PRINT("Initializing...")
+    DEBUG_PRINT("Button pin:")
+    DEBUG_PRINT(pin)
     this->_pin = pin;
     this->_pushedValue = pushedValue;
 	this->_click = new Event<EventArgs>;
@@ -21,6 +24,7 @@ void Button::initialize(byte pin, byte pushedValue, bool usePullUp, unsigned lon
     unsigned long period = debounceTime >> 3;
     t = Timer::create(period);
     t->tick()->addHandler(MakeDelegate(this, &Button::onTick));
+    t->tick()->raise(nullptr);
     t->enable();
 
 }
@@ -54,17 +58,28 @@ Event<EventArgs>* Button::up(){
 }
  
 void Button::onTick(EventArgs* e){
+    DEBUG_PRINT("Pin A0:")
+    DEBUG_PRINT(A0)
+    DEBUG_PRINT("Pin leido:")
+    DEBUG_PRINT(_pin)
     byte readValue = digitalRead(_pin);
+    DEBUG_PRINT("Valor leido:")
+    DEBUG_PRINT(readValue)
 	byte value = !(readValue ^ this->_pushedValue);
     EventArgs eClick(this);
+    DEBUG_PRINT("Valor calculado:")
+    DEBUG_PRINT(value)
     if(this->devounceValue==0xFF && value==0) {
         this->devounceValue = 0;
+        DEBUG_PRINT("CLICK!!!")
         this->_click->raise(&eClick); 
+        DEBUG_PRINT("UP!!!")
         this->_up->raise(&eClick); 	
 		this->downRaised = false;
 	} else {
 		this->devounceValue = (this->devounceValue << 1) | value; 
         if(!downRaised && this->devounceValue==0xFF) {
+            DEBUG_PRINT("DOWN!!!")
         	this->_down->raise(&eClick); 
 			this->downRaised = true;
 		};

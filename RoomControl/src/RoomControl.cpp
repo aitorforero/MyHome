@@ -16,13 +16,15 @@
 
 #define INVALID_VALUE -99
 
-RoomControl::RoomControl() : ButtonEventsController(this) {
+RoomControl::RoomControl() : 	ButtonEventsController(this)
+{
 	line = 0;
 	mStateMachine = new RoomControlStateMachine(this);
 	mStateMachine->changeTo(new InitializingState(this));
 };
 
-RoomControl* RoomControl::Instance(){
+RoomControl* RoomControl::Instance()
+{
 	static RoomControl instance;
 
 	return &instance;
@@ -31,11 +33,8 @@ RoomControl* RoomControl::Instance(){
 
  
 void RoomControl::loop() {
-	DEBUG_PRINT("loop start");
 	Timer::loop();
 	mStateMachine->update();
-	
-	DEBUG_PRINT("loop end");
 }
 
 
@@ -81,6 +80,7 @@ void RoomControl::println(const char* text){
 }
 
 void RoomControl::onLeftButtonClick(EventArgs* e){
+  reset();
   if(this->rightButton->isPushed()) {
 		onClick(ButtonName::bothButtons); 
 	} else {
@@ -97,6 +97,7 @@ void RoomControl::onRightButtonClick(EventArgs* e){
 }
 
 void RoomControl::onLeftButtonDown(EventArgs* e){
+  reset();
   onDown(ButtonName::leftButton);   
 }
 
@@ -105,6 +106,7 @@ void RoomControl::onRightButtonDown(EventArgs* e){
 }
 
 void RoomControl::onLeftButtonUp(EventArgs* e){
+  reset();
   onUp(ButtonName::leftButton);
 }
 

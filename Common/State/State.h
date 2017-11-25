@@ -14,6 +14,7 @@ class State
 		virtual void suspend()=0;
 		virtual void resume()=0;
 		virtual void exit()=0;
+		virtual const char * getName()=0;
 		
 		virtual ~State(){};
 };

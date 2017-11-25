@@ -135,3 +135,8 @@ void ConfigurationMenuState::handleButtonClick(ButtonEventArgs* e){
 			break;
 	}
 };
+
+const char * ConfigurationMenuState::getName()
+{
+    return "ConfigurationMenuState";
+};

@@ -1,105 +1,75 @@
 #ifndef _List_h
 #define _List_h
 #include <Arduino.h>
+#include <string.h>
 #include <DebugUtils.h>
 
-template <class T>
-class ListItem {
-	public:
-		ListItem<T> *previous;
-	    ListItem<T> *next;
-	    T * item;
-		ListItem(T * item) {
-			this->item = item;
-			previous = nullptr;
-			next = nullptr;
-		}
-	
-};
-
 template <class T> 
-class 
-List
+class List
 {
 	private:
-	 int _count;
-	 ListItem<T> * _items;
-	
-public:
-	List()
-	{	
-		_count = 0;
-		_items = nullptr;
-	};
+		int _count = 0;
+		T* _items = nullptr;
 
-	void add(const T& item)
-	{
-		ListItem<T>*  newItem = new ListItem<T>((T*)&item); 
-
-		if(_count==0) {
-			_items = newItem;
-		} else {
-			ListItem<T>* last = _items;
-			while(last->next){
-				last = last->next;
-			}
-			last->next = newItem;
-			newItem->previous = last;
-		}		
-		
-		_count++;
-		DEBUG_PRINT("Created new item!")
-		DEBUG_PRINT((int)(newItem->item))
-	};
-
-	void remove(const T& item) {
-	    DEBUG_PRINT("Remove item!")
-	    DEBUG_PRINT((int)&item)    
-        ListItem<T>* toDestroy;
-		bool destroy = false;
-
-		if (_items->item == &item) {
-			toDestroy = _items;
-			_items = toDestroy->next;
-			destroy = true;
-		} else {
-			ListItem<T>* current = _items->next;
-			while(!(destroy || !current)) {
-				if(current->item == &item) {
-					toDestroy = current;
-				    current->previous->next = current->next;
-					destroy = true;
-				} else {
-					current = current->next;
-				}
-			}
-		}
-
-		if (destroy)
+		void resizeIfNecesaryFor(int length)
 		{
-			delete toDestroy;
-			_count--;
-			DEBUG_PRINT("removed item!")
+			if (_count < length) {
+				// resize it
+			    T* newItems = (T*) calloc (length * 2, sizeof(T*));
+				memcpy(newItems, _items, _count * sizeof(T*));
+				if(_items) free(_items);
+				_items = newItems;
+			}
 		}
-	};
+
+	public:
+		~List()
+		{
+			if(_items) free(_items);			
+		}
+
+		void add(const T& item)
+		{
+			resizeIfNecesaryFor(_count+1);
+			_items[_count] = item;		
+			_count++;
+		};
+
+		void remove(const T& item) {
+			removeAt(indexOf(item));
+		};
+
+		void removeAt(int index)
+		{
+			for(int i=index; i<_count-1; i++)
+			{
+				_items[i] = _items[i+1];
+			}
+
+			_count--;
+		}
 
 	int indexOf(const T& item)
 	{
-		int index;
-		for(index = 0;index<_count;index++)
+		int i = 0;
+		bool found = false;
+		while(!found && (i < _count))
 		{
-			if(_items[index]->item==&item)
+			if (memcmp(&_items[i], &item,sizeof(item)) == 0)
 			{
-				break;
-			};
-		};
+				found = true;
+			} 
+			i++;
+		}
 
-		if (index==_count)
+		if(found)
 		{
-			index = -1;
-		};
-
-		return index;
+			return i;
+		}
+		else
+		{
+			return -1;
+		}
 	};
 
 	bool contains(const T& item)
@@ -115,25 +85,17 @@ public:
 
 	T item(int index)
 	{
-		int i = 0;
-		ListItem<T>* current = _items;
-		while (i<index) {
-			current = current->next;
-			i++;
-		};
-		return *(current->item);	
+		T res = _items[index]; 
+		return res;	
 	};
 
     bool isEmpty() {
-		DEBUG_PRINT("Checking emptyness...")
 		if (_count == 0) 
 		{ 
-			DEBUG_PRINT("Empty!")
 			return true;
 		}
 		else
 		{
-			DEBUG_PRINT("Has items")
 			return false;
 		}
     };

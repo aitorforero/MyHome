@@ -4,7 +4,10 @@
 #include "ConfigurationEditNameState.h"
 #include "Configuration.h"
 
-
+const char * ConfigurationEditNameState::getName()
+{
+    return "ConfigurationEditNameState";
+};
 
 ConfigurationEditNameState::ConfigurationEditNameState(RoomControl*  rc)
 	: RoomControlState(rc),

@@ -2,6 +2,10 @@
 #define _Event_h
 
 #include <Arduino.h>
+
+#define TRACE_LEVEL_DEBUG 
+#include <DebugUtils.h>
+
 #include <FastDelegate.h>
 #include <List.h>
 
@@ -15,29 +19,23 @@ class Event
 
 		void addHandler(Handler h)
 		{
-				handlers->add(h);
+			handlers.add(h);
 		};
 
 		void removeHandler(Handler h)
 		{
-				handlers->remove(h);
+		    handlers.remove(h);
 		};
 		
 		void raise(TEventArgs* args) { 
-				for(int i=0;i<handlers->count();i++)
+				for(int i=0;i<handlers.count();i++)
 				{   
-					(handlers->item(i))(args);				
+					(handlers.item(i))(args);				
 				}
 		};
-
-		Event()
-		{
-				handlers = new List<Handler>;
-		};
-
-	
+		
 		private:
-			List<Handler>* handlers;
+			List<Handler> handlers;
 };
 
 #endif

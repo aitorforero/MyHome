@@ -33,45 +33,45 @@ class ButtonEventsController
 {
     private:
         RoomControl* _owner;
-        Event<ButtonEventArgs>* _down;  
-        Event<ButtonEventArgs>* _up;  
-        Event<ButtonEventArgs>* _click;  
+        Event<ButtonEventArgs> _down;  
+        Event<ButtonEventArgs> _up;  
+        Event<ButtonEventArgs> _click;  
     
     public:
         ButtonEventsController(RoomControl* owner):_owner(owner)
         {
-            _down = new Event<ButtonEventArgs>;
-            _up = new Event<ButtonEventArgs>;
-            _click = new Event<ButtonEventArgs>;
+            // _down = new Event<ButtonEventArgs>;
+            // _up = new Event<ButtonEventArgs>;
+            // _click = new Event<ButtonEventArgs>;
         };
 
         ~ButtonEventsController()
         {
-            delete _down;
-            delete _up;
-            delete _click;
+            // delete _down;
+            // delete _up;
+            // delete _click;
         };
 
 
 
-        Event<ButtonEventArgs>* downEvent(){return _down;};  
-        Event<ButtonEventArgs>* upEvent(){return _up;};  
-        Event<ButtonEventArgs>* clickEvent(){return _click;};  
+        Event<ButtonEventArgs> downEvent(){return _down;};  
+        Event<ButtonEventArgs> upEvent(){return _up;};  
+        Event<ButtonEventArgs> clickEvent(){return _click;};  
        
     protected:
         void onDown(ButtonName _button) {
             ButtonEventArgs e(this, _button);
-            _down->raise(&e);
+            _down.raise(&e);
         };
         
         void onUp(ButtonName _button) {
             ButtonEventArgs e(this, _button);
-           _up->raise(&e);
+           _up.raise(&e);
         };
         
         void onClick(ButtonName _button) {
             ButtonEventArgs e(this, _button);
-           _click->raise(&e);
+           _click.raise(&e);
         };
         
 };

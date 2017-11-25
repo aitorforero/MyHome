@@ -33,6 +33,7 @@ class ConfigurationMenuState : public RoomControlState, private ControlContainer
     public:
       void enter();
       ConfigurationMenuState(RoomControl* rc);
+      const char * getName();
      
       
     protected:

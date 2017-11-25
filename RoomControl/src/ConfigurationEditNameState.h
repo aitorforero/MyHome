@@ -28,7 +28,8 @@ class ConfigurationEditNameState : public RoomControlState, private ControlConta
       ConfigurationEditNameState(RoomControl* rc);     
       void enter();
       void exit();
-      
+      const char * getName();
+     
       void handleButtonClick(ButtonEventArgs* e);
 };
 

@@ -21,7 +21,7 @@ class Timer {
         unsigned long _period;
         unsigned long startTime;
         void onTick();
-        Event<EventArgs>* _tick;
+        Event<EventArgs> _tick;
         Timer* nextTimer;
         Timer* previousTimer;
         static Timer* timers;
