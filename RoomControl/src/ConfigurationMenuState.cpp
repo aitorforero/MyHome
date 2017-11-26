@@ -56,6 +56,11 @@ ConfigurationMenuState::ConfigurationMenuState(RoomControl*  rc)
 void ConfigurationMenuState::enter()
 {
 	RoomControlState::enter();
+			
+	// _owner->downEvent()->addHandler(MakeDelegate(this, &ConfigurationMenuState::handleButtonDown));
+	// _owner->clickEvent()->addHandler(MakeDelegate(this, &ConfigurationMenuState::handleButtonClick));        
+	// _owner->upEvent()->addHandler(MakeDelegate(this, &ConfigurationMenuState::handleButtonUp)); 
+
 	_owner->println("Entrando en modo configuracion...");
 	changeSelectedOption(_owner->u8g, 0);
 };
@@ -122,7 +127,6 @@ void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int
 
 void ConfigurationMenuState::handleButtonClick(ButtonEventArgs* e){
 	RoomControl* rc = (RoomControl*)e->getSender();
-	
 	switch(e->getButtonName()) {
 		case leftButton:
 			changeSelectedOption(rc->u8g, -1);

@@ -1,6 +1,7 @@
 #ifndef BUTTONEVENTS_H
 #define BUTTONEVENTS_H
 
+#define TRACE_LEVEL_DEBUG
 #include <DebugUtils.h>
 #include <Event.h>
 #include <EventArgs.h>
@@ -38,25 +39,11 @@ class ButtonEventsController
         Event<ButtonEventArgs> _click;  
     
     public:
-        ButtonEventsController(RoomControl* owner):_owner(owner)
-        {
-            // _down = new Event<ButtonEventArgs>;
-            // _up = new Event<ButtonEventArgs>;
-            // _click = new Event<ButtonEventArgs>;
-        };
+        ButtonEventsController(RoomControl* owner):_owner(owner){};
 
-        ~ButtonEventsController()
-        {
-            // delete _down;
-            // delete _up;
-            // delete _click;
-        };
-
-
-
-        Event<ButtonEventArgs> downEvent(){return _down;};  
-        Event<ButtonEventArgs> upEvent(){return _up;};  
-        Event<ButtonEventArgs> clickEvent(){return _click;};  
+        Event<ButtonEventArgs>* downEvent(){return &_down;};  
+        Event<ButtonEventArgs>* upEvent(){return &_up;};  
+        Event<ButtonEventArgs>* clickEvent(){return &_click;};  
        
     protected:
         void onDown(ButtonName _button) {
@@ -70,7 +57,8 @@ class ButtonEventsController
         };
         
         void onClick(ButtonName _button) {
-            ButtonEventArgs e(this, _button);
+           DEBUG_PRINT(_click.handlerCount())
+           ButtonEventArgs e(this, _button);
            _click.raise(&e);
         };
         

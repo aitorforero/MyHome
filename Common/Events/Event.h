@@ -7,9 +7,10 @@
 #include <DebugUtils.h>
 
 #include <FastDelegate.h>
-#include <List.h>
+#include <vector>
 
 using namespace fastdelegate;
+using namespace std;
 
 template <class TEventArgs> 
 class Event
@@ -19,23 +20,37 @@ class Event
 
 		void addHandler(Handler h)
 		{
-			handlers.add(h);
+			handlers.push_back(h);
 		};
 
 		void removeHandler(Handler h)
-		{
-		    handlers.remove(h);
+		{ 
+			typename vector<Handler>::iterator Iter;
+			for (Iter = handlers.begin() ; Iter != handlers.end() ; Iter++ )  
+			{   
+				if(*Iter==h) 
+				{
+					handlers.erase(Iter);
+					break;
+				}
+			}
 		};
 		
 		void raise(TEventArgs* args) { 
-				for(int i=0;i<handlers.count();i++)
-				{   
-					(handlers.item(i))(args);				
-				}
+			typename vector<Handler>::iterator Iter;
+			for (Iter = handlers.begin() ; Iter != handlers.end() ; Iter++ )  
+			{   
+				(*Iter)(args);				
+			}
 		};
+
+		int handlerCount()
+		{
+			return handlers.size();
+		}
 		
 		private:
-			List<Handler> handlers;
+			vector<Handler> handlers;
 };
 
 #endif

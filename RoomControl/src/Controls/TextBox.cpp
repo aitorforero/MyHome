@@ -19,9 +19,9 @@ TextBox::TextBox(int x, int y, int width, int height, int maxLength, ButtonBar *
 
 TextBox::~TextBox(){
 	delete[] this->_value;
-	while(characterRanges.count()>0) {
-		IntRange* range = characterRanges.item(0);
-		characterRanges.remove(range);
+	while(!characterRanges.empty()) {
+		IntRange* range = characterRanges.back();
+		characterRanges.pop_back();
 		delete range;
 	}
 };
@@ -54,7 +54,7 @@ void TextBox::getValue(char* value){
 
 void TextBox::addCharacterRange(int min, int max){
 	IntRange* newRange = new IntRange(min,max);
-	characterRanges.add(newRange);
+	characterRanges.push_back(newRange);
 };
 
 void TextBox::setFont(const u8g_fntpgm_uint8_t* font){
@@ -112,9 +112,9 @@ void TextBox::changePos( U8GLIB_SH1106_128X64 *g, int value){
 
 void TextBox::changeCharacter( int value){
 	curr[0] +=value;
-	if(!characterRanges.item(_currentRange)->contains(curr[0]))
+	if(!characterRanges.at(_currentRange)->contains(curr[0]))
 	{
-		if(_currentRange==characterRanges.count())
+		if(_currentRange==characterRanges.size())
 		{
 			_currentRange = 0;
 		}
@@ -123,7 +123,7 @@ void TextBox::changeCharacter( int value){
 			_currentRange++;
 		}
 		
-		curr[0] += characterRanges.item(_currentRange)->min;
+		curr[0] += characterRanges.at(_currentRange)->min;
 	}
 };
 

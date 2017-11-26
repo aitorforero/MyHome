@@ -1,7 +1,7 @@
 #ifndef TEXTBOX_H
 #define TEXTBOX_H
 
-#include <List.h>
+#include <vector>
 #include <U8glib.h>
 #include "Control.h"
 #include "ButtonBar.h"
@@ -28,7 +28,7 @@ class IntRange {
 
 class TextBox : public Control {
     private:
-        List<IntRange*> characterRanges;
+        vector<IntRange*> characterRanges;
         int _maxLength;
         char *_value;
         ButtonBar *_buttonBar;

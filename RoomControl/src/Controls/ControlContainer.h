@@ -1,32 +1,42 @@
 #ifndef CONTROL_CONTAINER_H
 #define CONTROL_CONTAINER_H
 
-#include <List.h>
+#include <vector>
 #include <U8glib.h>
 #include "Control.h"
 
-class ControlContainer {
+using namespace std;
+
+class ControlContainer 
+{
     private:
-        List<Control*> _childControls;
+        vector<Control*> _childControls;
 
     public:
-       ControlContainer(){};
-    
         void addChild(Control* item) {
-            _childControls.add(item);
+            _childControls.push_back(item);
         };
     
         void removeChild(Control* item) {
-            _childControls.remove(item);
+            typename vector<Control*>::iterator _childControlsIter;
+			for (_childControlsIter = _childControls.begin() ; _childControlsIter != _childControls.end() ; _childControlsIter++ )  
+			{   
+				if(*_childControlsIter==item) 
+				{
+					_childControls.erase(_childControlsIter);
+					break;
+				}
+			};
         };
     
-        virtual void drawChildren(U8GLIB_SH1106_128X64 *g) {
-            for(int i = 0;i<this->_childControls.count();i++) {
-                this->_childControls.item(i)->draw(g);
+        virtual void drawChildren(U8GLIB_SH1106_128X64 *g) 
+        {
+            typename vector<Control*>::iterator _childControlsIter;
+			for (_childControlsIter = _childControls.begin() ; _childControlsIter != _childControls.end() ; _childControlsIter++ )  
+            {
+                (*_childControlsIter)->draw(g);
             }
         };
-
-        
 };
 
 #endif

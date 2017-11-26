@@ -80,7 +80,7 @@ void RoomControl::println(const char* text){
 }
 
 void RoomControl::onLeftButtonClick(EventArgs* e){
-  reset();
+  DEBUG_PRINT("Left Click!!")
   if(this->rightButton->isPushed()) {
 		onClick(ButtonName::bothButtons); 
 	} else {
@@ -89,7 +89,8 @@ void RoomControl::onLeftButtonClick(EventArgs* e){
 }
 
 void RoomControl::onRightButtonClick(EventArgs* e){
-  if(this->rightButton->isPushed()) {
+  DEBUG_PRINT("Right Click!!")
+  if(this->leftButton->isPushed()) {
 		onClick(ButtonName::bothButtons); 
 	} else {
 		onClick(ButtonName::rightButton); 
@@ -97,7 +98,6 @@ void RoomControl::onRightButtonClick(EventArgs* e){
 }
 
 void RoomControl::onLeftButtonDown(EventArgs* e){
-  reset();
   onDown(ButtonName::leftButton);   
 }
 
@@ -106,7 +106,6 @@ void RoomControl::onRightButtonDown(EventArgs* e){
 }
 
 void RoomControl::onLeftButtonUp(EventArgs* e){
-  reset();
   onUp(ButtonName::leftButton);
 }
 

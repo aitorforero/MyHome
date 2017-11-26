@@ -15,7 +15,7 @@
 #include "ButtonEvents.h"
 
 
-class RoomControl : ButtonEventsController {
+class RoomControl : public ButtonEventsController {
     public:
         static RoomControl* Instance();
         void loop();

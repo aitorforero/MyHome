@@ -26,9 +26,9 @@ class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
 			clickHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonClick);
 			upHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonUp);
 			
-			((ButtonEventsController*)_owner)->downEvent().addHandler(downHndlr);
-			((ButtonEventsController*)_owner)->clickEvent().addHandler(clickHndlr);        
-			((ButtonEventsController*)_owner)->upEvent().addHandler(upHndlr); 
+			((ButtonEventsController*)_owner)->downEvent()->addHandler(downHndlr);
+			((ButtonEventsController*)_owner)->clickEvent()->addHandler(clickHndlr);        
+			((ButtonEventsController*)_owner)->upEvent()->addHandler(upHndlr); 
 		};
 	  
 	   virtual void execute(){
@@ -36,9 +36,9 @@ class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
 	   };
 	  
 	  virtual void exit(){
-		  ((ButtonEventsController*)_owner)->downEvent().removeHandler(downHndlr);
-		  ((ButtonEventsController*)_owner)->clickEvent().removeHandler(clickHndlr);        
-		  ((ButtonEventsController*)_owner)->upEvent().removeHandler(upHndlr);        
+		  ((ButtonEventsController*)_owner)->downEvent()->removeHandler(downHndlr);
+		  ((ButtonEventsController*)_owner)->clickEvent()->removeHandler(clickHndlr);        
+		  ((ButtonEventsController*)_owner)->upEvent()->removeHandler(upHndlr);        
 	  };
 	  
 	virtual void suspend(){};

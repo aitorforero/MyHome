@@ -6,9 +6,6 @@
 #include <DebugUtils.h>
 
 void Button::initialize(byte pin, byte pushedValue, bool usePullUp, unsigned long debounceTime){
-    DEBUG_PRINT("Initializing...")
-    DEBUG_PRINT("Button pin:")
-    DEBUG_PRINT(pin)
     this->_pin = pin;
     this->_pushedValue = pushedValue;
 	this->_click = new Event<EventArgs>;
@@ -58,17 +55,9 @@ Event<EventArgs>* Button::up(){
 }
  
 void Button::onTick(EventArgs* e){
-    DEBUG_PRINT("Pin A0:")
-    DEBUG_PRINT(A0)
-    DEBUG_PRINT("Pin leido:")
-    DEBUG_PRINT(_pin)
     byte readValue = digitalRead(_pin);
-    DEBUG_PRINT("Valor leido:")
-    DEBUG_PRINT(readValue)
 	byte value = !(readValue ^ this->_pushedValue);
     EventArgs eClick(this);
-    DEBUG_PRINT("Valor calculado:")
-    DEBUG_PRINT(value)
     if(this->devounceValue==0xFF && value==0) {
         this->devounceValue = 0;
         DEBUG_PRINT("CLICK!!!")
