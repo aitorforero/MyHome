@@ -4,23 +4,23 @@
 #define CONTROLLINO_MEGA
 
 
-
+#include <vector>
 #include <Arduino.h>
 #include <Controllino.h>
 #include <SPI.h>
 #include <PubSubClient.h>
 #include <Button.h>
 #include <Timer.h>
-#include <List.h>
 #include <DebugUtils.h>
 
 #include <Ethernet.h>
 
+using namespace std;
 
 class Input {
     public:
         Button* button;
-        char* topic;
+        const char* topic;
         Input(const char* t, Button* b){
             this->button = b;
             this->topic = t;
@@ -36,7 +36,7 @@ class PLC {
     private:
         static EthernetClient ethClient;
         static PubSubClient mqttClient;
-        static List<Input*> inputs;
+        static vector<Input*> inputs;
         static long millisLastAttempt;
         static void initializeMQTT();
         static void initializeEthernet();
@@ -51,6 +51,6 @@ class PLC {
         static void onButtonUp(EventArgs* e);
         static int getValue(byte* payload, unsigned int length);
         static void publish(const char* portName,const char* messageType, const char* payload);
-
+        static void publishInput(int pin, const char * event);
 };
 #endif

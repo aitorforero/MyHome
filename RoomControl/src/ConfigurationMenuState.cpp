@@ -1,3 +1,4 @@
+#include <ArduinoSTL.h>
 #include <stdio.h>
 #include <DebugUtils.h>
 #include <IconCreate.h>
@@ -8,6 +9,7 @@
 #include <DebugUtils.h>
 #include "ConfigurationMenuState.h"
 #include "ConfigurationEditNameState.h"
+#include "MainState.h"
 #include "RoomControl.h"
 #include "Configuration.h"
 #include "Controls/HorizontalAlign.h"
@@ -53,18 +55,17 @@ ConfigurationMenuState::ConfigurationMenuState(RoomControl*  rc)
 
 
 
-void ConfigurationMenuState::enter()
+void ConfigurationMenuState::onEnter()
 {
-	RoomControlState::enter();
-			
-	// _owner->downEvent()->addHandler(MakeDelegate(this, &ConfigurationMenuState::handleButtonDown));
-	// _owner->clickEvent()->addHandler(MakeDelegate(this, &ConfigurationMenuState::handleButtonClick));        
-	// _owner->upEvent()->addHandler(MakeDelegate(this, &ConfigurationMenuState::handleButtonUp)); 
-
 	_owner->println("Entrando en modo configuracion...");
 	changeSelectedOption(_owner->u8g, 0);
 };
 
+void ConfigurationMenuState::onExecute()
+{
+	_owner->println("Paso a editar el nombre directamente...");
+	_owner->moveToState(new ConfigurationEditNameState(_owner));
+};
 
 
 void ConfigurationMenuState::drawMenu(U8GLIB_SH1106_128X64 *u8g)
@@ -126,16 +127,16 @@ void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int
 }
 
 void ConfigurationMenuState::handleButtonClick(ButtonEventArgs* e){
-	RoomControl* rc = (RoomControl*)e->getSender();
+	DEBUG_PRINT("A ver donde me muevo");
 	switch(e->getButtonName()) {
 		case leftButton:
-			changeSelectedOption(rc->u8g, -1);
+			changeSelectedOption(_owner->u8g, -1);
 			break;
 		case rightButton:
-			changeSelectedOption(rc->u8g, 1);
+			changeSelectedOption(_owner->u8g, 1);
 			break;
-		case bothButtons:
-			rc->moveToState(new ConfigurationEditNameState(rc));
+		default:
+			_owner->moveToState(new ConfigurationEditNameState(_owner));
 			break;
 	}
 };

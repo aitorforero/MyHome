@@ -1,30 +1,50 @@
 #include <Arduino.h>
+#include <DebugUtils.h>
 #include "Control.h"
 
 Control::Control(int x, int y, int width, int height) {
 
-    this->_x = x;
-    this->_y = y;
-    this->_width = width;
-    this->_height = height;
-    this->setPadding(2);
-    this->parent = 0;
+    _x = x;
+    _y = y;
+    _width = width;
+    _height = height;
+    setPadding(2);
+    parent = 0;
+    _Name = nullptr;
     
-    this->_backColor = 0;
-    this->_foreColor = 1;
+    _backColor = 0;
+    _foreColor = 1;
+    layoutChanged = true;
 }
 
+void Control::setName(const char * Name)
+{
+    _Name = Name;
+}
+
+const char * Control::getName()
+{
+    return _Name;
+}
+
+
 void Control::draw(U8GLIB_SH1106_128X64 *g){
-      	drawMe(g); 
+	if (layoutChanged) 
+	{
+        calculateLayout();
+        layoutChanged = false; 
+    }
+
+    drawMe(g);
 }
 
 void Control::drawMe(U8GLIB_SH1106_128X64 *g){
-      	g->setColorIndex(_backColor); 
-        g->drawBox(_x,_y,_width,_height);
+    g->setColorIndex(_backColor); 
+    g->drawBox(_x,_y,_width,_height);
 }
 
 void Control::setParent(Control* Parent){
-      	this->parent = Parent;
+    this->parent = Parent;
 }
 
 void Control::calculateLayout(){};

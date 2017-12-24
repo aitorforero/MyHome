@@ -1,7 +1,7 @@
 #ifndef BUTTONEVENTS_H
 #define BUTTONEVENTS_H
 
-#define TRACE_LEVEL_DEBUG
+#include "ArduinoSTL.h"
 #include <DebugUtils.h>
 #include <Event.h>
 #include <EventArgs.h>
@@ -17,7 +17,10 @@ class ButtonEventArgs : public EventArgs
         ButtonName _buttonName;
     
     public:
-        ButtonName getButtonName(){return _buttonName;};
+        ButtonName getButtonName(){
+            cout << "getting " << _buttonName << "\n";
+            return _buttonName;
+        };
         void setButtonName(ButtonName buttonName){_buttonName = buttonName;};
         ButtonEventArgs(void* sender, ButtonName buttonName):EventArgs(sender), _buttonName(buttonName) {};
 };
@@ -47,17 +50,19 @@ class ButtonEventsController
        
     protected:
         void onDown(ButtonName _button) {
+            cout << "on ButtonName: " << _button  << "\n";
             ButtonEventArgs e(this, _button);
             _down.raise(&e);
         };
         
         void onUp(ButtonName _button) {
+            cout << "on ButtonName: " << _button  << "\n";
             ButtonEventArgs e(this, _button);
            _up.raise(&e);
         };
         
         void onClick(ButtonName _button) {
-           DEBUG_PRINT(_click.handlerCount())
+            cout << "on ButtonName: " << _button  << "\n";
            ButtonEventArgs e(this, _button);
            _click.raise(&e);
         };

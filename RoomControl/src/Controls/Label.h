@@ -10,7 +10,10 @@ class Label : public Container {
         const char* _text;
         const u8g_fntpgm_uint8_t* _font;
         HorizontalAlign _horizontalAlign;
-    
+        void calculateLayout(U8GLIB_SH1106_128X64 *g);
+        int yPos;
+        int xPos;
+
     public:
         Label(int x, int y, int width, int height, const char* text);
         void drawMe( U8GLIB_SH1106_128X64 *g);

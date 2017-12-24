@@ -2,7 +2,6 @@
 #include <Event.h>
 #include <EventArgs.h>
 #include <FastDelegate.h>
-#define TRACE_LEVEL_DEBUG
 #include <DebugUtils.h>
 
 void Button::initialize(byte pin, byte pushedValue, bool usePullUp, unsigned long debounceTime){

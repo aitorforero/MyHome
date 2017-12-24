@@ -4,7 +4,6 @@
 #include <SPI.h>
 #include <Ethernet.h>
 #include <avr/wdt.h>
-#define TRACE_LEVEL_DEBUG
 #include <DebugUtils.h>
 #include <Button.h>
 #include <EventArgs.h>
@@ -80,36 +79,42 @@ void RoomControl::println(const char* text){
 }
 
 void RoomControl::onLeftButtonClick(EventArgs* e){
-  DEBUG_PRINT("Left Click!!")
   if(this->rightButton->isPushed()) {
+  		DEBUG_PRINT("Both after left Click!!")
 		onClick(ButtonName::bothButtons); 
 	} else {
+ 		DEBUG_PRINT("Left Click!!")
 		onClick(ButtonName::leftButton); 
   }
 }
 
 void RoomControl::onRightButtonClick(EventArgs* e){
-  DEBUG_PRINT("Right Click!!")
   if(this->leftButton->isPushed()) {
+  		DEBUG_PRINT("Both after right Click!!")
 		onClick(ButtonName::bothButtons); 
 	} else {
+  		DEBUG_PRINT("Right Click!!")
 		onClick(ButtonName::rightButton); 
   }
 }
 
 void RoomControl::onLeftButtonDown(EventArgs* e){
+  cout << "ButtonName: " << ButtonName::leftButton << "\n";
   onDown(ButtonName::leftButton);   
 }
 
 void RoomControl::onRightButtonDown(EventArgs* e){
+  cout << "ButtonName: " << ButtonName::rightButton  << "\n";
   onDown(ButtonName::rightButton);
 }
 
 void RoomControl::onLeftButtonUp(EventArgs* e){
+  cout << "ButtonName: " << ButtonName::leftButton << "\n";
   onUp(ButtonName::leftButton);
 }
 
 void RoomControl::onRightButtonUp(EventArgs* e){
+  cout << "ButtonName: " << ButtonName::rightButton  << "\n";
   onUp(ButtonName::rightButton);
 }
 

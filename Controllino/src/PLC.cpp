@@ -9,20 +9,20 @@
 #include <Timer.h>
 #include <FastDelegate.h>
 #include <DebugUtils.h>
-#include <List.h>
+#include <vector>
 #include "Configuration.h"
 #include "PLC.h"
 
 
 #define INVALID_VALUE -99
 
-
+using namespace std;
 
 
 
 EthernetClient PLC::ethClient;
 PubSubClient PLC::mqttClient(ethClient);
-List<Input*> PLC::inputs;
+vector<Input*> PLC::inputs;
 long PLC::millisLastAttempt = 0;
 
 void PLC::setup() {
@@ -102,7 +102,7 @@ void PLC::initializeInputs() {
 		button->down()->addHandler(&PLC::onButtonDown);
 		button->up()->addHandler(&PLC::onButtonUp);
 		Input *input = new Input(names[i], button);
-		PLC::inputs.add(input);
+		PLC::inputs.push_back(input);
 	}
 	
 
@@ -148,18 +148,17 @@ void PLC::log(const char* errorMsg)
 }
 
 void PLC::onMQTTMessage(char* topic, byte* payload, unsigned int length) {
-    DEBUG_PRINT("Message arrived [");
-    DEBUG_PRINT(topic);
-    DEBUG_PRINT("] ");
+    DEBUG_PRINT("Message arrived [" << topic << "] ");
+    
     for (unsigned int i=0;i<length;i++) {
         DEBUG_PRINT((char)payload[i]);
     }
-    DEBUG_PRINT();
+    
 
     char command[10];
     if (getOuput(topic, command)) {
-        DEBUG_PRINT("Comando: ");
-        DEBUG_PRINT(command);
+        DEBUG_PRINT("Comando: " << command);
+        
         int newState = getValue(payload, length);
         
         if(command[0]=='R') {
@@ -225,48 +224,39 @@ void PLC::publish(const char* portName,const char* messageType, const char* payl
 void PLC::onButtonClick(EventArgs* e){
 	INFO_PRINT("Click!!!");
 	INFO_PRINT(((Button*)e->sender)->pin());
+	publishInput(((Button*)e->sender)->pin(), "click");
 	
-	int i;
-	for(i=0;i<PLC::inputs.count();i++) {
-		Input* current = inputs.item(i);
-		if (current->button->pin()==((Button*)e->sender)->pin()) {
-			INFO_PRINT(current->topic);
-			PLC::publish(current->topic, "command", "click");
-			break;
-		}
-	}
 }
 
 void PLC::onButtonDown(EventArgs* e){
 	INFO_PRINT("Down!!!");
 	INFO_PRINT(((Button*)e->sender)->pin());
+	publishInput(((Button*)e->sender)->pin(), "down");
 	
-	int i;
-	for(i=0;i<PLC::inputs.count();i++) {
-		Input* current = inputs.item(i);
-		if (current->button->pin()==((Button*)e->sender)->pin()) {
-			INFO_PRINT(current->topic);
-			PLC::publish(current->topic, "command", "down");
-			break;
-		}
-	}
 }
 
 void PLC::onButtonUp(EventArgs* e){
 	INFO_PRINT("Up!!!");
 	INFO_PRINT(((Button*)e->sender)->pin());
 	
-	int i;
-	for(i=0;i<PLC::inputs.count();i++) {
-		Input* current = inputs.item(i);
-		if (current->button->pin()==((Button*)e->sender)->pin()) {
-			INFO_PRINT(current->topic);
-			PLC::publish(current->topic, "command", "up");
-			break;
-		}
-	}
+	publishInput(((Button*)e->sender)->pin(), "up");
+	
 }
 
+void PLC::publishInput(int pin, const char * event)
+{
+	typename vector<Input*>::iterator Iter;
+	
+	for (Iter = inputs.begin() ; Iter != inputs.end() ; Iter++ )  
+			{   
+				if((*Iter)->button->pin()==pin) 
+				{
+					PLC::publish((*Iter)->topic, "command", event);
+					break;
+				}
+			}
+	
+}
 
 
 

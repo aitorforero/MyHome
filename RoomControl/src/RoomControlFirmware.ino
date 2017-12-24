@@ -2,7 +2,6 @@
 #include <Arduino.h>
 #include <EEPROM.h>
 
-#define TRACE_LEVEL_DEBUG 
 #include <DebugUtils.h>
 
 #include "RoomControl.h"

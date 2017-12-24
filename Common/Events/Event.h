@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 
-#define TRACE_LEVEL_DEBUG 
 #include <DebugUtils.h>
 
 #include <FastDelegate.h>

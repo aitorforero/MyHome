@@ -1,3 +1,5 @@
+#include <ArduinoSTL.h>
+#include <DebugUtils.h>
 #include <string.h>
 #include <IconCreate.h>
 #include <IconDone.h>
@@ -8,17 +10,19 @@ TextBox::TextBox(int x, int y, int width, int height, int maxLength, ButtonBar *
 	  selectIcon(0,0, icon_done_width, icon_done_height, icon_done_bits),	
 	  editIcon(0,0, icon_create_width, icon_create_height, icon_create_bits)
 {
-	this->_maxLength = maxLength;
-	this->_value = new char[maxLength+1];
-	this->_pos = 0;
-	this->_currentRange = 0;
-	this->setValue("");
-	this->_buttonBar = buttonBar;
+	DEBUG_PRINT("Creating TextBox")
+	_maxLength = maxLength;
+	_value = new char[maxLength+1];
+	_pos = 0;
+	_currentRange = 0;
+	_buttonBar = buttonBar;
+	setValue("");
 	setEditing(false);
+	layoutChanged = true;
 };
 
 TextBox::~TextBox(){
-	delete[] this->_value;
+	if (_value) delete[] _value;
 	while(!characterRanges.empty()) {
 		IntRange* range = characterRanges.back();
 		characterRanges.pop_back();
@@ -31,25 +35,29 @@ void TextBox::setEditing(bool value)
 	_isEditing = value;
 	if(_isEditing)
 	{
-		_buttonBar->setCenterIcon(&selectIcon);
+	    DEBUG_PRINT("Editing state")
+    //	_buttonBar->setCenterIcon(&selectIcon);
 	}
 	else
 	{
-		_buttonBar->setCenterIcon(&editIcon);
+	    DEBUG_PRINT("Selecting state")
+    //	_buttonBar->setCenterIcon(&editIcon);
 	}
+	layoutChanged = true;
 }
 		
 	
 
 void TextBox::setValue(const char* value){
-	strncpy(this->_value, value, this->_maxLength );
+	strncpy(_value, value, this->_maxLength );
 	_pos = 0;
 	curr[0] = value[0];
-	changeCharacter(0);
+	// changeCharacter(0);
+	layoutChanged = true;
 };
 
 void TextBox::getValue(char* value){
-	strncpy(value, this->_value, this->_maxLength );
+	strncpy(value, _value, _maxLength );
 };
 
 void TextBox::addCharacterRange(int min, int max){
@@ -58,56 +66,85 @@ void TextBox::addCharacterRange(int min, int max){
 };
 
 void TextBox::setFont(const u8g_fntpgm_uint8_t* font){
-	this->_font = font;
+	_font = font;
+	layoutChanged = true;
 };
 
+void TextBox::calculateLayout( U8GLIB_SH1106_128X64 *g){ 
+		DEBUG_PRINT("calculating Layout...")
+
+		int yPos;
+		int xPos;
+		int totWidth;
+		int totHeight;
+		getDrawingArea(xPos, yPos, totWidth, totHeight);
+
+		int xPosOrg = xPos;
+		int yPosOrg = yPos;
+		
+		g->setFont(_font);
+		g->setFontRefHeightAll();
+		int h = g->getFontAscent() - g->getFontDescent();
+		yPos += (totHeight - h)  / 2 + g->getFontAscent() + 1;
+
+		xValue = xPos;
+		yValue = yPos;
+
+		char leftPart[_maxLength] = {0};
+		char currentPart[2] = {0};
+		
+		strncpy(leftPart, _value, _pos);
+		currentPart[0] = _value[_pos];
+		DEBUG_PRINT("_pos: " << _pos );
+		DEBUG_PRINT("_value: " << _value);
+		DEBUG_PRINT("leftPart: " << leftPart);
+		DEBUG_PRINT("Current: " << currentPart);
+		xCursor = xPos - 1 + g->getStrWidth(leftPart);
+		yCursor = yPosOrg;
+		cursorWidth = g->getStrWidth(currentPart);
+		cursorHeight = h;
+		DEBUG_PRINT("cursorWidth: " << cursorWidth );
+		DEBUG_PRINT("xCursor: " << xCursor);
+}
+
+
 void TextBox::drawMe( U8GLIB_SH1106_128X64 *g){ 
-	Control::drawMe(g);
-	
-	
-	int yPos;
-	int xPos;
-	int totWidth;
-	int totHeight;
-	getDrawingArea(xPos, yPos, totWidth, totHeight);
+    Control::drawMe(g);
 
-	char prev[this->_pos+1] = {0};
-	char next[strlen(this->_value)-this->_pos] = {0};
-	
-	if(_pos>0){
-		strncpy(prev, this->_value, _pos-1);
-	}
-	
-	if(_pos <= this->_maxLength){
-		strncpy(next, this->_value + _pos + 1, strlen(this->_value) - this->_pos - 1);
-	}
-
-	
-	
-	g->setFont(this->_font);
-	g->setFontRefHeightAll();
-	int h = g->getFontAscent() - g->getFontDescent();
-	int yLetter = (totHeight - h) / 2;
-	yPos += yLetter + g->getFontAscent();
-	
-	
-	
-	int prevWidth = g->getStrWidth(prev);
-	int currWidth = g->getStrWidth(curr);
-	int nextWidth = g->getStrWidth(next);
-
-	
-	g->setColorIndex(_foreColor); 
-	g->drawStr(xPos, yPos, prev);
-	g->drawStr(xPos + prevWidth, yPos, curr);
-	g->drawFrame(xPos + prevWidth, yLetter, currWidth, h);
-	g->drawStr(xPos + currWidth, yPos, next);
-	
+    g->setFont(_font);
+    g->setFontRefHeightAll();
+    g->setColorIndex(_foreColor); 
+    g->drawStr(xValue, yValue, _value);   
+    g->drawFrame(xCursor, yCursor,cursorWidth,cursorHeight);
 }
 
 void TextBox::changePos( U8GLIB_SH1106_128X64 *g, int value){
-	_pos +=value;
-	this->draw(g);
+    // Controlar valor _pos Negativo !!!
+	_pos+=value;
+	DEBUG_PRINT("Nuevo valor de _pos = " << _pos)
+	if(_pos<0)
+	{
+		DEBUG_PRINT("Salgo por abajo")
+		_pos = 0;
+	}
+	else if(_pos >=_maxLength)
+	{
+		DEBUG_PRINT("Salgo por arriba")
+		_pos--;
+	}
+	else
+	{
+    	int len = strlen(_value);
+		if(_pos>len-1) 
+        {
+			DEBUG_PRINT("Añadir una mas")
+    	   _value[_pos] = characterRanges.at(0)->min;
+    	   _value[_pos + 1] = 0;
+        }
+		
+	} 
+
+	layoutChanged = true;
 };
 
 void TextBox::changeCharacter( int value){
@@ -128,30 +165,36 @@ void TextBox::changeCharacter( int value){
 };
 
 
-
-void TextBox::doLeft(U8GLIB_SH1106_128X64 *g){
+    
+void TextBox::doLeft( U8GLIB_SH1106_128X64 *g){
+	DEBUG_PRINT("doLeft");
+	
 	if(_isEditing)
 	{
-		changeCharacter(-1);
-	}
+	 	changeCharacter(-1);
+    }
 	else
 	{
-		changePos(g, -1);
+		changePos(g,-1);
 	}
 };
-void TextBox::doRight(U8GLIB_SH1106_128X64 *g){
-	if(_isEditing)
+void TextBox::doRight( U8GLIB_SH1106_128X64 *g){
+    DEBUG_PRINT("doRight");
+    
+    if(_isEditing)
 	{
-		changeCharacter(1);
+	    changeCharacter(1);
 	}
 	else
 	{
-		changePos(g, 1);
+	    changePos(g, 1);
 	}    
 };
 
-bool TextBox::doSelect(U8GLIB_SH1106_128X64 *g){
-	setEditing(!_isEditing);
+bool TextBox::doSelect( U8GLIB_SH1106_128X64 *g){
+	DEBUG_PRINT("doSelect");
+    
+    setEditing(!_isEditing);
 
 	return !_isEditing;
 };

@@ -4,6 +4,7 @@
 
 #include <DebugUtils.h>
 #include <stack>
+#include <ArduinoSTL.h>
 #include <vector>
 #include "State.h"
 
@@ -36,6 +37,7 @@ class StateMachine
 		{
 			State<entity_type>* s = _StateStack.top();
 			_StateStack.pop();
+			s->suspend();
 			s->exit();
 			_statesToDelete.push_back(s);
 		}
@@ -44,6 +46,7 @@ class StateMachine
 		{
 			_StateStack.push(s);
 			s->enter();			
+			s->resume();			
 		}
 
 

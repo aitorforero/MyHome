@@ -20,6 +20,8 @@ class Control {
         int getHeight();
         int getX();
         int getY();
+        void setName(const char * Name);
+        const char * getName();
     
     protected:
         int _x;
@@ -32,7 +34,9 @@ class Control {
         int _rightPadding;
         int _topPadding;
         int _bottomPadding;
+        bool layoutChanged;
         void getDrawingArea(int& x, int& y, int& width, int& height);
+        const char * _Name;
        
         Control* parent;
     

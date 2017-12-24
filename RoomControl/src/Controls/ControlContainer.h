@@ -1,6 +1,7 @@
 #ifndef CONTROL_CONTAINER_H
 #define CONTROL_CONTAINER_H
 
+#include <DebugUtils.h>
 #include <vector>
 #include <U8glib.h>
 #include "Control.h"
