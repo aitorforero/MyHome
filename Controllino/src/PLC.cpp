@@ -1,8 +1,7 @@
-#define CONTROLLINO_MEGA
 #include <Arduino.h>
 #include <Controllino.h>
 #undef SPI_HAS_EXTENDED_CS_PIN_HANDLING
-#include <Ethernet.h>
+#include "./lib/Ethernet/src/Ethernet.h"
 #include <SPI.h>
 #include <PubSubClient.h>
 #include <Button.h>
@@ -26,6 +25,10 @@ vector<Input*> PLC::inputs;
 long PLC::millisLastAttempt = 0;
 
 void PLC::setup() {
+#ifdef CONTROLLINO_MEGA
+	DEBUG_PRINT("CONTROLLINO_MEGA definido");	
+#endif
+
 
 	DEBUG_PRINT("Inicializando PLC");
 
@@ -35,6 +38,7 @@ void PLC::setup() {
 		PLC::initializeMQTT();
 		PLC::initializeEthernet();
 		PLC::initializeInputs();
+		DEBUG_PRINT("Inicializacion OK");
 	} else {
 		INFO_PRINT("PLC sin configurar");
 	}
@@ -50,7 +54,7 @@ void PLC::loop() {
 	if(Configuration::isValid && !Configuration::isConfiguring) {
 		bool connected  = true;
 
-		if (!mqttClient.connected() && (millisLastAttempt ==0 || ((millis() - millisLastAttempt) >= 5000))) {
+		if (!mqttClient.connected() && (millisLastAttempt ==0 || ((millis() - millisLastAttempt) >= 2000))) {
 			millisLastAttempt = millis();
 			connected = reconnect();
 		}
@@ -77,6 +81,8 @@ void PLC::initializeEthernet() {
   INFO_PRINT("Inicializando ethernet...");
   IPAddress ip(Configuration::ip[0], Configuration::ip[1], Configuration::ip[2], Configuration::ip[3]);
   Ethernet.begin(Configuration::mac,ip);
+  
+  DEBUG_PRINT("Inicializado")
   // Allow the hardware to sort itself out
   delay(1500);
 
@@ -86,7 +92,7 @@ void PLC::initializeEthernet() {
 
 void PLC::initializeInputs() {  
   	INFO_PRINT("Inicializando entradas...");
-	char *names[19] = {"A0","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11","A12","A13","A14","A15","I16","I17","I18"};
+	const char * names[19] = {"A0","A1","A2","A3","A4","A5","A6","A7","A8","A9","A10","A11","A12","A13","A14","A15","I16","I17","I18"};
 	byte pins[19] = {
 		CONTROLLINO_A0,  CONTROLLINO_A1,  CONTROLLINO_A2,
 		CONTROLLINO_A3,	 CONTROLLINO_A4,  CONTROLLINO_A5,
@@ -98,16 +104,21 @@ void PLC::initializeInputs() {
 	};
 	
 	for(int i=0;i<=18;i++) {
+		DEBUG_PRINT("Entrada  " << i << " pin " << pins[i])
 		Button *button = new Button(pins[i] , HIGH, false, &PLC::onButtonClick, 10);
+		DEBUG_PRINT("Handlers  " << i)
 		button->down()->addHandler(&PLC::onButtonDown);
 		button->up()->addHandler(&PLC::onButtonUp);
+		DEBUG_PRINT("Creo entrada  " << i)
 		Input *input = new Input(names[i], button);
+		DEBUG_PRINT("La pongo en la lista  " << i)
 		PLC::inputs.push_back(input);
-	}
-	
+		DEBUG_PRINT("Inicializada  " << i)
+ }
+	DEBUG_PRINT("Inicializadas")
 
 	INFO_PRINT("Entradas inicializadas: ");
-}
+ }
 
 bool PLC::reconnect() {
     bool res;

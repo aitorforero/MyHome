@@ -1,9 +1,6 @@
 #ifndef _PLC_h
 #define _PLC_h
 
-#define CONTROLLINO_MEGA
-
-
 #include <vector>
 #include <Arduino.h>
 #include <Controllino.h>
