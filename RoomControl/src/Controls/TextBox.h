@@ -33,6 +33,8 @@ class TextBox : public Control {
         ButtonBar *_buttonBar;
         const u8g_fntpgm_uint8_t* _font;
         bool _isEditing;
+        bool _isEdited;
+        bool _isNewChar;
         int _pos;
         int _currentRange;
         void changeCharacter(int value);

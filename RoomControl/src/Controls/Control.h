@@ -41,7 +41,7 @@ class Control {
         Control* parent;
     
         virtual void drawMe(U8GLIB_SH1106_128X64 *g);
-        virtual void calculateLayout();
+        virtual void calculateLayout(U8GLIB_SH1106_128X64 *g);
         
 };
 

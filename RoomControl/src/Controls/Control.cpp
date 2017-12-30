@@ -31,7 +31,7 @@ const char * Control::getName()
 void Control::draw(U8GLIB_SH1106_128X64 *g){
 	if (layoutChanged) 
 	{
-        calculateLayout();
+        calculateLayout(g);
         layoutChanged = false; 
     }
 
@@ -47,28 +47,30 @@ void Control::setParent(Control* Parent){
     this->parent = Parent;
 }
 
-void Control::calculateLayout(){};
+void Control::calculateLayout(U8GLIB_SH1106_128X64 *g){};
 
 
                    
 void Control::setPosition(int x, int y){
     this->_x = x;
     this->_y = y; 
-    this->calculateLayout();
+    layoutChanged = true;
 }
                    
 void Control::setSize(int width, int height){
     this->_width = width;
     this->_height = height;    
-    this->calculateLayout();
+    layoutChanged = true;
 }
                    
 void Control::setForeColor(int value){
     this->_foreColor = value;
+    layoutChanged = true;
 }
                    
 void Control::setBackColor(int value){
     this->_backColor = value;
+    layoutChanged = true;
 }
 
 void Control::setPadding(int value){
@@ -80,7 +82,7 @@ void Control::setPadding(int leftPadding, int topPadding, int rightPadding, int 
     this->_topPadding = topPadding;
     this->_rightPadding = rightPadding;
     this->_bottomPadding = bottomPadding;
-    this->calculateLayout();
+    layoutChanged = true;
 }
 
 void Control::getDrawingArea(int& x, int& y, int& width, int& height) {

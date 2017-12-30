@@ -10,12 +10,12 @@ TextBox::TextBox(int x, int y, int width, int height, int maxLength, ButtonBar *
 	  selectIcon(0,0, icon_done_width, icon_done_height, icon_done_bits),	
 	  editIcon(0,0, icon_create_width, icon_create_height, icon_create_bits)
 {
-	DEBUG_PRINT("Creating TextBox")
 	_maxLength = maxLength;
 	_value = new char[maxLength+1];
 	_pos = 0;
 	_currentRange = 0;
 	_buttonBar = buttonBar;
+	_isNewChar = false;
 	setValue("");
 	setEditing(false);
 	layoutChanged = true;
@@ -36,12 +36,13 @@ void TextBox::setEditing(bool value)
 	if(_isEditing)
 	{
 	    DEBUG_PRINT("Editing state")
-    //	_buttonBar->setCenterIcon(&selectIcon);
+    	_buttonBar->setCenterIcon(&selectIcon);
+		_isEdited = true;
 	}
 	else
 	{
 	    DEBUG_PRINT("Selecting state")
-    //	_buttonBar->setCenterIcon(&editIcon);
+    	_buttonBar->setCenterIcon(&editIcon);
 	}
 	layoutChanged = true;
 }
@@ -51,7 +52,6 @@ void TextBox::setEditing(bool value)
 void TextBox::setValue(const char* value){
 	strncpy(_value, value, this->_maxLength );
 	_pos = 0;
-	curr[0] = value[0];
 	// changeCharacter(0);
 	layoutChanged = true;
 };
@@ -138,30 +138,63 @@ void TextBox::changePos( U8GLIB_SH1106_128X64 *g, int value){
 		if(_pos>len-1) 
         {
 			DEBUG_PRINT("Añadir una mas")
-    	   _value[_pos] = characterRanges.at(0)->min;
+		   _isEdited = false;
+		   _isNewChar = true;
+		   _currentRange = 0;
+    	   _value[_pos] = characterRanges.at(_currentRange)->min;
     	   _value[_pos + 1] = 0;
         }
-		
+		else if(_pos==len-2 && _isNewChar && !_isEdited) 
+        {
+			DEBUG_PRINT("Quitar la ultima")
+		   _isEdited = false;
+		   _isNewChar = false;
+    	   _value[_pos + 1] = 0;
+        }
+
+	
 	} 
 
 	layoutChanged = true;
 };
 
 void TextBox::changeCharacter( int value){
-	curr[0] +=value;
-	if(!characterRanges.at(_currentRange)->contains(curr[0]))
+	_value[_pos] +=value;
+	DEBUG_PRINT("Rango actual: " << _currentRange << " Minimo: " << characterRanges.at(_currentRange)->min << " Actual: " << _value[_pos] << " Maximo: " << characterRanges.at(_currentRange)->max )
+	if(characterRanges.at(_currentRange)->max < _value[_pos])
 	{
-		if(_currentRange==characterRanges.size())
+		DEBUG_PRINT("Me paso por arriba")
+		if(_currentRange== (characterRanges.size() - 1))
 		{
+			DEBUG_PRINT("Primer rango")
 			_currentRange = 0;
 		}
 		else
 		{
+			DEBUG_PRINT("Siguiente rango")
 			_currentRange++;
 		}
-		
-		curr[0] += characterRanges.at(_currentRange)->min;
+		_value[_pos] = characterRanges.at(_currentRange)->min;
+		DEBUG_PRINT("Corregido: " << _currentRange << " Minimo: " << characterRanges.at(_currentRange)->min << " Actual: " << _value[_pos] << " Maximo: " << characterRanges.at(_currentRange)->max )
 	}
+	else if(characterRanges.at(_currentRange)->min > _value[_pos])
+	{
+		DEBUG_PRINT("Me paso por abajo")
+		if(_currentRange == 0)
+		{
+			DEBUG_PRINT("Ultimo rango")
+			_currentRange = characterRanges.size() - 1;
+		}
+		else
+		{
+			DEBUG_PRINT("Anterior rango")
+			_currentRange++;
+		}
+		_value[_pos] = characterRanges.at(_currentRange)->max;
+		DEBUG_PRINT("Corregido: " << _currentRange << " Minimo: " << characterRanges.at(_currentRange)->min << " Actual: " << _value[_pos] << " Maximo: " << characterRanges.at(_currentRange)->max )
+	}
+
+	layoutChanged = true;
 };
 
 
@@ -179,6 +212,7 @@ void TextBox::doLeft( U8GLIB_SH1106_128X64 *g){
 	}
 };
 void TextBox::doRight( U8GLIB_SH1106_128X64 *g){
+
     DEBUG_PRINT("doRight");
     
     if(_isEditing)

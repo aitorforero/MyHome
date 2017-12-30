@@ -10,6 +10,7 @@ Label::Label(int x, int y, int width, int height, const char* text)
 
 void Label::calculateLayout(U8GLIB_SH1106_128X64 *g)
 {
+    DEBUG_PRINT("calculateLayout Text: " << _text )
 	int totWidth;
     int totHeight;
     getDrawingArea(xPos, yPos, totWidth, totHeight);
@@ -35,6 +36,8 @@ void Label::calculateLayout(U8GLIB_SH1106_128X64 *g)
             // Do nothing
             break;
     }
+
+    DEBUG_PRINT("xPos" << xPos << " yPos " << yPos )
 } 
 
 void Label::drawMe( U8GLIB_SH1106_128X64 *g){ 

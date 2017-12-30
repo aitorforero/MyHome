@@ -40,7 +40,7 @@ void ButtonBar::setRightIcon(Icon *icon) {
     }
 } 
 
-void ButtonBar::calculateLayout(){
+void ButtonBar::calculateLayout(U8GLIB_SH1106_128X64 *g){
     int yPos;
     int xPos;
     int totWidth;

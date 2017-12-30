@@ -19,7 +19,7 @@ class ButtonBar : public Container {
         void setLeftIcon(Icon *icon); 
         void setCenterIcon(Icon *icon);
         void setRightIcon(Icon *icon);
-        void calculateLayout();
+        void calculateLayout(U8GLIB_SH1106_128X64 *g);
 };
 
 #endif

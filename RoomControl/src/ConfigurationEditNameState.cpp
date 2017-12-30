@@ -77,16 +77,15 @@ void ConfigurationEditNameState::handleButtonClick(ButtonEventArgs* e){
     switch(e->getButtonName()) {
         case rightButton:
 	        nameTextBox.doRight(_owner->u8g);
-			draw(_owner->u8g);
             break;
         case leftButton:
 			DEBUG_PRINT("case leftButton") ;
 	        nameTextBox.doLeft(_owner->u8g);
-			draw(_owner->u8g);
             break;
-        case bothButtons:
+        default:
 	        nameTextBox.doSelect(_owner->u8g);
             break;
     };
+	draw(_owner->u8g);
 };
 

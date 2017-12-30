@@ -79,23 +79,42 @@ void RoomControl::println(const char* text){
 }
 
 void RoomControl::onLeftButtonClick(EventArgs* e){
-  if(this->rightButton->isPushed()) {
+  	if(this->rightButton->isPushed()) 
+  	{
   		DEBUG_PRINT("Both after left Click!!")
+		previousBothClick = true;
 		onClick(ButtonName::bothButtons); 
-	} else {
+	} 
+	else if (!previousBothClick) 
+	{
  		DEBUG_PRINT("Left Click!!")
 		onClick(ButtonName::leftButton); 
-  }
+  	}
+	else
+	{
+  		DEBUG_PRINT("Previous Both Click!!")
+		previousBothClick = false;
+	}
 }
 
 void RoomControl::onRightButtonClick(EventArgs* e){
-  if(this->leftButton->isPushed()) {
+  	if(this->leftButton->isPushed()) 
+  	{
   		DEBUG_PRINT("Both after right Click!!")
+		previousBothClick = true;
 		onClick(ButtonName::bothButtons); 
-	} else {
+  	} 
+  	else if (!previousBothClick) 
+  	{
   		DEBUG_PRINT("Right Click!!")
 		onClick(ButtonName::rightButton); 
-  }
+	} 
+	else
+	{
+  		DEBUG_PRINT("Previous Both Click!!")
+		previousBothClick = false;
+	}
+
 }
 
 void RoomControl::onLeftButtonDown(EventArgs* e){

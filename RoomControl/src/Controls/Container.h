@@ -10,13 +10,13 @@ class Container : public ControlContainer, public Control {
         void addChild(Control* item) {
             item->setParent(this);
             ControlContainer::addChild(item);
-            calculateLayout();
+            layoutChanged=true;
         };
     
         void removeChild(Control* item) {
             ControlContainer::removeChild(item);
             item->setParent(0);
-            calculateLayout();
+            layoutChanged=true;
         };
     
         Container(int x, int y, int width, int height):Control(x,y,width,height){};

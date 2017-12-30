@@ -40,6 +40,7 @@ class RoomControl : public ButtonEventsController {
         RoomControl();
         char buffer[5][81];
         int line = 0;
+        bool previousBothClick = false;
         RoomControlStateMachine* mStateMachine;
 };
 #endif
