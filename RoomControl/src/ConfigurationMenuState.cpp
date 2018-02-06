@@ -63,8 +63,8 @@ void ConfigurationMenuState::onEnter()
 
 void ConfigurationMenuState::onExecute()
 {
-	_owner->println("Paso a editar el nombre directamente...");
-	_owner->moveToState(new ConfigurationEditNameState(_owner));
+// 	_owner->println("Paso a editar el nombre directamente...");
+// 	_owner->moveToState(new ConfigurationEditNameState(_owner));
 };
 
 

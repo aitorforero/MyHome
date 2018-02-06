@@ -50,6 +50,7 @@ class TextBox : public Control {
         bool _isNewChar;
         int _pos;
         int _currentRange;
+        bool _saved;
         
         void changeCharacter(int value);
         void changePos(int value);

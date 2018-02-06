@@ -3,7 +3,7 @@
 #include <EEPROM.h>
 #include <string.h>
 
-
+     
 byte Configuration::_mac[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; 
 char Configuration::_Name[9] = "ANONIMO";
 byte Configuration::_MQTTserverIP[4] = {0,0,0,0};

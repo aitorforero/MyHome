@@ -351,15 +351,21 @@ void TextBox::insertAt(int pos)
 	changePos(pos - _pos);
 };
 
-void TextBox::save(){};
-void TextBox::cancel(){};
+void TextBox::save()
+{
+	_saved = true;
+};
+void TextBox::cancel()
+{
+	_saved = false;
+};
 
     
 void TextBox::doLeft( U8GLIB_SH1106_128X64 *g){
 	DEBUG_PRINT("doLeft");
 	
 	switch(_state)
-	{
+	{ 
 		case Canceling:
 			setState(Inserting);
 			break;
@@ -434,7 +440,7 @@ bool TextBox::doSelect( U8GLIB_SH1106_128X64 *g){
 	{
 		case Canceling:
 		    cancel();
-		    return = true;
+		    res = true;
 			break;
 		case Inserting:
 			insertAt(_pos);
