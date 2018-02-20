@@ -37,7 +37,8 @@ class ConfigurationMenuState : public RoomControlState, private ControlContainer
       
     protected:
       void handleButtonClick(ButtonEventArgs* e);
-      void onEnter();
+      void onEnter();      
+      void onResume();
       void onExecute();
 };
 

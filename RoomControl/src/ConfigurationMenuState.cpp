@@ -9,6 +9,9 @@
 #include <DebugUtils.h>
 #include "ConfigurationMenuState.h"
 #include "ConfigurationEditNameState.h"
+#include "ConfigurationEditMACState.h"
+#include "ConfigurationEditServerState.h"
+#include "ConfigurationEditPortState.h"
 #include "MainState.h"
 #include "RoomControl.h"
 #include "Configuration.h"
@@ -68,6 +71,12 @@ void ConfigurationMenuState::onExecute()
 };
 
 
+void ConfigurationMenuState::onResume()
+{
+	changeSelectedOption(_owner->u8g, 0);
+};
+
+
 void ConfigurationMenuState::drawMenu(U8GLIB_SH1106_128X64 *u8g)
 {
 	u8g->firstPage();  
@@ -102,13 +111,13 @@ void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int
 			Configuration::getName(valueStr);
 			break;
 		case 1: 
-			byte* mac;
-			mac = Configuration::getMAC();
+			byte mac[CONFIG_MAC_LENGTH];
+			Configuration::getMAC(mac);
 			sprintf(valueStr, "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
 			break;
 		case 2:
-			byte* IP;
-			IP = Configuration::getMQTTServerIP();
+			byte IP[CONFIG_MQTT_SERVER_IP_LENGTH];
+			Configuration::getMQTTServerIP(IP);
 			sprintf(valueStr, "%03d:%03d:%03d:%03d", IP[0], IP[1], IP[2], IP[3]);
 			break;
 		case 3:
@@ -136,7 +145,25 @@ void ConfigurationMenuState::handleButtonClick(ButtonEventArgs* e){
 			changeSelectedOption(_owner->u8g, 1);
 			break;
 		default:
-			_owner->moveToState(new ConfigurationEditNameState(_owner));
+		 switch(selectedOption)
+		 {
+					case 0:
+							_owner->moveToState(new ConfigurationEditNameState(_owner));
+							break;
+					case 1:
+							_owner->moveToState(new ConfigurationEditMACState(_owner));					
+							break;
+					case 2:
+							_owner->moveToState(new ConfigurationEditServerState(_owner));
+							break;
+					case 3:
+							_owner->moveToState(new ConfigurationEditPortState(_owner));
+							break;
+					default:
+							_owner->moveToState(new ConfigurationEditNameState(_owner));
+							break;					
+				}
+			
 			break;
 	}
 };

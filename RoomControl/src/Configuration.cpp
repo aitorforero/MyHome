@@ -1,40 +1,91 @@
-#include "Configuration.h"
 #include <avr/wdt.h>
 #include <EEPROM.h>
 #include <string.h>
 
-     
-byte Configuration::_mac[6] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00}; 
-char Configuration::_Name[9] = "ANONIMO";
-byte Configuration::_MQTTserverIP[4] = {0,0,0,0};
-int Configuration::_MQTTserverPort = 0;
+#include "Configuration.h"
 
+bool Configuration::load()
+{
+	bool isValid = false;
+	
+	EEPROM.get(CONFIG_SIGNATURE_POS, cd);
 
-bool Configuration::load(){
-    return false;
+	if (strcmp(cd.signature,CONFIG_SIGNATURE)!=0)
+	{
+		setSignature(CONFIG_SIGNATURE);
+		setMAC(nullMAC);
+		setName(CONFIG_DEFAULT_NAME);
+		setMQTTServerIP(CONFIG_MQTT_SERVER_IP_LENGTH);
+		setMQTTServerPort(CONFIG_DEFAULT_PORT);
+		update();
+	}
+
+	return isValid ;
+
+}
+
+void Configuration::setSignature(const char* signature)
+{ 
+	for(int i = 0; i < CONFIG_SIGNATURE_LENGTH; i++)
+		cd.signature[i] = signature[i];
+	update();  
 };
 
-void Configuration::save(){
-    // Save configuration here
+void Configuration::update()
+{
+	EEPROM.put(CONFIG_SIGNATURE_POS, cd);            
+}
+    
+void Configuration::getMAC(byte* MAC)
+{
+	for(int i = 0; i < CONFIG_MAC_LENGTH; i++)
+		MAC[i] = cd.MAC[i];
+};
+    
+void Configuration::setMAC(const byte* MAC)
+{ 
+	for(int i = 0; i < CONFIG_MAC_LENGTH; i++)
+		cd.MAC[i] = MAC[i];
+	update();  
 };
 
-byte* Configuration::getMAC(){
-    return _mac;
+bool Configuration::getName(char* name)
+{
+  for(int i = 0; i < CONFIG_NAME_LENGTH; i++)
+		name[i] = cd.name[i];
+ };
+    
+void Configuration::setName(const char* name)
+{ 
+	for(int i = 0; i < CONFIG_NAME_LENGTH; i++)
+		cd.name[i] = name[i];
+	update();  
+};
+    
+void Configuration::getMQTTServerIP(byte* serverIP)
+{    
+  for(int i = 0; i < CONFIG_MQTT_SERVER_IP_LENGTH; i++)
+		serverIP[i] = cd.serverIP[i];
+};
+    
+void Configuration::setMQTTServerIP(const byte* serverIP)
+{    
+  for(int i = 0; i < CONFIG_MQTT_SERVER_IP_LENGTH; i++)
+		cd.serverIP[i] = cd.serverIP[i];
+	update();  
 };
 
-void Configuration::getName(char* name){
-    strncpy(name, _Name, CONFIG_NAME_LENGTH );
+int Configuration::getMQTTServerPort()
+{
+	return cd.serverPort;          
 };
 
-void Configuration::setName(const char* value){
-    strncpy(_Name, value, CONFIG_NAME_LENGTH );
+void Configuration::setMQTTServerPort(int serverPort)
+{
+	cd.serverPort = serverPort;        
+	update();  
 };
 
-byte* Configuration::getMQTTServerIP(){
-    return _MQTTserverIP;
-};
-
-int Configuration::getMQTTServerPort(){
-    return _MQTTserverPort;
-};
-
+ConfigurationData Configuration::cd;
+byte Configuration::nullMAC[CONFIG_MAC_LENGTH] = {0};
+byte Configuration::nullIP[CONFIG_MQTT_SERVER_IP_LENGTH] = {0};

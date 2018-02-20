@@ -63,15 +63,20 @@ void InitializingState::initializeScreen(){
 
 void InitializingState::initializeEthernet(){
 
-  _owner->println("Inicializando ethernet...");
-  _owner->ethClient = new EthernetClient;
-  Ethernet.begin(Configuration::getMAC());
-  // Allow the hardware to sort itself out
-  delay(1500);
-  char IPAddress [16];
-  sprintf(IPAddress,"%d.%d.%d.%d",Ethernet.localIP()[0],Ethernet.localIP()[1],Ethernet.localIP()[2],Ethernet.localIP()[3]);
+	_owner->println("Inicializando ethernet...");
+	_owner->ethClient = new EthernetClient;
 	
-  _owner->println(IPAddress);
+	byte MAC[CONFIG_MAC_LENGTH];
+	
+	Configuration::getMAC(MAC);
+
+	Ethernet.begin(MAC);
+	// Allow the hardware to sort itself out
+	delay(1500);
+	char IPAddress [16];
+	sprintf(IPAddress,"%d.%d.%d.%d",Ethernet.localIP()[0],Ethernet.localIP()[1],Ethernet.localIP()[2],Ethernet.localIP()[3]);
+
+	_owner->println(IPAddress);
 }
 
 void InitializingState::initializeButtons() {  

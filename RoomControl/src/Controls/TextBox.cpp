@@ -313,6 +313,8 @@ void TextBox::changeCharacter( int value){
 	DEBUG_PRINT("Corregido: " << nextRange << " Minimo: " << characterRanges.at(nextRange)->min << " Actual: " << nextValue << " Maximo: " << characterRanges.at(nextRange)->max );
 	
 	_value[_pos] = nextValue;
+	_currentRange = nextRange;
+	
 			
 
 	layoutChanged = true;
@@ -344,8 +346,8 @@ void TextBox::insertAt(int pos)
 			_value[i-1] = _value[i];	
 		}
         
-        currentRange = 0;
-		_value[valueLength - 1] = characterRanges.at(currentRange)->min;
+        _currentRange = 0;
+		_value[valueLength - 1] = characterRanges.at(_currentRange)->min;
 	}
 
 	changePos(pos - _pos);
@@ -355,6 +357,12 @@ void TextBox::save()
 {
 	_saved = true;
 };
+
+bool TextBox::saved()
+{
+	return _saved;
+};
+
 void TextBox::cancel()
 {
 	_saved = false;

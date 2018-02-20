@@ -5,7 +5,7 @@
 Label::Label(int x, int y, int width, int height, const char* text)
     : Container (x, y, width, height)
 {
-    this->_text = text;
+    this->setText(text);
 };
 
 void Label::calculateLayout(U8GLIB_SH1106_128X64 *g)
@@ -51,11 +51,14 @@ void Label::drawMe( U8GLIB_SH1106_128X64 *g){
 
 void Label::setText(const char* text){
     this->_text = text;
+    layoutChanged = true;
 }
 void Label::setFont(const u8g_fntpgm_uint8_t* font){
     this->_font = font;
+    layoutChanged = true;
 }
 
 void Label::setHorizontalAlign(HorizontalAlign horizontalAlign){
     this->_horizontalAlign = horizontalAlign;           
+    layoutChanged = true;
 }

@@ -2,22 +2,22 @@
 #include <IconCreate.h>
 #include <IconPrevious.h>
 #include <IconNext.h>
-#include "ConfigurationEditNameState.h"
+#include "ConfigurationEditServerState.h"
 #include "Configuration.h"
 
-const char * ConfigurationEditNameState::getName()
+const char * ConfigurationEditServerState::getName()
 {
-    return "ConfigurationEditNameState";
+    return "ConfigurationEditServerState";
 };
 
-ConfigurationEditNameState::ConfigurationEditNameState(RoomControl*  rc)
+ConfigurationEditServerState::ConfigurationEditServerState(RoomControl*  rc)
 	: RoomControlState(rc)
 	, titleLabel(0, 0, 128, 16, "Nombre") 
 	, menuButtonBar(0, 54, 128, 10)
 	, moveLeftIcon(0,0, icon_previous_width, icon_previous_height, icon_previous_bits)
 	, moveRightIcon(0,0, icon_next_width, icon_next_height, icon_next_bits)
 	, selectIcon(0,0, icon_create_width, icon_create_height, icon_create_bits)	
-    , nameTextBox(0, 22, 128, 16, 8, &menuButtonBar)
+    , serverTextBox(0, 22, 128, 16, 8, &menuButtonBar)
 {
 	titleLabel.setFont(u8g_font_profont12r);
     titleLabel.setBackColor(1);
@@ -26,10 +26,10 @@ ConfigurationEditNameState::ConfigurationEditNameState(RoomControl*  rc)
     addChild(&titleLabel);
 		  
 	DEBUG_PRINT("Añadiendo menuButtonBar...");
-	nameTextBox.setFont(u8g_font_profont22r);
-	nameTextBox.addCharacterRange(65, 90); // A..Z
-	nameTextBox.setName("nameTextBox");
-    addChild(&nameTextBox);
+	serverTextBox.setFont(u8g_font_profont22r);
+	serverTextBox.addCharacterRange(65, 90); // A..Z
+	serverTextBox.setName("serverTextBox");
+    addChild(&serverTextBox);
 
 	moveLeftIcon.setName("moveLeftIcon");
 	moveRightIcon.setName("moveRightIcon");
@@ -43,27 +43,27 @@ ConfigurationEditNameState::ConfigurationEditNameState(RoomControl*  rc)
 	addChild(&menuButtonBar);	  
 }
 
-void ConfigurationEditNameState::onEnter()
+void ConfigurationEditServerState::onEnter()
 {
 	char *name= new char[CONFIG_NAME_LENGTH+1];
 	Configuration::getName(name);
-	nameTextBox.setValue(name);
+	serverTextBox.setValue(name);
 	delete name;
 	draw(_owner->u8g);
 };
 
 
-void ConfigurationEditNameState::onExit()
+void ConfigurationEditServerState::onExit()
 {
 	// char *newName = new char[CONFIG_NAME_LENGTH+1];
 	// Configuration::getName(newName);
-	// nameTextBox.getValue(newName);
+	// serverTextBox.getValue(newName);
 
     // Configuration::setName(newName);
 	// delete newName;
 };
 
-void ConfigurationEditNameState::draw(U8GLIB_SH1106_128X64 *u8g)
+void ConfigurationEditServerState::draw(U8GLIB_SH1106_128X64 *u8g)
 {
 	u8g->firstPage();  
 	do
@@ -72,35 +72,20 @@ void ConfigurationEditNameState::draw(U8GLIB_SH1106_128X64 *u8g)
 	} while(u8g->nextPage());
 };
 
-void ConfigurationEditNameState::handleButtonClick(ButtonEventArgs* e){
+void ConfigurationEditServerState::handleButtonClick(ButtonEventArgs* e){
 	DEBUG_PRINT( "handleButtonClick: " << e->getButtonName() ) ;
-	switch(e->getButtonName()) {
-		case rightButton:
-			nameTextBox.doRight(_owner->u8g);
-    		draw(_owner->u8g);
-			 break;
-        
-		case leftButton:
-	  		nameTextBox.doLeft(_owner->u8g);
-			draw(_owner->u8g);
-			break;
-        
-		default:
-			if(nameTextBox.doSelect(_owner->u8g))
-			{
-				if(nameTextBox.saved())
-				{
-					char *name= new char[CONFIG_NAME_LENGTH+1];
-					nameTextBox.getValue(name);
-					Configuration::setName(name);
-					delete name;
-				}
-				
-				_owner->revertState();
-			}
-			         
-			break;
-	};
-	
+    switch(e->getButtonName()) {
+        case rightButton:
+	        serverTextBox.doRight(_owner->u8g);
+            break;
+        case leftButton:
+			DEBUG_PRINT("case leftButton") ;
+	        serverTextBox.doLeft(_owner->u8g);
+            break;
+        default:
+	        serverTextBox.doSelect(_owner->u8g);
+            break;
+    };
+	draw(_owner->u8g);
 };
 
