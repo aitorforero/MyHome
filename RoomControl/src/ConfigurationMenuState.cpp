@@ -118,7 +118,7 @@ void ConfigurationMenuState::changeSelectedOption(U8GLIB_SH1106_128X64 *u8g, int
 		case 2:
 			byte IP[CONFIG_MQTT_SERVER_IP_LENGTH];
 			Configuration::getMQTTServerIP(IP);
-			sprintf(valueStr, "%03d:%03d:%03d:%03d", IP[0], IP[1], IP[2], IP[3]);
+			sprintf(valueStr, "%03d.%03d.%03d.%03d", IP[0], IP[1], IP[2], IP[3]);
 			break;
 		case 3:
 			sprintf(valueStr, "%d", Configuration::getMQTTServerPort());

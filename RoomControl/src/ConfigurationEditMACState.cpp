@@ -28,7 +28,7 @@ ConfigurationEditMACState::ConfigurationEditMACState(RoomControl*  rc)
 	MACTextBox.setFont(u8g_font_profont15r);
     MACTextBox.addCharacterRange(48, 57); // 0..9  
 	MACTextBox.addCharacterRange(65, 70); // A..F
-    MACTextBox.addCharacterRange(58, 58); //.   
+    MACTextBox.addCharacterRange(58, 58); //:
 
 	MACTextBox.setName("MACTextBox");
     addChild(&MACTextBox);
