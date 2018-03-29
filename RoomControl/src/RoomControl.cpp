@@ -141,3 +141,7 @@ void RoomControl::reset(){
 	wdt_enable(WDTO_60MS);
 	while(1) {}
 }
+
+void RoomControl::onMQTTMessage(char* topic, byte* payload, unsigned int length) {
+    DEBUG_PRINT("Message arrived [" << topic << "] : " << payload )
+}

@@ -1,7 +1,7 @@
+#include <DebugUtils.h>
 #include <avr/wdt.h>
 #include <EEPROM.h>
 #include <string.h>
-
 #include "Configuration.h"
 
 bool Configuration::load()
@@ -15,13 +15,14 @@ bool Configuration::load()
 		setSignature(CONFIG_SIGNATURE);
 		setMAC(nullMAC);
 		setName(CONFIG_DEFAULT_NAME);
-		setMQTTServerIP(CONFIG_MQTT_SERVER_IP_LENGTH);
+		setMQTTServerIP(nullIP);
 		setMQTTServerPort(CONFIG_DEFAULT_PORT);
 		update();
+	} else {
+		isValid = true;
 	}
 
 	return isValid ;
-
 }
 
 void Configuration::setSignature(const char* signature)
@@ -38,6 +39,7 @@ void Configuration::update()
     
 void Configuration::getMAC(byte* MAC)
 {
+	DEBUG_PRINT( "Saving MAC")  
 	for(int i = 0; i < CONFIG_MAC_LENGTH; i++)
 		MAC[i] = cd.MAC[i];
 };
@@ -57,6 +59,7 @@ bool Configuration::getName(char* name)
     
 void Configuration::setName(const char* name)
 { 
+	DEBUG_PRINT( "Saving Name")  
 	for(int i = 0; i < CONFIG_NAME_LENGTH; i++)
 		cd.name[i] = name[i];
 	update();  
@@ -69,9 +72,11 @@ void Configuration::getMQTTServerIP(byte* serverIP)
 };
     
 void Configuration::setMQTTServerIP(const byte* serverIP)
-{    
-  for(int i = 0; i < CONFIG_MQTT_SERVER_IP_LENGTH; i++)
-		cd.serverIP[i] = cd.serverIP[i];
+{  	
+	DEBUG_PRINT( "Saving MQTT Server IP")  
+	for(int i = 0; i < CONFIG_MQTT_SERVER_IP_LENGTH; i++)
+		cd.serverIP[i] = serverIP[i];
+	
 	update();  
 };
 
@@ -82,10 +87,11 @@ int Configuration::getMQTTServerPort()
 
 void Configuration::setMQTTServerPort(int serverPort)
 {
+	DEBUG_PRINT( "Saving MQTT Server Port")
 	cd.serverPort = serverPort;        
 	update();  
 };
 
 ConfigurationData Configuration::cd;
-byte Configuration::nullMAC[CONFIG_MAC_LENGTH] = {0};
-byte Configuration::nullIP[CONFIG_MQTT_SERVER_IP_LENGTH] = {0};
+byte Configuration::nullMAC[CONFIG_MAC_LENGTH] = {0x7a,0xfc,0x5b,0x30,0x95,0x6c};
+byte Configuration::nullIP[CONFIG_MQTT_SERVER_IP_LENGTH] = {192, 168, 0, 10};

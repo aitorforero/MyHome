@@ -88,3 +88,15 @@ void InitializingState::initializeButtons() {
 	_owner->rightButton->down()->addHandler(MakeDelegate(_owner, &RoomControl::onRightButtonDown));
 	_owner->rightButton->up()->addHandler(MakeDelegate(_owner, &RoomControl::onRightButtonUp));
 }
+
+void InitializingState::initializeMQTT() {
+	INFO_PRINT("Inicializando cliente MQTT...");
+	byte serverIP[CONFIG_MQTT_SERVER_IP_LENGTH];
+
+	Configuration::setMQTTServerIP(serverIP);
+
+	IPAddress server(serverIP[0], serverIP[1], serverIP[2], serverIP[3]);
+  
+  	_owner->mqttClient.setServer(server, Configuration::getMQTTServerPort());
+	_owner->mqttClient.setCallback(&RoomControl::onMQTTMessage); 
+} 

@@ -90,7 +90,7 @@ void ConfigurationEditMACState::handleButtonClick(ButtonEventArgs* e){
 			{
 				if(MACTextBox.saved())
 				{
-					char *MAC= new byte[CONFIG_MAC_LENGTH];
+					byte *MAC= new byte[CONFIG_MAC_LENGTH];
 					Configuration::getMAC(MAC);
 
 					char *strMAC = new char[CONFIG_MAC_LENGTH*3]; // Two digits for each byte,  ':' between and in the end '0'
@@ -110,7 +110,10 @@ void ConfigurationEditMACState::handleButtonClick(ButtonEventArgs* e){
 				}
 				
 				_owner->revertState();
+			} else {
+				draw(_owner->u8g);
 			}
+
 			         
 			break;
         

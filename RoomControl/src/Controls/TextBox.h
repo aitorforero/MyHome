@@ -42,7 +42,7 @@ enum TextBoxState
 class TextBox : public Control {
     private:
         vector<IntRange*> characterRanges;
-        int _maxLength;
+        int _maxLength = 0;
         ButtonBar *_buttonBar;
         const u8g_fntpgm_uint8_t* _font;
         TextBoxState _state;

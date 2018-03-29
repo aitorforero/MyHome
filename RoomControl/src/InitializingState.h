@@ -9,6 +9,7 @@ class InitializingState : public RoomControlState
       void initializeScreen();
       void initializeEthernet();
       void initializeButtons();
+      void initializeMQTT();
       
     public:
       InitializingState(RoomControl* rc):RoomControlState(rc){};

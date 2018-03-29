@@ -9,6 +9,8 @@
 #include <DebugUtils.h>
 #include <Button.h>
 #include <EventArgs.h>
+#include <PubSubClient.h>
+
 
 #include "RoomControlState.h"
 #include "RoomControlStateMachine.h"
@@ -21,6 +23,8 @@ class RoomControl : public ButtonEventsController {
         void loop();
         U8GLIB_SH1106_128X64 *u8g;
         EthernetClient* ethClient;
+        PubSubClient mqttClient;
+ 
         void changeToState(RoomControlState* s);
         void moveToState(RoomControlState* s);
         void revertState();
@@ -34,7 +38,9 @@ class RoomControl : public ButtonEventsController {
         void onLeftButtonUp(EventArgs* e);
         void onRightButtonUp(EventArgs* e);
         void reset();
-      
+        static void onMQTTMessage(char* topic, byte* payload, unsigned int length);
+
+     
    
     private:
         RoomControl();
@@ -42,5 +48,6 @@ class RoomControl : public ButtonEventsController {
         int line = 0;
         bool previousBothClick = false;
         RoomControlStateMachine* mStateMachine;
+        void MQTTMessage(char* topic, byte* payload, unsigned int length);
 };
 #endif

@@ -4,7 +4,7 @@
 #include <Arduino.h>
 
 
-#define CONFIG_SIGNATURE "RCtrl00"
+#define CONFIG_SIGNATURE "RCtrl01"
 #define CONFIG_SIGNATURE_POS 100
 
 #define CONFIG_SIGNATURE_LENGTH 8
@@ -12,8 +12,7 @@
 #define CONFIG_NAME_LENGTH 9
 #define CONFIG_MQTT_SERVER_IP_LENGTH 4
 #define CONFIG_DEFAULT_NAME "ANONIMO"
-#define CONFIG_DEFAULT_PORT 0
-
+#define CONFIG_DEFAULT_PORT 1883
 
 struct ConfigurationData{
   char signature[CONFIG_SIGNATURE_LENGTH];

@@ -27,7 +27,7 @@ ConfigurationEditPortState::ConfigurationEditPortState(RoomControl*  rc)
 		  
 	DEBUG_PRINT("Añadiendo menuButtonBar...");
 	portTextBox.setFont(u8g_font_profont22r);
-	portTextBox.addCharacterRange(65, 90); // A..Z
+	portTextBox.addCharacterRange(48, 57); // 0..9
 	portTextBox.setName("portTextBox");
     addChild(&portTextBox);
 
@@ -77,15 +77,35 @@ void ConfigurationEditPortState::handleButtonClick(ButtonEventArgs* e){
     switch(e->getButtonName()) {
         case rightButton:
 	        portTextBox.doRight(_owner->u8g);
+			draw(_owner->u8g);
             break;
         case leftButton:
 			DEBUG_PRINT("case leftButton") ;
 	        portTextBox.doLeft(_owner->u8g);
+			draw(_owner->u8g);
             break;
         default:
-	        portTextBox.doSelect(_owner->u8g);
+	        if (portTextBox.doSelect(_owner->u8g)) {
+				if(portTextBox.saved())
+				{
+					int port;
+	
+					char *strPort = new char[8]; 
+					portTextBox.getValue(strPort);
+					port=(int)strtol(strPort, 0, 10);
+
+					Configuration::setMQTTServerPort(port);
+
+					delete strPort;
+				}
+				
+				_owner->revertState();
+
+			} else {
+				draw(_owner->u8g);
+			}
             break;
     };
-	draw(_owner->u8g);
+
 };
 

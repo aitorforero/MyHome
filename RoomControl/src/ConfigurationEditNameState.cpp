@@ -97,6 +97,8 @@ void ConfigurationEditNameState::handleButtonClick(ButtonEventArgs* e){
 				}
 				
 				_owner->revertState();
+			} else {
+				draw(_owner->u8g);
 			}
 			         
 			break;
