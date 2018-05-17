@@ -16,6 +16,7 @@ class InitializingState : public RoomControlState
       void execute();
       const char * getName();
 
+
 };
 
 

@@ -26,7 +26,8 @@ void InitializingState::execute()
 		return;
 	}
 	
-	initializeEthernet();	
+	initializeEthernet();
+	initializeMQTT();	
 	_owner->println("Inicializado");
 	
 	_owner->changeToState(new MainState(_owner));
@@ -93,10 +94,11 @@ void InitializingState::initializeMQTT() {
 	INFO_PRINT("Inicializando cliente MQTT...");
 	byte serverIP[CONFIG_MQTT_SERVER_IP_LENGTH];
 
-	Configuration::setMQTTServerIP(serverIP);
+	Configuration::getMQTTServerIP(serverIP);
 
 	IPAddress server(serverIP[0], serverIP[1], serverIP[2], serverIP[3]);
   
-  	_owner->mqttClient.setServer(server, Configuration::getMQTTServerPort());
-	_owner->mqttClient.setCallback(&RoomControl::onMQTTMessage); 
+    _owner->mqttClient = new PubSubClient(*(_owner->ethClient));
+  	_owner->mqttClient->setServer(server, Configuration::getMQTTServerPort());
+	_owner->mqttClient->setCallback(&RoomControl::onMQTTMessage); 
 } 

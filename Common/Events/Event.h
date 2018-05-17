@@ -36,6 +36,11 @@ class Event
 		};
 		
 		void raise(TEventArgs* args) { 
+			if(handlerCount()==0) 
+			{
+				DEBUG_PRINT("There are: " << handlerCount() << " handlers")
+			}
+
 			typename vector<Handler>::iterator Iter;
 			for (Iter = handlers.begin() ; Iter != handlers.end() ; Iter++ )  
 			{   

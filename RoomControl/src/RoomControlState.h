@@ -4,17 +4,19 @@
 #include <DebugUtils.h>
 #include <State.h> 
 #include "ButtonEvents.h"
+#include "MQTTEvents.h"
 
 class RoomControl;		 
 
 typedef FastDelegate1<ButtonEventArgs*, void> Handler;
 
-class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
+class RoomControlState : public State<RoomControl>, public ButtonEventsHandler, public MQTTEventsHandler
 {
 	private:
 		Event<ButtonEventArgs>::Handler clickHndlr;
 		Event<ButtonEventArgs>::Handler upHndlr;
 		Event<ButtonEventArgs>::Handler downHndlr;
+		Event<MQTTMessageEventArgs>::Handler MQTTMessageHndlr;
   
 	public:
 		RoomControlState(RoomControl* rc):State<RoomControl>(rc){};
@@ -37,9 +39,12 @@ class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
 	  
 		void suspend(){
 			DEBUG_PRINT("Suspending: " << getName())
-			((ButtonEventsController*)_owner)->downEvent()->removeHandler(downHndlr);
-			((ButtonEventsController*)_owner)->clickEvent()->removeHandler(clickHndlr);        
-			((ButtonEventsController*)_owner)->upEvent()->removeHandler(upHndlr);   
+			MQTTEventsController* mqttEC = _owner;
+			ButtonEventsController* bEC = _owner;			
+			bEC->downEvent()->removeHandler(downHndlr);
+			bEC->clickEvent()->removeHandler(clickHndlr);        
+			bEC->upEvent()->removeHandler(upHndlr);   
+			mqttEC->messageEvent()->removeHandler(MQTTMessageHndlr);   
 
 			onSuspend();     
 			DEBUG_PRINT("Suspended: " << getName())
@@ -51,11 +56,27 @@ class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
 			downHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonDown);
 			clickHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonClick);
 			upHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonUp);
+			MQTTMessageHndlr = MakeDelegate(this, &MQTTEventsHandler::handleMQTTMessage);
 			
-			((ButtonEventsController*)_owner)->downEvent()->addHandler(downHndlr);
-			((ButtonEventsController*)_owner)->clickEvent()->addHandler(clickHndlr);        
-			((ButtonEventsController*)_owner)->upEvent()->addHandler(upHndlr); 
+ 			MQTTEventsController* mqttEC = _owner;
+			ButtonEventsController* bEC = _owner;			
 
+            DEBUG_PRINT(mqttEC->messageEvent())
+           	DEBUG_PRINT(bEC->downEvent())
+           	DEBUG_PRINT(bEC->clickEvent())
+           	DEBUG_PRINT(bEC->upEvent())
+
+
+          	DEBUG_PRINT("Anadir " << mqttEC->messageEvent())
+			mqttEC->messageEvent()->addHandler(MQTTMessageHndlr);  
+            DEBUG_PRINT("Anadido " << mqttEC->messageEvent()->handlerCount())
+			
+			bEC->downEvent()->addHandler(downHndlr);
+			bEC->clickEvent()->addHandler(clickHndlr);        
+            DEBUG_PRINT("Anadir " << bEC->upEvent()->handlerCount())
+			bEC->upEvent()->addHandler(upHndlr); 
+             DEBUG_PRINT("Anadir " << bEC->upEvent()->handlerCount())
+			
 			onResume();
 			DEBUG_PRINT("Resumed: " << getName())
 		};

@@ -17,13 +17,13 @@
 #include "ButtonEvents.h"
 
 
-class RoomControl : public ButtonEventsController {
+class RoomControl : public ButtonEventsController, public MQTTEventsController {
     public:
         static RoomControl* Instance();
         void loop();
         U8GLIB_SH1106_128X64 *u8g;
         EthernetClient* ethClient;
-        PubSubClient mqttClient;
+        PubSubClient* mqttClient;
  
         void changeToState(RoomControlState* s);
         void moveToState(RoomControlState* s);
@@ -39,15 +39,15 @@ class RoomControl : public ButtonEventsController {
         void onRightButtonUp(EventArgs* e);
         void reset();
         static void onMQTTMessage(char* topic, byte* payload, unsigned int length);
-
+        bool reconnect();
+        void publishCommand(const char* state, const char* item, const char* payload );
+        void publishInitialize();
      
-   
     private:
         RoomControl();
         char buffer[5][81];
         int line = 0;
         bool previousBothClick = false;
-        RoomControlStateMachine* mStateMachine;
-        void MQTTMessage(char* topic, byte* payload, unsigned int length);
+        RoomControlStateMachine* mStateMachine;        
 };
 #endif
