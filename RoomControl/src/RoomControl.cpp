@@ -16,7 +16,7 @@
 
 #define INVALID_VALUE -99
 
-RoomControl::RoomControl() : 	ButtonEventsController(this), MQTTEventsController(this)
+RoomControl::RoomControl() : RoomControlEventsController(this)
 {
 	line = 0;
 	mStateMachine = new RoomControlStateMachine(this);
@@ -152,9 +152,9 @@ bool RoomControl::reconnect() {
     // Loop until we're reconnected
     println("Conectando con servidor MQTT...");
     // Attempt to connect
-	char name[CONFIG_NAME_LENGTH];
+	char name[CONFIG_MAC_LENGTH];
 	Configuration::getName(name);
-	DEBUG_PRINT("Client ID" << name)
+	DEBUG_PRINT("Client ID: " << name)
 
     if (mqttClient->connect(name)) {
       // Once connected, publish an announcement...
@@ -189,7 +189,7 @@ bool RoomControl::reconnect() {
 }
 
 
-void RoomControl::publishCommand(const char* state, const char* item, const char* payload )
+void RoomControl::publishCommand( const char* item, const char* payload )
 {
 	// casa/mandos/command/{MAC}/{estado}/{item (left/right/both)}
 
@@ -203,8 +203,11 @@ void RoomControl::publishCommand(const char* state, const char* item, const char
 
 	String topicString = String(rootTopic) + String("/");
 	topicString += String(roomControlTopic) + String("/command/");
-	topicString += String(MAC[0],16) + String(MAC[1],16) + String(MAC[2],16) + String(MAC[3],16) + String(MAC[4],16) + String(MAC[5],16) + String("/");
-	topicString += String(state) + String("/");
+	char cMAC[13];
+    sprintf(cMAC, "%02X%02X%02X%02X%02X%02X",  MAC[0],MAC[1],MAC[2],MAC[3],MAC[4],MAC[5]);
+
+	topicString += String(cMAC) + String("/");
+	topicString += String(MQTTState) + String("/");
 	topicString += String(item);
 	
 	int topicLength = topicString.length()+1;
@@ -238,4 +241,14 @@ void RoomControl::publishInitialize()
     sprintf(payload, "%02X%02X%02X%02X%02X%02X",  MAC[0],MAC[1],MAC[2],MAC[3],MAC[4],MAC[5]);
 
 	mqttClient->publish(topic, payload);  
+}
+
+void RoomControl::setMQTTState(const char* state)
+{
+	MQTTState = state;
+}
+
+RoomControl::~RoomControl()
+{
+
 }

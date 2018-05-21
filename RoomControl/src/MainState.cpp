@@ -10,7 +10,7 @@
 MainState::MainState(RoomControl*  rc)
 	: RoomControlState(rc),
 	  nameLabel(0, 0, 128, 16, ""),
-	  textLabel(0, 16, 128, 16, "")
+	  textLabel(0, 22, 128, 16, "")
 {
 	nameLabel.setFont(u8g_font_profont12r);
     nameLabel.setBackColor(1);
@@ -18,8 +18,8 @@ MainState::MainState(RoomControl*  rc)
 	nameLabel.setName("nameLabel");
     addChild(&nameLabel);
 		 
-	textLabel.setFont(u8g_font_profont15r);
-	textLabel.setName("serverTextBox");
+	textLabel.setFont(u8g_font_profont29r);
+	textLabel.setName("textLabel");
     addChild(&textLabel);
 }
 
@@ -54,25 +54,67 @@ void MainState::execute() {
 }
 
 void MainState::handleButtonClick(ButtonEventArgs* e){
-	
+	switch(e->getButtonName()) {
+		case leftButton:
+			_owner->publishCommand("left","click");
+			break;
+		case rightButton:
+			_owner->publishCommand("right","click");
+			break;
+		default:
+			_owner->publishCommand("both","click");
+			break;
+	}
+};
+
+void MainState::handleButtonDown(ButtonEventArgs* e){
+	switch(e->getButtonName()) {
+		case leftButton:
+			_owner->publishCommand("left","down");
+			break;
+		case rightButton:
+			_owner->publishCommand("right","down");
+			break;
+		default:
+			_owner->publishCommand("both","down");
+			break;
+	}
+};
+
+void MainState::handleButtonUp(ButtonEventArgs* e){
+	switch(e->getButtonName()) {
+		case leftButton:
+			_owner->publishCommand("left","up");
+			break;
+		case rightButton:
+			_owner->publishCommand("right","up");
+			break;
+		default:
+			_owner->publishCommand("both","up");
+			break;
+	}
 };
 
 void MainState::handleMQTTMessage(MQTTMessageEventArgs* e){
-    DEBUG_PRINT("mqtt MESSAGE RECIBIDO")
-	char message[e->getMessageLength()];
+	char message[80] = {0};
 	e->getMessage(message);
-    INFO_PRINT("Message arrived: " << message )
+
 
 
 	StaticJsonBuffer<200> jsonBuffer;
 
 	JsonObject& root = jsonBuffer.parseObject(message);
 
+	const char* state = root["state"];
+	const char* name = root["name"];
+	const char* text = root["text"];
 
+	_owner->setMQTTState(state);
+	nameLabel.setText(name);
+	textLabel.setText(text);
+    DEBUG_PRINT(state)
+    DEBUG_PRINT(name)
+    DEBUG_PRINT(text)
 
-	MQTTState = root["state"];
-	nameLabel.setText(root["name"]);
-	textLabel.setText(root["text"]);
-
-	draw(_owner->u8g);
+ 	draw(_owner->u8g);
 };

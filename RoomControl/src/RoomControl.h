@@ -14,10 +14,10 @@
 
 #include "RoomControlState.h"
 #include "RoomControlStateMachine.h"
-#include "ButtonEvents.h"
+#include "RoomControlEventsController.h"
 
 
-class RoomControl : public ButtonEventsController, public MQTTEventsController {
+class RoomControl : public RoomControlEventsController {
     public:
         static RoomControl* Instance();
         void loop();
@@ -40,14 +40,17 @@ class RoomControl : public ButtonEventsController, public MQTTEventsController {
         void reset();
         static void onMQTTMessage(char* topic, byte* payload, unsigned int length);
         bool reconnect();
-        void publishCommand(const char* state, const char* item, const char* payload );
+        void publishCommand(const char* item, const char* payload );
         void publishInitialize();
+        void setMQTTState(const char* state);
      
     private:
         RoomControl();
+        ~RoomControl();
         char buffer[5][81];
         int line = 0;
         bool previousBothClick = false;
-        RoomControlStateMachine* mStateMachine;        
+        RoomControlStateMachine* mStateMachine;
+        const char* MQTTState;        
 };
 #endif

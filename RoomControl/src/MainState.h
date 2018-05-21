@@ -16,13 +16,14 @@ class MainState : public RoomControlState, private ControlContainer
 
     private:
         long millisLastAttempt = 0;
-        char* MQTTState;
         Label nameLabel;  
         Label textLabel;
 
 
     protected:
       void handleButtonClick(ButtonEventArgs* e);
+      void handleButtonDown(ButtonEventArgs* e);
+      void handleButtonUp(ButtonEventArgs* e);
       void handleMQTTMessage(MQTTMessageEventArgs* e);
 
 };

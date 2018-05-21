@@ -7,6 +7,9 @@
         "support": "cpp",
         "algorithm": "cpp",
         "associative_base": "cpp",
-        "bitset": "cpp"
+        "bitset": "cpp",
+        "ios": "cpp",
+        "locale": "cpp",
+        "typeinfo": "cpp"
     }
 }

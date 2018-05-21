@@ -3,8 +3,7 @@
 
 #include <DebugUtils.h>
 #include <State.h> 
-#include "ButtonEvents.h"
-#include "MQTTEvents.h"
+#include "RoomControlEventsController.h"
 
 class RoomControl;		 
 
@@ -39,14 +38,15 @@ class RoomControlState : public State<RoomControl>, public ButtonEventsHandler, 
 	  
 		void suspend(){
 			DEBUG_PRINT("Suspending: " << getName())
-			MQTTEventsController* mqttEC = _owner;
-			ButtonEventsController* bEC = _owner;			
-			bEC->downEvent()->removeHandler(downHndlr);
-			bEC->clickEvent()->removeHandler(clickHndlr);        
-			bEC->upEvent()->removeHandler(upHndlr);   
-			mqttEC->messageEvent()->removeHandler(MQTTMessageHndlr);   
+ 			RoomControlEventsController* ec = (RoomControlEventsController*)_owner;
+			
+			ec->downEvent()->removeHandler(downHndlr);
+			ec->clickEvent()->removeHandler(clickHndlr);        
+			ec->upEvent()->removeHandler(upHndlr);   
+			ec->messageEvent()->removeHandler(MQTTMessageHndlr);   
 
 			onSuspend();     
+			
 			DEBUG_PRINT("Suspended: " << getName())
 		};
 
@@ -58,26 +58,16 @@ class RoomControlState : public State<RoomControl>, public ButtonEventsHandler, 
 			upHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonUp);
 			MQTTMessageHndlr = MakeDelegate(this, &MQTTEventsHandler::handleMQTTMessage);
 			
- 			MQTTEventsController* mqttEC = _owner;
-			ButtonEventsController* bEC = _owner;			
+ 			RoomControlEventsController* ec = (RoomControlEventsController*)_owner;
 
-            DEBUG_PRINT(mqttEC->messageEvent())
-           	DEBUG_PRINT(bEC->downEvent())
-           	DEBUG_PRINT(bEC->clickEvent())
-           	DEBUG_PRINT(bEC->upEvent())
-
-
-          	DEBUG_PRINT("Anadir " << mqttEC->messageEvent())
-			mqttEC->messageEvent()->addHandler(MQTTMessageHndlr);  
-            DEBUG_PRINT("Anadido " << mqttEC->messageEvent()->handlerCount())
+			ec->messageEvent()->addHandler(MQTTMessageHndlr);  
 			
-			bEC->downEvent()->addHandler(downHndlr);
-			bEC->clickEvent()->addHandler(clickHndlr);        
-            DEBUG_PRINT("Anadir " << bEC->upEvent()->handlerCount())
-			bEC->upEvent()->addHandler(upHndlr); 
-             DEBUG_PRINT("Anadir " << bEC->upEvent()->handlerCount())
-			
+			ec->downEvent()->addHandler(downHndlr);
+			ec->clickEvent()->addHandler(clickHndlr);        
+ 			ec->upEvent()->addHandler(upHndlr); 
+ 			
 			onResume();
+			
 			DEBUG_PRINT("Resumed: " << getName())
 		};
 	
