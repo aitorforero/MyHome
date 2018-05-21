@@ -27,12 +27,15 @@ void Label::calculateLayout(U8GLIB_SH1106_128X64 *g)
     int textWidth = g->getStrWidth(_text);
     switch(_horizontalAlign) {
         case HorizontalAlign::center:
+            DEBUG_PRINT("center align")
             xPos += ((totWidth-textWidth) / 2);
             break;
         case HorizontalAlign::right:
+            DEBUG_PRINT("right align")
             xPos += totWidth - textWidth;
             break;
         case HorizontalAlign::left:
+            DEBUG_PRINT("left align")
             // Do nothing
             break;
     }

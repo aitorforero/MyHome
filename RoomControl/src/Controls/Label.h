@@ -9,7 +9,7 @@ class Label : public Container {
     private:
         const char* _text;
         const u8g_fntpgm_uint8_t* _font;
-        HorizontalAlign _horizontalAlign;
+        HorizontalAlign _horizontalAlign = HorizontalAlign::left;
         void calculateLayout(U8GLIB_SH1106_128X64 *g);
         int yPos;
         int xPos;

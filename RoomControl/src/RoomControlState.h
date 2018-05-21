@@ -3,18 +3,19 @@
 
 #include <DebugUtils.h>
 #include <State.h> 
-#include "ButtonEvents.h"
+#include "RoomControlEventsController.h"
 
 class RoomControl;		 
 
 typedef FastDelegate1<ButtonEventArgs*, void> Handler;
 
-class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
+class RoomControlState : public State<RoomControl>, public ButtonEventsHandler, public MQTTEventsHandler
 {
 	private:
 		Event<ButtonEventArgs>::Handler clickHndlr;
 		Event<ButtonEventArgs>::Handler upHndlr;
 		Event<ButtonEventArgs>::Handler downHndlr;
+		Event<MQTTMessageEventArgs>::Handler MQTTMessageHndlr;
   
 	public:
 		RoomControlState(RoomControl* rc):State<RoomControl>(rc){};
@@ -37,11 +38,15 @@ class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
 	  
 		void suspend(){
 			DEBUG_PRINT("Suspending: " << getName())
-			((ButtonEventsController*)_owner)->downEvent()->removeHandler(downHndlr);
-			((ButtonEventsController*)_owner)->clickEvent()->removeHandler(clickHndlr);        
-			((ButtonEventsController*)_owner)->upEvent()->removeHandler(upHndlr);   
+ 			RoomControlEventsController* ec = (RoomControlEventsController*)_owner;
+			
+			ec->downEvent()->removeHandler(downHndlr);
+			ec->clickEvent()->removeHandler(clickHndlr);        
+			ec->upEvent()->removeHandler(upHndlr);   
+			ec->messageEvent()->removeHandler(MQTTMessageHndlr);   
 
 			onSuspend();     
+			
 			DEBUG_PRINT("Suspended: " << getName())
 		};
 
@@ -51,12 +56,18 @@ class RoomControlState : public State<RoomControl>, public ButtonEventsHandler
 			downHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonDown);
 			clickHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonClick);
 			upHndlr = MakeDelegate(this, &ButtonEventsHandler::handleButtonUp);
+			MQTTMessageHndlr = MakeDelegate(this, &MQTTEventsHandler::handleMQTTMessage);
 			
-			((ButtonEventsController*)_owner)->downEvent()->addHandler(downHndlr);
-			((ButtonEventsController*)_owner)->clickEvent()->addHandler(clickHndlr);        
-			((ButtonEventsController*)_owner)->upEvent()->addHandler(upHndlr); 
+ 			RoomControlEventsController* ec = (RoomControlEventsController*)_owner;
 
+			ec->messageEvent()->addHandler(MQTTMessageHndlr);  
+			
+			ec->downEvent()->addHandler(downHndlr);
+			ec->clickEvent()->addHandler(clickHndlr);        
+ 			ec->upEvent()->addHandler(upHndlr); 
+ 			
 			onResume();
+			
 			DEBUG_PRINT("Resumed: " << getName())
 		};
 	

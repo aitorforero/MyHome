@@ -85,12 +85,12 @@ void ConfigurationEditServerState::draw(U8GLIB_SH1106_128X64 *u8g)
 
 void ConfigurationEditServerState::handleButtonClick(ButtonEventArgs* e){
 	DEBUG_PRINT( "handleButtonClick: " << e->getButtonName() ) ;
+	bool redraw = true;
     switch(e->getButtonName()) {
         case rightButton:
 	        serverTextBox.doRight(_owner->u8g);
             break;
         case leftButton:
-			DEBUG_PRINT("case leftButton") ;
 	        serverTextBox.doLeft(_owner->u8g);
             break;
         default:
@@ -98,8 +98,7 @@ void ConfigurationEditServerState::handleButtonClick(ButtonEventArgs* e){
 			{
 				if(serverTextBox.saved())
 				{
-					char *Server= new byte[CONFIG_MQTT_SERVER_IP_LENGTH];
-					Configuration::getMAC(Server);
+					byte *Server= new byte[CONFIG_MQTT_SERVER_IP_LENGTH];
 
 					char *strServer = new char[CONFIG_MQTT_SERVER_IP_LENGTH*3]; // Two digits for each byte,  ':' between and in the end '0'
 					serverTextBox.getValue(strServer);
@@ -111,14 +110,20 @@ void ConfigurationEditServerState::handleButtonClick(ButtonEventArgs* e){
 						Server[i]=(byte)strtol(strByte, 0, 16);
 					}
 
-					Configuration::setMAC(Server);
+					Configuration::setMQTTServerIP(Server);
 
 					delete strServer;
 					delete Server;
-					}
+				}
+
+   				_owner->revertState();
+				redraw = false;
+			} 
             break;
-			};
-			draw(_owner->u8g);
 	};
+
+	if (redraw) {
+		draw(_owner->u8g);
+	}
 };
 

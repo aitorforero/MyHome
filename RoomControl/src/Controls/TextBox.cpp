@@ -45,7 +45,8 @@ TextBox::~TextBox(){
 
 void TextBox::setState(TextBoxState state)
 {
-	_state = state;
+	DEBUG_PRINT("Entering setState")
+    _state = state;
 	switch(_state)
 	{
 		case Editing:
@@ -138,16 +139,10 @@ void TextBox::calculateLayout( U8GLIB_SH1106_128X64 *g){
 		
 		strncpy(leftPart, _value, _pos);
 		currentPart[0] = _value[_pos];
-		DEBUG_PRINT("_pos: " << _pos );
-		DEBUG_PRINT("_value: " << _value);
-		DEBUG_PRINT("leftPart: " << leftPart);
-		DEBUG_PRINT("Current: " << currentPart);
 		xCursor = xPos - 1 + g->getStrWidth(leftPart);
 		yCursor = yPosOrg;
 		cursorWidth = g->getStrWidth(currentPart);
 		cursorHeight = h;
-		DEBUG_PRINT("cursorWidth: " << cursorWidth );
-		DEBUG_PRINT("xCursor: " << xCursor);
 }
 
 
@@ -209,105 +204,38 @@ void TextBox::changeCharacter( int value){
 
 	DEBUG_PRINT("Rango actual: " << _currentRange << " Minimo: " << characterRanges.at(_currentRange)->min << " Actual: " << nextValue<< " Maximo: " << characterRanges.at(_currentRange)->max )
 
-	switch(_state)
+	DEBUG_PRINT("default")
+	nextValue = _value[_pos] < 255 ? _value[_pos] + value : 0;
+	if(characterRanges.at(nextRange)->max < nextValue)
 	{
-		case BackSpacing:
-			DEBUG_PRINT("BackSpacing")
-			if(value<0)
-			{
-				setState(Editing);
-				DEBUG_PRINT("Ultimo rango")
-				nextRange = characterRanges.size() - 1;
-				nextValue = characterRanges.at(nextRange)->max;
-			}
-			else if(value>0)
-			{
-				setState(Deleting);
-			}
-			break;
-		case Deleting:
-			DEBUG_PRINT("Deleting")
-			if(value<0)
-			{
-				setState(BackSpacing);
-			}
-			else if(value>0)
-			{
-				setState(Inserting);
-			}
-			break;
-		case Inserting:
-			DEBUG_PRINT("Inserting")
-			if(value<0)
-			{
-				setState(Deleting);
-			}
-			else if(value>0)
-			{
-				setState(Canceling);
-			}
-			break;
-		case Canceling:
-			DEBUG_PRINT("Canceling")
-			if(value<0)
-			{
-				setState(Inserting);
-			}
-			else if(value>0)
-			{
-				setState(Saving);
-			}
-			break;
-		case Saving:
-			DEBUG_PRINT("Saving")
-			if(value<0)
-			{
-				setState(Canceling);
-			}
-			else if(value>0)
-			{
-				setState(Editing);
-				DEBUG_PRINT("Primer rango")
-				nextRange = 0;
-				nextValue = characterRanges.at(nextRange)->min;
-			}
-			break;
-		default:
-			DEBUG_PRINT("default")
-			nextValue = _value[_pos] < 255 ? _value[_pos] + value : 0;
-			if(characterRanges.at(nextRange)->max < nextValue)
-			{
-				DEBUG_PRINT("Me paso por arriba")
-				if(nextRange == (characterRanges.size() - 1))
-				{
-					nextValue = _value[_pos]; // set to the previous value
-					setState(BackSpacing);
-				}
-				else
-				{
-					DEBUG_PRINT("Siguiente rango")
-					nextRange++;
-					nextValue = characterRanges.at(nextRange)->min;
-				}
-				
-			}
-			else if(characterRanges.at(nextRange)->min > nextValue)
-			{
-				DEBUG_PRINT("Me paso por abajo")
-				if(nextRange == 0)
-				{
-					nextValue = _value[_pos]; // set to the previous value
-					setState(Saving);
-				}
-				else
-				{
-					DEBUG_PRINT("Anterior rango")
-					nextRange--;
-					nextValue = characterRanges.at(nextRange)->max;
-				}
-			}
-			
-			break;
+		DEBUG_PRINT("Me paso por arriba")
+		if(nextRange == (characterRanges.size() - 1))
+		{
+			DEBUG_PRINT("Siguiente rango")
+			nextRange=0;
+		}
+		else
+		{
+			DEBUG_PRINT("Siguiente rango")
+			nextRange++;
+		}
+
+		nextValue = characterRanges.at(nextRange)->min;		
+	}
+	else if(characterRanges.at(nextRange)->min > nextValue)
+	{
+		DEBUG_PRINT("Me paso por abajo")
+		if(nextRange == 0)
+		{
+			DEBUG_PRINT("Anterior rango")
+			nextRange=(characterRanges.size() - 1);
+		}
+		else
+		{
+			DEBUG_PRINT("Anterior rango")
+			nextRange--;
+		}
+		nextValue = characterRanges.at(nextRange)->max;
 	}
 	
 	DEBUG_PRINT("Corregido: " << nextRange << " Minimo: " << characterRanges.at(nextRange)->min << " Actual: " << nextValue << " Maximo: " << characterRanges.at(nextRange)->max );
@@ -477,5 +405,6 @@ bool TextBox::doSelect( U8GLIB_SH1106_128X64 *g){
 			break;
     };
     
+	layoutChanged = true;
 	return res;
 };
